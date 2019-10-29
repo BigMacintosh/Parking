@@ -1,35 +1,45 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Schema;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
 
 public class DriveController : MonoBehaviour
 {
-    private Rigidbody rigid;
-    [SerializeField] private Transform steering;
-    [SerializeField] private float accel; //acceleration value for the car
-    [SerializeField] private float maxSpeed; //top speed
+    [SerializeField] private List<Axle> axles;
 
-    [SerializeField] private float turnFactor;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        rigid = GetComponent<Rigidbody>();
-    }
-
+    [SerializeField] private float maxMotorTorque;
+    [SerializeField] private float maxSteeringAngle;
+    
     // FixedUpdate is 50Hz
     void FixedUpdate()
     {
-        if (Input.GetButton("Vertical"))
-        {
-            rigid.AddForce(steering.forward * accel * Input.GetAxis("Vertical"));
-        }
+        float torque = Input.GetAxis("Vertical") * maxMotorTorque;
+        float steering = Input.GetAxis("Horizontal") * maxSteeringAngle;
 
-        if (Input.GetButton("Horizontal"))
+        foreach (Axle axle in axles)
         {
-            steering.Rotate(0f, turnFactor * Input.GetAxis("Horizontal") * Time.deltaTime, 0f);
+            if (axle.steering)
+            {
+                axle.leftWheel.steerAngle = steering;
+                axle.rightWheel.steerAngle = steering;
+            }
+
+            if (axle.motor)
+            {
+                axle.leftWheel.motorTorque = torque;
+                axle.rightWheel.motorTorque = torque;
+            }
         }
     }
+}
+
+[System.Serializable]
+public class Axle
+{
+    public WheelCollider leftWheel;
+    public WheelCollider rightWheel;
+    public bool motor; //Does this wheel provide torque
+    public bool steering; //Does this wheel provide steering
 }
