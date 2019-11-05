@@ -9,7 +9,7 @@ public class AntiRoll : MonoBehaviour
     public GameObject car;
     private Rigidbody rb;
 
-    [SerializeField] public float AntiSwayMultiplier = 5000.0f;
+    public float AntiSwayMultiplier = 5000.0f;
 
     // Start is called before the first frame update
     void Start()
