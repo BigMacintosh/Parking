@@ -400,7 +400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44c07d85576ad4116ab7ccf23790c418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectToFollow: {fileID: 0}
+  objectToFollow: {fileID: 970562389}
   offset: {x: 0, y: 2, z: -6}
   followSpeed: 10
   lookSpeed: 10
@@ -483,22 +483,22 @@ PrefabInstance:
     - target: {fileID: 2754571377349320158, guid: 7aeb836a048c048579b51f47538106b5,
         type: 3}
       propertyPath: m_Name
-      value: Car (1)
+      value: Car
       objectReference: {fileID: 0}
     - target: {fileID: 2754571377349320128, guid: 7aeb836a048c048579b51f47538106b5,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.9378376
+      value: 41.5
       objectReference: {fileID: 0}
     - target: {fileID: 2754571377349320128, guid: 7aeb836a048c048579b51f47538106b5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.5
+      value: 39.7
       objectReference: {fileID: 0}
     - target: {fileID: 2754571377349320128, guid: 7aeb836a048c048579b51f47538106b5,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.9640167
+      value: 94.5
       objectReference: {fileID: 0}
     - target: {fileID: 2754571377349320128, guid: 7aeb836a048c048579b51f47538106b5,
         type: 3}
@@ -918,6 +918,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &970562389 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2754571377349320128, guid: 7aeb836a048c048579b51f47538106b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 630470833}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1040537434
 PrefabInstance:
   m_ObjectHideFlags: 0
