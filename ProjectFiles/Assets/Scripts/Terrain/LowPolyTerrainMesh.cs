@@ -140,7 +140,7 @@ public class LowPolyTerrainMesh : MonoBehaviour
         if (Time.frameCount % 30 == 0) {
             for (var y = 0; y <= size; y++) {
                 for (var x = 0; x <= size; x++) {
-                    SetVerticesFor(x, y, UnityEngine.Random.Range(0.0f, 5.0f));
+                    SetVerticesFor(x, y, UnityEngine.Random.Range(0.0f, 1.0f));
 //                    IncreaseVerticesFor(x, y, 0.5f);
                 }
             }
