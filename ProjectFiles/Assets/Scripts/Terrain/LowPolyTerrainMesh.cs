@@ -12,11 +12,11 @@ public class LowPolyTerrainMesh : MonoBehaviour
     private Vector2[] uv;
     private int[] triangles;
     
-    public int size = 10;
+    public int size = 3;
     
-    private int GetVertexStartIndexFor(int x, int y) {
+    private int? GetVertexStartIndexFor(int x, int y) {
         var idx = x * 6 + y * 6 * size;
-        return idx >= 0 && idx < vertices.Length ? idx : -1;
+        return idx >= 0 && idx < vertices.Length ? idx : (int?) null;
     }
 
     private void test() {
@@ -24,7 +24,9 @@ public class LowPolyTerrainMesh : MonoBehaviour
         Debug.Assert(GetVertexStartIndexFor(1, 0) == 6);
         Debug.Assert(GetVertexStartIndexFor(2, 0) == 12);
         Debug.Assert(GetVertexStartIndexFor(0, 1) == size * 6);
-        Debug.Assert(GetVertexStartIndexFor(1, 2) == size * 6 + 1 * size);
+        Debug.Assert(GetVertexStartIndexFor(1, 2) == 1 * 6 + 2 * 6 * size);
+        Debug.Log(GetVertexStartIndexFor(1, 2));
+
     }
     
     private void EditVertexAt(int idx, Func<float, float> f) {
@@ -39,19 +41,52 @@ public class LowPolyTerrainMesh : MonoBehaviour
     }
 
     private void EditVerticesFor(int x, int y, Func<float, float> f) {
-        var topRight = GetVertexStartIndexFor(x, y);
-        EditVertexAt(topRight + 0, f);
+        if (x < size)
+        {
+            var topRight = GetVertexStartIndexFor(x, y);
+            if (topRight.HasValue)
+            {
+                int i = topRight.Value + 0;
+                Debug.Log("EDIT " + i);
+                EditVertexAt(i, f);
+            }
+
+            var bottomRight = GetVertexStartIndexFor(x, y - 1);
+            if (bottomRight.HasValue)
+            {
+                int i = bottomRight.Value + 1;
+                Debug.Log("EDIT " + i);
+                EditVertexAt(i, f);
+                i = bottomRight.Value + 4;
+                Debug.Log("EDIT " + i);
+                EditVertexAt(i, f);
+            }
+        }
+
+        if (x > 0)
+        {
+            var topLeft = GetVertexStartIndexFor(x - 1, y);
+            if (topLeft.HasValue)
+            {
+                int i = topLeft.Value + 2;
+                Debug.Log("EDIT " + i);
+                EditVertexAt(i, f);
+                i = topLeft.Value + 3;
+                Debug.Log("EDIT " + i);
+                EditVertexAt(i, f);
+            }
+
+
+            var bottomLeft = GetVertexStartIndexFor(x - 1, y - 1);
+            if (bottomLeft.HasValue)
+            {
+                int i = bottomLeft.Value + 5;
+                Debug.Log("EDIT " + i);
+                EditVertexAt(i, f);
+            }
+        }
+
         
-        var topLeft = GetVertexStartIndexFor(x - 1, y);
-        EditVertexAt(topLeft + 2, f);
-        EditVertexAt(topLeft + 3, f);
-        
-        var bottomLeft = GetVertexStartIndexFor(x - 1, y - 1);
-        EditVertexAt(bottomLeft + 5, f);
-        
-        var bottomRight = GetVertexStartIndexFor(x, y - 1);
-        EditVertexAt(bottomRight + 1, f);
-        EditVertexAt(bottomRight + 4, f);
     }
 
     private void SetVerticesFor(int x, int y, float amnt) {
@@ -126,8 +161,9 @@ public class LowPolyTerrainMesh : MonoBehaviour
             Debug.Log("Round " + c);
             for (var y = 0; y <= size; y++) {
                 for (var x = 0; x <= size; x++) {
-                    //SetVerticesFor(x, y, UnityEngine.Random.Range(0.0f, 3.0f));
-                    IncreaseVerticesFor(x, y, 0.5f);
+                    SetVerticesFor(x, y, UnityEngine.Random.Range(0.0f, 5.0f));
+                    Debug.Log("UPDATE x " + x + "y " + y);
+//                    IncreaseVerticesFor(x, y, 0.5f);
                 }
             }
 
