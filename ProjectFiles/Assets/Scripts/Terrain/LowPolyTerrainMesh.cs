@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class LowPolyTerrainMesh : MonoBehaviour
     // a lot from this https://catlikecoding.com/unity/tutorials/procedural-grid/
     
     private MeshFilter mf;
-    private Vector3[] vertices;
+    public Vector3[] vertices;
     private Vector2[] uv;
     private int[] triangles;
     
@@ -15,95 +16,54 @@ public class LowPolyTerrainMesh : MonoBehaviour
     
     private int GetVertexStartIndexFor(int x, int y) {
         var idx = x * 6 + y * 6 * size;
-        return idx >= 0 && idx < size * size * 6 ? idx : -1;
+        return idx >= 0 && idx < vertices.Length ? idx : -1;
+    }
+
+    private void test() {
+        Debug.Assert(GetVertexStartIndexFor(0, 0) == 0);
+        Debug.Assert(GetVertexStartIndexFor(1, 0) == 6);
+        Debug.Assert(GetVertexStartIndexFor(2, 0) == 12);
+        Debug.Assert(GetVertexStartIndexFor(0, 1) == size * 6);
+        Debug.Assert(GetVertexStartIndexFor(1, 2) == size * 6 + 1 * size);
+    }
+    
+    private void EditVertexAt(int idx, Func<float, float> f) {
+        if (idx == 0) {
+            Debug.Log("Editing vertex 0");
+        }
+
+        if(idx >= 0 && idx <= vertices.Length) {
+            var val = f(vertices[idx][2]);
+            vertices[idx][2] = val;
+        }
+    }
+
+    private void EditVerticesFor(int x, int y, Func<float, float> f) {
+        var topRight = GetVertexStartIndexFor(x, y);
+        EditVertexAt(topRight + 0, f);
+        
+        var topLeft = GetVertexStartIndexFor(x - 1, y);
+        EditVertexAt(topLeft + 2, f);
+        EditVertexAt(topLeft + 3, f);
+        
+        var bottomLeft = GetVertexStartIndexFor(x - 1, y - 1);
+        EditVertexAt(bottomLeft + 5, f);
+        
+        var bottomRight = GetVertexStartIndexFor(x, y - 1);
+        EditVertexAt(bottomRight + 1, f);
+        EditVertexAt(bottomRight + 4, f);
+    }
+
+    private void SetVerticesFor(int x, int y, float amnt) {
+        EditVerticesFor(x, y, (z => amnt));
     }
     
     private void IncreaseVerticesFor(int x, int y, float amnt) {
-        var topRight = GetVertexStartIndexFor(x, y);
-        Debug.Log(topRight);
-        if (topRight != -1) {
-            vertices[topRight + 0][2] += amnt;
-        }
-        
-        var topLeft = GetVertexStartIndexFor(x - 1, y);
-        Debug.Log(topLeft);
-        if (topLeft != -1) {
-            vertices[topLeft + 2][2] += amnt;
-            vertices[topLeft + 3][2] += amnt;
-        }
-        
-        var bottomLeft = GetVertexStartIndexFor(x - 1, y - 1);
-        Debug.Log(bottomLeft);
-        if (bottomLeft != -1) {
-            vertices[bottomLeft + 5][2] += amnt;
-        }
-        
-        var bottomRight = GetVertexStartIndexFor(x, y - 1);
-        Debug.Log(bottomRight);
-        if (bottomRight != -1) {
-            vertices[bottomRight + 1][2] += amnt;
-            vertices[bottomRight + 4][2] += amnt;
-        }
-    }
-    
-    private void SetVerticesFor(int x, int y, float amnt) {
-        var topRight = GetVertexStartIndexFor(x, y);
-        if (topRight != -1) {
-            vertices[topRight + 0][2] = amnt;
-        }
-        
-        var topLeft = GetVertexStartIndexFor(x - 1, y);
-        if (topLeft != -1) {
-            vertices[topLeft + 2][2] = amnt;
-            vertices[topLeft + 3][2] = amnt;
-        }
-        
-        var bottomLeft = GetVertexStartIndexFor(x - 1, y - 1);
-        if (bottomLeft != -1) {
-            vertices[bottomLeft + 5][2] = amnt;
-        }
-        
-        var bottomRight = GetVertexStartIndexFor(x, y - 1);
-        if (bottomRight != -1) {
-            vertices[bottomRight + 1][2] = amnt;
-            vertices[bottomRight + 4][2] = amnt;
-        }
+        EditVerticesFor(x, y, (z => z + amnt));
     }
     
     private void Generate(ref Mesh mesh)
-    {
-        /*vertices = new Vector3[(int) Mathf.Pow((size + 1), 2)];
-        var i = 0;
-        for (var y = 0; y < size + 1; y++) {
-            for (var x = 0; x < size + 1; x++) {
-                vertices[i] = new Vector3(x, y);
-                i++;
-            }
-        }
-        vertices[10][2] = -2;
-        vertices[20][2] = -2;
-        vertices[50][2] = -2;
-        vertices[100][2] = -3;
-        mesh.vertices = vertices;
-        
-        triangles = new int[size * size * 6];
-        for (int ti = 0, vi = 0, y = 0; y < size; y++, vi++) {
-			for (int x = 0; x < size; x++, ti += 6, vi++) {
-				triangles[ti] = vi;
-				triangles[ti + 1] = vi + size + 1;
-				triangles[ti + 2] = vi + 1;
-				triangles[ti + 3] = vi + 1;
-				triangles[ti + 4] = vi + size + 1;
-				triangles[ti + 5] = vi + size + 2;
-				//triangles[ti + 3] = triangles[ti + 2] = vi + 1;
-				//triangles[ti + 4] = triangles[ti + 1] = vi + size + 1;
-				//triangles[ti + 5] = vi + size + 2;
-			}
-		}
-        mesh.triangles = triangles;
-        mesh.RecalculateNormals();*/
-        
-        //vertices = new Vector3[(int) Mathf.Pow((size + 1), 2)];
+    {        
         vertices = new Vector3[size * size * 6];
         triangles = new int[size * size * 6];
         
@@ -128,19 +88,15 @@ public class LowPolyTerrainMesh : MonoBehaviour
                 i += 6;
             }
         }
+
+        test();
         
-        /*vertices[20][2] = -2;
-        vertices[50][2] = -2;
-        vertices[150][2] = -2;
-        vertices[210][2] = -2;*/
-        
-        /*IncreaseVerticesFor(0, 0, -0.5f);
-        IncreaseVerticesFor(1, 1, -2);
-        IncreaseVerticesFor(5, 5, -0.2f);
-        IncreaseVerticesFor(6, 5, -0.5f);*/
-        
-        
-        
+        UpdateMesh();
+    }
+    
+    private void UpdateMesh() {
+        var mf = GetComponent<MeshFilter>();
+        var mesh = mf.mesh;
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
@@ -154,32 +110,29 @@ public class LowPolyTerrainMesh : MonoBehaviour
         
         mf = GetComponent<MeshFilter>();
         mf.mesh = mesh;
+
+        // for (var y = 0; y < size; y++) {
+        //     for (var x = 0; x < size; x++) {
+        //         SetVerticesFor(x, y, UnityEngine.Random.Range(0.0f, 3.0f));
+        //     }
+        // }
     }
 
+    int c= 0;
     // Update is called once per frame
     void Update()
     {
         if (Time.frameCount % 30 == 0) {
-        for (var y = 0; y < size; y++) {
-            for (var x = 0; x < size; x++) {
-                SetVerticesFor(x, y, Random.Range(0.0f, 2.0f));
+            Debug.Log("Round " + c);
+            for (var y = 0; y <= size; y++) {
+                for (var x = 0; x <= size; x++) {
+                    //SetVerticesFor(x, y, UnityEngine.Random.Range(0.0f, 3.0f));
+                    IncreaseVerticesFor(x, y, 0.5f);
+                }
             }
+
+            UpdateMesh();
+            c++;
         }
-        
-        var mf = GetComponent<MeshFilter>();
-        var mesh = mf.mesh;
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.RecalculateNormals();
-        }
-        /*Mesh mesh = GetComponent<MeshFilter>().mesh;
-        Vector3[] vertices = mesh.vertices;
-        Vector3[] normals = mesh.normals;
-        
-        for (var i = 0;i < vertices.Length; i++) {
-            vertices[i] += normals[i] * Mathf.Sin(Time.time);
-        }
-        
-        mesh.vertices = vertices;*/
     }
 }
