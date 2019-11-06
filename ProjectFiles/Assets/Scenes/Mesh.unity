@@ -242,6 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d84175853b921d2c99902013c7e2c82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vertices: []
   size: 10
 --- !u!33 &216307609
 MeshFilter:
@@ -250,7 +251,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 216307607}
-  m_Mesh: {fileID: 4300006, guid: a09837bc152a9b9459581f48bee12074, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!23 &216307610
 MeshRenderer:
   m_ObjectHideFlags: 0
