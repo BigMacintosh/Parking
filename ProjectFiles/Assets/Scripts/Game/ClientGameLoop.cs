@@ -43,7 +43,7 @@ namespace Game
         
         public void Update()
         {
-            Debug.Log("ClientGameLoop: Update() call");
+//            Debug.Log("ClientGameLoop: Update() call");
             Driver.ScheduleUpdate().Complete();
 
             if (!Connection.IsCreated)

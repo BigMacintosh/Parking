@@ -104,7 +104,7 @@ namespace Game
                 {
                     foreach (var gameLoop in gameLoops)
                     {
-                        Debug.Log("Game: Update game loop");
+//                        Debug.Log("Game: Update game loop");
                         gameLoop.Update();
                     }
 

@@ -43,7 +43,7 @@ namespace Game
 
         public void Update()
         {
-            Debug.Log("ServerGameLoop: Update() call");
+//            Debug.Log("ServerGameLoop: Update() call");
             Driver.ScheduleUpdate().Complete();
             // Clean up connections
             for (var i = 0; i < connections.Length; i++)
