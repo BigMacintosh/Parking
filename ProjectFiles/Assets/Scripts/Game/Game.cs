@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Game
 {    
     public interface IGameLoop
     {
-        bool Init(string[] args);
+        bool Init(Spawner spawner, string[] args);
         void Shutdown();
 
         void Update();
@@ -15,8 +16,13 @@ namespace Game
         void LateUpdate();
     }
 
+    public interface Spawner
+    {
+        T spawn<T>(T prefab, Vector3 position, Quaternion rotation) where T : Object;
+    }
+    
     [DefaultExecutionOrder(-1000)]
-    public class Game : MonoBehaviour
+    public class Game : MonoBehaviour, Spawner
     {
         public bool IsHeadless { get; private set; }
         private List<IGameLoop> gameLoops = new List<IGameLoop>();
@@ -73,7 +79,7 @@ namespace Game
                     try
                     {
                         IGameLoop gameLoop = (IGameLoop) System.Activator.CreateInstance(requestedGameLoopTypes[i]);
-                        initSucceeded = gameLoop.Init(requestedGameLoopArguments[i]);
+                        initSucceeded = gameLoop.Init(this, requestedGameLoopArguments[i]);
                         if (!initSucceeded)
                             break;
 
@@ -154,5 +160,12 @@ namespace Game
 #endif
             ShutdownGameLoops();
         }
+
+
+        public T spawn<T>(T prefab, Vector3 position, Quaternion rotation) where T : Object
+        {
+            return Instantiate(prefab, position, rotation);
+        }
+
     }
 }

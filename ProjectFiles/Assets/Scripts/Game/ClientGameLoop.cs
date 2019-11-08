@@ -1,4 +1,5 @@
-﻿using Unity.Collections;
+﻿using Network;
+using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEngine;
@@ -14,9 +15,10 @@ namespace Game
         public NetworkConnection Connection;
         public bool Done;
         private NetworkPipeline pipeline;
-    
-        // Update is called once per frame
-        public bool Init(string[] args)
+        private World world;
+        private Spawner spawner;
+        
+        public bool Init(Spawner spawner, string[] args)
         {
             Driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
@@ -65,8 +67,9 @@ namespace Game
                     Debug.Log($"Client: Successfully connected to server.");
                 
                     var value = 1;
-                    using (var writer = new DataStreamWriter(4, Allocator.Temp))
+                    using (var writer = new DataStreamWriter(16, Allocator.Temp))
                     {
+                        writer.Write((byte) ClientNetworkEvent.ClientHandshake);
                         writer.Write(value);
                         Driver.Send(pipeline, Connection, writer);
                     }
@@ -75,6 +78,7 @@ namespace Game
                 {
                     Debug.Log("Client: Data received");
                     var readerContext = default(DataStreamReader.Context);
+                    reader.ReadByte(ref readerContext);
                     var value = reader.ReadUInt(ref readerContext);
                     Debug.Log($"Client: Got the value {value} back from the server.");
                     Done = true;
@@ -91,7 +95,7 @@ namespace Game
 
         public void FixedUpdate()
         {
-        
+            
         }
 
         public void LateUpdate()
