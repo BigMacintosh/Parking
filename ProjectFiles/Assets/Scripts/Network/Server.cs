@@ -4,6 +4,7 @@ using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEditor.MemoryProfiler;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using NetworkConnection = Unity.Networking.Transport.NetworkConnection; 
 using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.Networking.Transport.IPv4UDPSocket,Unity.Networking.Transport.DefaultPipelineStageCollection>;
 
@@ -14,6 +15,9 @@ namespace Network
         public UdpCNetworkDriver Driver;
         private NativeList<NetworkConnection> connections;
         private NetworkPipeline pipeline;
+
+        public string IP { get; private set; }
+        public ushort Port { get; private set; }
         
         public Server()
         {
@@ -21,20 +25,19 @@ namespace Network
             // ReliableSequenced might not be the best choice 
             Driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
-            
-            
         }
 
-        public bool Start()
+        public bool Start(string ip = "0.0.0.0", ushort port = 25565)
         {
-            // TODO: add network configuration
-            if (Driver.Bind(NetworkEndPoint.Parse("0.0.0.0", 25565)) != 0)
+            IP = ip;
+            Port = port;
+            if (Driver.Bind(NetworkEndPoint.Parse(IP, Port)) != 0)
             {
-                Debug.Log("Server: Failed to bind to port 25565");
+                Debug.Log($"Server: Failed to bind to port {Port}. Is the port already in use?");
                 return false;
             }
             Driver.Listen();
-            Debug.Log("Server listening at port 25565");
+            Debug.Log($"Server listening at port {IP}:{Port}...");
             
             connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
             
@@ -47,7 +50,7 @@ namespace Network
             connections.Dispose();
         }
 
-        public void SomeFuckingFunctionTODOThinkOfNameWeAgreeOn()
+        public void HandleNetworkEvents()
         {
             Driver.ScheduleUpdate().Complete();
             // Clean up connections
@@ -82,19 +85,9 @@ namespace Network
                     {
                         case NetworkEvent.Type.Data:
                         {
-//                            var readerContext = default(DataStreamReader.Context);
-//                            var number = reader.ReadUInt(ref readerContext);
-//                            Debug.Log($"Server: Received number {number} from {connections[i].InternalId}");
-//                            number += 2;
-//                            using (var writer = new DataStreamWriter(4, Allocator.Temp))
-//                            {
-//                                writer.Write(number);
-//                                Driver.Send(pipeline, connection, writer);
-//                            }
-//                            break;
                             var readerContext = default(DataStreamReader.Context);
                             var ev = (ClientNetworkEvent) reader.ReadByte(ref readerContext);
-                            ProcessEvent(connection, ev, reader, readerContext);
+                            HandleEvent(connection, ev, reader, readerContext);
                             break;
                         }
                         case NetworkEvent.Type.Disconnect:
@@ -106,7 +99,7 @@ namespace Network
             }
         }
         
-        private void ProcessEvent(NetworkConnection connection, ClientNetworkEvent ev, DataStreamReader reader, DataStreamReader.Context readerContext)
+        private void HandleEvent(NetworkConnection connection, ClientNetworkEvent ev, DataStreamReader reader, DataStreamReader.Context readerContext)
         {
             switch (ev)
             {

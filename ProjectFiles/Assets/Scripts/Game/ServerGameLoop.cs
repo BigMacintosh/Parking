@@ -29,7 +29,7 @@ namespace Game
 
         public void Update()
         {
-            server.SomeFuckingFunctionTODOThinkOfNameWeAgreeOn();
+            server.HandleNetworkEvents();
         }
 
         public void FixedUpdate()
