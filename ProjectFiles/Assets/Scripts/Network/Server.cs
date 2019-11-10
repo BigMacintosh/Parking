@@ -2,9 +2,7 @@ using System;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using NetworkConnection = Unity.Networking.Transport.NetworkConnection; 
 using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.Networking.Transport.IPv4UDPSocket,Unity.Networking.Transport.DefaultPipelineStageCollection>;
 
@@ -85,6 +83,7 @@ namespace Network
                     {
                         case NetworkEvent.Type.Data:
                         {
+                            
                             var readerContext = default(DataStreamReader.Context);
                             var ev = (ClientNetworkEvent) reader.ReadByte(ref readerContext);
                             HandleEvent(connection, ev, reader, readerContext);
@@ -105,7 +104,7 @@ namespace Network
             {
                 case ClientNetworkEvent.ClientHandshake:
                     var number = reader.ReadUInt(ref readerContext);
-                    Debug.Log($"Server: Received {number} from ID#{connection.InternalId}");
+                    Debug.Log($"Server: Received {number} from {Driver.RemoteEndPoint(connection).IpAddress()} ID#{connection.InternalId}");
                     using (var writer = new DataStreamWriter(16, Allocator.Temp))
                     {
                         writer.Write((byte) ServerNetworkEvent.ServerHandshake);
