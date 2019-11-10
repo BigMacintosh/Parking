@@ -66,31 +66,29 @@ namespace Network
             while ((c = Driver.Accept()) != default(NetworkConnection))
             {
                 connections.Add(c);
-                Debug.Log("Server: Accepted a connection");
+                var endpoint = Driver.RemoteEndPoint(c);
+                Debug.Log($"Server: Accepted a connection from {endpoint.IpAddress()}:{endpoint.Port}.");
             }
         
             // Process events since the last update
-            DataStreamReader reader;
             for (var i = 0; i < connections.Length; i++)
             {
                 if (!connections[i].IsCreated) continue;
-
+                var endpoint = Driver.RemoteEndPoint(connections[i]);
                 NetworkEvent.Type command;
-                var connection = connections[i];
-                while ((command = Driver.PopEventForConnection(connection, out reader)) != NetworkEvent.Type.Empty)
+                while ((command = Driver.PopEventForConnection(connections[i], out var reader)) != NetworkEvent.Type.Empty)
                 {
                     switch (command)
                     {
                         case NetworkEvent.Type.Data:
                         {
-                            
                             var readerContext = default(DataStreamReader.Context);
                             var ev = (ClientNetworkEvent) reader.ReadByte(ref readerContext);
-                            HandleEvent(connection, ev, reader, readerContext);
+                            HandleEvent(connections[i], endpoint, ev, reader, readerContext);
                             break;
                         }
                         case NetworkEvent.Type.Disconnect:
-                            Debug.Log($"Server: Client disconnected");
+                            Debug.Log($"Server: {endpoint.IpAddress()}:{endpoint.Port} disconnected.");
                             connections[i] = default(NetworkConnection);
                             break;
                     }
@@ -98,13 +96,14 @@ namespace Network
             }
         }
         
-        private void HandleEvent(NetworkConnection connection, ClientNetworkEvent ev, DataStreamReader reader, DataStreamReader.Context readerContext)
+        private void HandleEvent(NetworkConnection connection, NetworkEndPoint endpoint, ClientNetworkEvent ev, 
+                                 DataStreamReader reader, DataStreamReader.Context readerContext)
         {
             switch (ev)
             {
                 case ClientNetworkEvent.ClientHandshake:
                     var number = reader.ReadUInt(ref readerContext);
-                    Debug.Log($"Server: Received {number} from {Driver.RemoteEndPoint(connection).IpAddress()} ID#{connection.InternalId}");
+                    Debug.Log($"Server: Received {number} from {endpoint.IpAddress()}:{endpoint.Port}.");
                     using (var writer = new DataStreamWriter(16, Allocator.Temp))
                     {
                         writer.Write((byte) ServerNetworkEvent.ServerHandshake);
@@ -115,7 +114,8 @@ namespace Network
                 case ClientNetworkEvent.ClientLocationUpdate:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(ev), ev, null);
+                    Debug.Log($"Received an invalid event ({ev}) from {endpoint.IpAddress()}:{endpoint.Port}.");
+                    break;
             }
         }
     }

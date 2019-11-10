@@ -65,14 +65,11 @@ namespace Network
             NetworkEvent.Type command;
             while ((command = connection.PopEvent(driver, out var reader)) != NetworkEvent.Type.Empty)
             {
-                Debug.Log("Client: Command received.");
-
                 switch (command)
                 {
                     case NetworkEvent.Type.Connect:
                     {
                         Debug.Log($"Client: Successfully connected to {serverIP}:{serverPort}.");
-                
                         var value = 1;
                         using (var writer = new DataStreamWriter(16, Allocator.Temp))
                         {
@@ -80,7 +77,6 @@ namespace Network
                             writer.Write(value);
                             driver.Send(pipeline, connection, writer);
                         }
-
                         break;
                     }
                     case NetworkEvent.Type.Data:
@@ -88,7 +84,6 @@ namespace Network
                         var readerContext = default(DataStreamReader.Context);
                         var ev = (ServerNetworkEvent) reader.ReadByte(ref readerContext);
                         HandleEvent(ev, reader, readerContext);
-
                         break;
                     }
                     case NetworkEvent.Type.Disconnect:
@@ -108,13 +103,15 @@ namespace Network
                     Debug.Log($"Client: Received {number} back from {serverIP}:{serverPort}.");
 
                     done = true;
+                    connection.Disconnect(driver);
                     connection = default(NetworkConnection);
                     
                     break;
                 case ServerNetworkEvent.ServerLocationUpdate:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(ev), ev, null);
+                    Debug.Log($"Received an invalid event ({ev}) from {serverIP}:{serverPort}.");
+                    break;
             }
         }
     }
