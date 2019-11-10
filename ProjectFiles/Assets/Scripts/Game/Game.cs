@@ -25,9 +25,9 @@ namespace Game
     public class Game : MonoBehaviour, Spawner
     {
         public bool IsHeadless { get; private set; }
-        private List<IGameLoop> gameLoops = new List<IGameLoop>();
-        private List<Type> requestedGameLoopTypes = new List<Type>();
-        private List<string[]> requestedGameLoopArguments = new List<string[]>();
+        private readonly List<IGameLoop> gameLoops = new List<IGameLoop>();
+        private readonly List<Type> requestedGameLoopTypes = new List<Type>();
+        private readonly List<string[]> requestedGameLoopArguments = new List<string[]>();
 
         public void RequestGameLoop(Type type, string[] args)
         {
@@ -38,7 +38,10 @@ namespace Game
         private void ShutdownGameLoops()
         {
             foreach (var gameLoop in gameLoops)
+            {
                 gameLoop.Shutdown();
+            }
+
             gameLoops.Clear();
         }
 
@@ -81,11 +84,13 @@ namespace Game
                         IGameLoop gameLoop = (IGameLoop) System.Activator.CreateInstance(requestedGameLoopTypes[i]);
                         initSucceeded = gameLoop.Init(this, requestedGameLoopArguments[i]);
                         if (!initSucceeded)
+                        {
                             break;
+                        }
 
                         gameLoops.Add(gameLoop);
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         Debug.Log(string.Format("Game loop initialization threw exception : ({0})\n{1}", e.Message,
                             e.StackTrace));
@@ -103,28 +108,13 @@ namespace Game
                 requestedGameLoopTypes.Clear();
                 requestedGameLoopArguments.Clear();
             }
-
-            try
+            
+            foreach (var gameLoop in gameLoops)
             {
-                if (!m_ErrorState)
-                {
-                    foreach (var gameLoop in gameLoops)
-                    {
-//                        Debug.Log("Game: Update game loop");
-                        gameLoop.Update();
-                    }
+                gameLoop.Update();
+            }
 
-//                levelManager.Update();
-                }
-            }
-            catch (System.Exception e)
-            {
-//            HandleGameloopException(e);
-                throw;
-            }
         }
-
-        bool m_ErrorState;
 
         private void FixedUpdate()
         {
@@ -136,20 +126,9 @@ namespace Game
 
         private void LateUpdate()
         {
-            try
+            foreach (var gameLoop in gameLoops)
             {
-                if (!m_ErrorState)
-                {
-                    foreach (var gameLoop in gameLoops)
-                    {
-                        gameLoop.LateUpdate();
-                    }
-                }
-            }
-            catch (System.Exception e)
-            {
-//            HandleGameloopException(e);
-                throw;
+                gameLoop.LateUpdate();
             }
         }
 

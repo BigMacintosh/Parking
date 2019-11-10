@@ -10,9 +10,9 @@ namespace Network
 {
     public class Server
     {
-        public UdpCNetworkDriver Driver;
+        private readonly UdpCNetworkDriver Driver;
         private NativeList<NetworkConnection> connections;
-        private NetworkPipeline pipeline;
+        private readonly NetworkPipeline pipeline;
 
         public string IP { get; private set; }
         public ushort Port { get; private set; }
@@ -73,7 +73,10 @@ namespace Network
             // Process events since the last update
             for (var i = 0; i < connections.Length; i++)
             {
-                if (!connections[i].IsCreated) continue;
+                if (!connections[i].IsCreated)
+                {
+                    continue;
+                }
                 var endpoint = Driver.RemoteEndPoint(connections[i]);
                 NetworkEvent.Type command;
                 while ((command = Driver.PopEventForConnection(connections[i], out var reader)) != NetworkEvent.Type.Empty)

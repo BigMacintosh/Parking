@@ -16,7 +16,8 @@ namespace Game
             
             // Create world
             world = new World(spawner);
-            
+
+            this.spawner = spawner;
             
             return success;
         }
@@ -24,7 +25,7 @@ namespace Game
         public void Shutdown()
         {
             server.Shutdown();
-//            world.Destroy();
+//          Destroy the world here.
         }
 
         public void Update()
@@ -34,12 +35,12 @@ namespace Game
 
         public void FixedUpdate()
         {
-        
+            // Trigger network send.
         }
 
         public void LateUpdate()
         {
-        
+            // Nothing required here yet.
         }
     }
 }

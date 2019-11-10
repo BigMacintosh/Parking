@@ -28,7 +28,7 @@ namespace Game
         public void Shutdown()
         {
             client.Shutdown();
-//            world.Destroy();
+//          Destroy the world here.
         }
 
         public void Update()
@@ -38,12 +38,12 @@ namespace Game
 
         public void FixedUpdate()
         {
-        
+            // Nothing required here yet.
         }
 
         public void LateUpdate()
         {
-        
+            // Nothing required here yet.
         }
     }
 }
