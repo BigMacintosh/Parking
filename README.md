@@ -12,4 +12,4 @@ Lead Programmer: [Riley Evans](https://github.com/RileyEv)🦄
 [Charlie Haslam](https://github.com/Keywarn)🥏  
 [Dimitri Papapostolou](https://github.com/Dimmitsaras)🇬🇷  
 [Jack (James)Bond-Preston](https://github.com/jackbondpreston)🤵  
-[Liam Dalgarno](https://github.com/liamdalg)🦮
+[Liam Dalgarno](https://github.com/liamdalg)😳
