@@ -6,7 +6,7 @@ namespace Game
     public class World
     {
         public List<DriveController> Cars { get; private set; }
-        private readonly Spawner spawner;
+        private Spawner spawner;
         
         public World(Spawner spawner)
         {
