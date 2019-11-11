@@ -10,11 +10,14 @@ public class DriveController : MonoBehaviour
     public GameObject car;
     private Rigidbody rb;
     private float v;
+    
+    public bool isControllable;
 
     [SerializeField] private List<Axle> axles;
 
     [SerializeField] private float maxMotorTorque;
     [SerializeField] private float maxSteeringAngle;
+    
 
     private void Start()
     {
@@ -25,24 +28,27 @@ public class DriveController : MonoBehaviour
     // FixedUpdate is 50Hz
     void FixedUpdate()
     {
-        
-        float torque = Input.GetAxis("Vertical") * maxMotorTorque;
-        float steering = (Input.GetAxis("Horizontal") * maxSteeringAngle) / TurnMultiplier(v);
-
-        foreach (Axle axle in axles)
+        if (isControllable)
         {
-            if (axle.steering)
-            {
-                axle.leftWheel.steerAngle = steering;
-                axle.rightWheel.steerAngle = steering;
-            }
+            float torque = Input.GetAxis("Vertical") * maxMotorTorque;
+            float steering = (Input.GetAxis("Horizontal") * maxSteeringAngle) / TurnMultiplier(v);
 
-            if (axle.motor)
+            foreach (Axle axle in axles)
             {
-                axle.leftWheel.motorTorque = torque;
-                axle.rightWheel.motorTorque = torque;
+                if (axle.steering)
+                {
+                    axle.leftWheel.steerAngle = steering;
+                    axle.rightWheel.steerAngle = steering;
+                }
+
+                if (axle.motor)
+                {
+                    axle.leftWheel.motorTorque = torque;
+                    axle.rightWheel.motorTorque = torque;
+                }
             }
         }
+        
     }
 
     public float TurnMultiplier(float v)
