@@ -16,18 +16,15 @@ namespace Game
         void LateUpdate();
     }
 
-    public interface Spawner
-    {
-        T spawn<T>(T prefab, Vector3 position, Quaternion rotation) where T : Object;
-    }
-    
     [DefaultExecutionOrder(-1000)]
-    public class Game : MonoBehaviour, Spawner
+    public class Game : MonoBehaviour
     {
         public bool IsHeadless { get; private set; }
         private readonly List<IGameLoop> gameLoops = new List<IGameLoop>();
         private readonly List<Type> requestedGameLoopTypes = new List<Type>();
         private readonly List<string[]> requestedGameLoopArguments = new List<string[]>();
+
+        [SerializeField] private Spawner spawner;
 
         public void RequestGameLoop(Type type, string[] args)
         {
@@ -82,9 +79,10 @@ namespace Game
                     try
                     {
                         IGameLoop gameLoop = (IGameLoop) System.Activator.CreateInstance(requestedGameLoopTypes[i]);
-                        initSucceeded = gameLoop.Init(this, requestedGameLoopArguments[i]);
+                        initSucceeded = gameLoop.Init(spawner, requestedGameLoopArguments[i]);
                         if (!initSucceeded)
                         {
+                            Debug.Log("Game loop failed to initialise.");
                             break;
                         }
 
@@ -138,12 +136,6 @@ namespace Game
         System.Diagnostics.Process.GetCurrentProcess().Kill();
 #endif
             ShutdownGameLoops();
-        }
-
-
-        public T spawn<T>(T prefab, Vector3 position, Quaternion rotation) where T : Object
-        {
-            return Instantiate(prefab, position, rotation);
         }
 
     }

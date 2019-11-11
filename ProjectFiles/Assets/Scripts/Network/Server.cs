@@ -10,9 +10,9 @@ namespace Network
 {
     public class Server
     {
-        private readonly UdpCNetworkDriver Driver;
+        private UdpCNetworkDriver Driver;
         private NativeList<NetworkConnection> connections;
-        private readonly NetworkPipeline pipeline;
+        private NetworkPipeline pipeline;
 
         public string IP { get; private set; }
         public ushort Port { get; private set; }
