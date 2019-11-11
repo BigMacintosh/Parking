@@ -4,8 +4,6 @@
 
 Battle Royale style knock out parking game.
 
-
-
 ## Team Members
 Team Leader: [Chris Gora](https://github.com/ChrisGora)🍆
 Lead Programmer: [Riley Evans](https://github.com/RileyEv)🦄
