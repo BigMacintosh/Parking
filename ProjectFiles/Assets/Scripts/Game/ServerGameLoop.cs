@@ -31,6 +31,7 @@ namespace Game
         public void Update()
         {
             server.HandleNetworkEvents();
+            world.Update();
         }
 
         public void FixedUpdate()

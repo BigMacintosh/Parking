@@ -9,8 +9,11 @@ namespace Game
 
         public bool Init(Spawner spawner, string[] args)
         {
+            // Create world
+            world = new World(spawner);
+            
             // Start server
-            client = new Client();
+            client = new Client(world);
             
             #if UNITY_EDITOR
                 var success = client.Start();
@@ -18,8 +21,7 @@ namespace Game
                 var success = client.Start("18.191.231.10");
             #endif
             
-            // Create world
-            world = new World(spawner);
+           
             
             
             return success;
@@ -33,6 +35,7 @@ namespace Game
 
         public void Update()
         {
+            world.Update();
             client.HandleNetworkEvents();
         }
 

@@ -7,7 +7,7 @@ namespace Car
     public class DriveController : MonoBehaviour
     {
         [SerializeField] private GameObject car;
-        [SerializeField] private bool isControllable;
+        public bool isControllable { get; set; }
         [SerializeField] private List<Axle> axles;
         [SerializeField] private float maxMotorTorque;
         [SerializeField] private float maxSteeringAngle;
@@ -23,9 +23,11 @@ namespace Car
 
         private void FixedUpdate()
         {
+            Debug.Log(isControllable);
             if (isControllable)
             {
                 var torque = Input.GetAxis("Vertical") * maxMotorTorque;
+                Debug.Log(torque);
                 var steering = (Input.GetAxis("Horizontal") * maxSteeringAngle) / TurnMultiplier(v);
 
                 foreach (var axle in axles)

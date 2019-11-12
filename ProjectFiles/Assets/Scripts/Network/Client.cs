@@ -1,4 +1,5 @@
 ﻿using System;
+using Game;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
@@ -13,17 +14,19 @@ namespace Network
         private UdpCNetworkDriver driver;
         private NetworkConnection connection;
         private NetworkPipeline pipeline;
+        private World world;
 
         private string serverIP;
         private ushort serverPort;
 
         private bool done;
 
-        public Client()
+        public Client(World world)
         {
             driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
             done = false;
+            this.world = world;
         }
 
         public bool Start(string ip = "127.0.0.1", ushort port = 25565)
@@ -102,6 +105,8 @@ namespace Network
                     var number = reader.ReadUInt(ref readerContext);
                     Debug.Log($"Client: Received {number} back from {serverIP}:{serverPort}.");
 
+                    world.SpawnPlayer();
+                    
                     done = true;
                     connection.Disconnect(driver);
                     connection = default(NetworkConnection);

@@ -325,14 +325,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   car: {fileID: 2754571377349320158}
   axles:
-  - leftWheel: {fileID: 2754571378156794546}
-    rightWheel: {fileID: 2754571376818001263}
-    motor: 1
-    steering: 1
-  - leftWheel: {fileID: 2754571376266578945}
-    rightWheel: {fileID: 2754571376626538339}
-    motor: 1
-    steering: 0
+  - <LeftWheel>k__BackingField: {fileID: 2754571378156794546}
+    <RightWheel>k__BackingField: {fileID: 2754571376818001263}
+    <Motor>k__BackingField: 1
+    <Steering>k__BackingField: 1
+  - <LeftWheel>k__BackingField: {fileID: 2754571376266578945}
+    <RightWheel>k__BackingField: {fileID: 2754571376626538339}
+    <Motor>k__BackingField: 1
+    <Steering>k__BackingField: 0
   maxMotorTorque: 10000
   maxSteeringAngle: 30
 --- !u!54 &2754571377349320129
@@ -366,7 +366,7 @@ MonoBehaviour:
   leftWheel: {fileID: 2754571378156794546}
   rightWheel: {fileID: 2754571376818001263}
   car: {fileID: 2754571377349320158}
-  AntiSwayMultiplier: 7000
+  antiSwayMultiplier: 5000
 --- !u!114 &2754571377349320131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,7 +382,7 @@ MonoBehaviour:
   leftWheel: {fileID: 2754571376266578945}
   rightWheel: {fileID: 2754571376626538339}
   car: {fileID: 2754571377349320158}
-  AntiSwayMultiplier: 7000
+  antiSwayMultiplier: 5000
 --- !u!1 &2754571377677959052
 GameObject:
   m_ObjectHideFlags: 0
