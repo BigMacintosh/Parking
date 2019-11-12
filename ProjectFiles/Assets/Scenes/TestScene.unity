@@ -625,6 +625,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f13a634684da7f95da216923164390fa, type: 3}
+--- !u!146 &545718970 stripped
+WheelCollider:
+  m_CorrespondingSourceObject: {fileID: 2754571376626538339, guid: 7aeb836a048c048579b51f47538106b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 630470833}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &630470833
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -696,6 +702,46 @@ PrefabInstance:
         type: 3}
       propertyPath: isControllable
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2754571377349320159, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: axles.Array.data[0].<LeftWheel>k__BackingField
+      value: 
+      objectReference: {fileID: 1976842874}
+    - target: {fileID: 2754571377349320159, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: axles.Array.data[0].<RightWheel>k__BackingField
+      value: 
+      objectReference: {fileID: 1885885692}
+    - target: {fileID: 2754571377349320159, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: axles.Array.data[1].<LeftWheel>k__BackingField
+      value: 
+      objectReference: {fileID: 1282430571}
+    - target: {fileID: 2754571377349320159, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: axles.Array.data[1].<RightWheel>k__BackingField
+      value: 
+      objectReference: {fileID: 545718970}
+    - target: {fileID: 2754571377349320159, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: axles.Array.data[0].<Motor>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2754571377349320159, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: axles.Array.data[0].<Steering>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2754571377349320159, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: axles.Array.data[1].<Motor>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2754571377349320159, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: axles.Array.data[1].<Steering>k__BackingField
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7aeb836a048c048579b51f47538106b5, type: 3}
@@ -1465,6 +1511,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!146 &1282430571 stripped
+WheelCollider:
+  m_CorrespondingSourceObject: {fileID: 2754571376266578945, guid: 7aeb836a048c048579b51f47538106b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 630470833}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1464328875
 GameObject:
   m_ObjectHideFlags: 0
@@ -1859,6 +1911,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f13a634684da7f95da216923164390fa, type: 3}
+--- !u!146 &1885885692 stripped
+WheelCollider:
+  m_CorrespondingSourceObject: {fileID: 2754571376818001263, guid: 7aeb836a048c048579b51f47538106b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 630470833}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1917046702
 GameObject:
   m_ObjectHideFlags: 0
@@ -1958,6 +2016,12 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!146 &1976842874 stripped
+WheelCollider:
+  m_CorrespondingSourceObject: {fileID: 2754571378156794546, guid: 7aeb836a048c048579b51f47538106b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 630470833}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1995053665
 GameObject:
   m_ObjectHideFlags: 0

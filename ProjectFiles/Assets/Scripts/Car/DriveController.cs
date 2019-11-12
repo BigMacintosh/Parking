@@ -1,80 +1,84 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Schema;
 using UnityEngine;
-using UnityEngine.Assertions.Comparers;
 
-public class DriveController : MonoBehaviour
+namespace Car
 {
-    public GameObject car;
-    private Rigidbody rb;
-    private float v;
-    
-    public bool isControllable;
-
-    [SerializeField] private List<Axle> axles;
-
-    [SerializeField] private float maxMotorTorque;
-    [SerializeField] private float maxSteeringAngle;
-    
-
-    private void Start()
+    public class DriveController : MonoBehaviour
     {
-        rb = car.GetComponent<Rigidbody>();
-        v = rb.velocity.magnitude * 3.6f; // km/h
-    }
-
-    // FixedUpdate is 50Hz
-    void FixedUpdate()
-    {
-        if (isControllable)
+        [SerializeField] private GameObject car;
+        [SerializeField] private bool isControllable;
+        [SerializeField] private List<Axle> axles;
+        [SerializeField] private float maxMotorTorque;
+        [SerializeField] private float maxSteeringAngle;
+        
+        private Rigidbody rb;
+        private float v;
+        
+        private void Start()
         {
-            float torque = Input.GetAxis("Vertical") * maxMotorTorque;
-            float steering = (Input.GetAxis("Horizontal") * maxSteeringAngle) / TurnMultiplier(v);
+            rb = car.GetComponent<Rigidbody>();
+            v = rb.velocity.magnitude * 3.6f; // km/h
+        }
 
-            foreach (Axle axle in axles)
+        private void FixedUpdate()
+        {
+            if (isControllable)
             {
-                if (axle.steering)
-                {
-                    axle.leftWheel.steerAngle = steering;
-                    axle.rightWheel.steerAngle = steering;
-                }
+                var torque = Input.GetAxis("Vertical") * maxMotorTorque;
+                var steering = (Input.GetAxis("Horizontal") * maxSteeringAngle) / TurnMultiplier(v);
 
-                if (axle.motor)
+                foreach (var axle in axles)
                 {
-                    axle.leftWheel.motorTorque = torque;
-                    axle.rightWheel.motorTorque = torque;
+                    if (axle.Steering)
+                    {
+                        axle.LeftWheel.steerAngle = steering;
+                        axle.RightWheel.steerAngle = steering;
+                    }
+
+                    if (axle.Motor)
+                    {
+                        axle.LeftWheel.motorTorque = torque;
+                        axle.RightWheel.motorTorque = torque;
+                    }
                 }
             }
-        }
         
-    }
+        }
 
-    public float TurnMultiplier(float v)
-    {
-        if (v > 20)
-            return 4;
-        else if (v > 40)
-            return 5;
-        else if (v > 80)
-            return 7;
-        else if (v > 200)
-            return 10;
-        else if (v > 400)
-            return 20;
-        else
+        private float TurnMultiplier(float v)
+        {
+            if (v > 20)
+            {
+                return 4;
+            }
+            if (v > 40)
+            {
+                return 5;
+            }
+            if (v > 80)
+            {
+                return 7;
+            }
+            if (v > 200)
+            {
+                return 10;
+            }
+            if (v > 400)
+            {
+                return 20;
+            }
             return 1;
+        }
+
     }
 
+    [Serializable]
+    public class Axle
+    {
+        [field: SerializeField] public WheelCollider LeftWheel { get; private set; }
+        [field: SerializeField] public WheelCollider RightWheel { get; private set; }
+        [field: SerializeField] public bool Motor { get; private set; } //Does this wheel provide torque
+        [field: SerializeField] public bool Steering { get; private set; } //Does this wheel provide steering
+    }
 }
-
-[System.Serializable]
-public class Axle
-{
-    public WheelCollider leftWheel;
-    public WheelCollider rightWheel;
-    public bool motor; //Does this wheel provide torque
-    public bool steering; //Does this wheel provide steering
-}
-
