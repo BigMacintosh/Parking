@@ -4,7 +4,8 @@ using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEngine;
-using NetworkConnection = Unity.Networking.Transport.NetworkConnection; 
+using NetworkConnection = Unity.Networking.Transport.NetworkConnection;
+using Object = UnityEngine.Object;
 using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.Networking.Transport.IPv4UDPSocket,Unity.Networking.Transport.DefaultPipelineStageCollection>;
 
 namespace Network
@@ -38,7 +39,6 @@ namespace Network
             
             var endpoint = NetworkEndPoint.Parse(serverIP, serverPort);
             connection = driver.Connect(endpoint);
-
             return true;
         }
         
@@ -105,7 +105,10 @@ namespace Network
                     var number = reader.ReadUInt(ref readerContext);
                     Debug.Log($"Client: Received {number} back from {serverIP}:{serverPort}.");
 
-                    world.SpawnPlayer();
+                    // Get player location from readerContext.
+                    // Create Vector3 and give to SpawnPlayer
+                    Vector3 position = new Vector3(41.5f, 39.7f, 94.671f);
+                    world.SpawnPlayer(position);
                     
                     done = true;
                     connection.Disconnect(driver);

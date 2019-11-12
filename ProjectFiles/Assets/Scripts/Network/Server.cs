@@ -1,4 +1,4 @@
-using System;
+using Game;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
@@ -13,16 +13,18 @@ namespace Network
         private UdpCNetworkDriver Driver;
         private NativeList<NetworkConnection> connections;
         private NetworkPipeline pipeline;
-
+        private World world;
+        
         public string IP { get; private set; }
         public ushort Port { get; private set; }
         
-        public Server()
+        public Server(World world )
         {
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
             Driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
+            this.world = world;
         }
 
         public bool Start(string ip = "0.0.0.0", ushort port = 25565)
@@ -107,6 +109,9 @@ namespace Network
                 case ClientNetworkEvent.ClientHandshake:
                     var number = reader.ReadUInt(ref readerContext);
                     Debug.Log($"Server: Received {number} from {endpoint.IpAddress()}:{endpoint.Port}.");
+                    
+                    
+                    
                     using (var writer = new DataStreamWriter(16, Allocator.Temp))
                     {
                         writer.Write((byte) ServerNetworkEvent.ServerHandshake);

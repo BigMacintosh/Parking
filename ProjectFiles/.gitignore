@@ -70,3 +70,4 @@ crashlytics-build.properties
 # End of https://www.gitignore.io/api/unity
 
 .DS_Store
+Assembly-CSharp.csproj.DotSettings

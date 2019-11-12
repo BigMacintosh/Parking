@@ -10,14 +10,14 @@ namespace Game
         
         public bool Init(Spawner spawner, string[] args)
         {
-            // Start server
-            server = new Server();
-            var success = server.Start();
+            this.spawner = spawner;
             
             // Create world
             world = new World(spawner);
 
-            this.spawner = spawner;
+            // Start server
+            server = new Server(world);
+            var success = server.Start();
             
             return success;
         }
