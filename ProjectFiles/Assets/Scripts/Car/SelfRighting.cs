@@ -1,33 +1,32 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class SelfRighting : MonoBehaviour
+namespace Car
 {
-    public GameObject car;
-    private Rigidbody rb;
-    private Collider carCollider;
-    public float distToGround;
-
-    // Start is called before the first frame update
-    void Start()
+    public class SelfRighting : MonoBehaviour
     {
-        rb = car.GetComponent<Rigidbody>();
-        carCollider = car.GetComponent<Collider>();
-    }
+        [SerializeField] private GameObject car;
+        [SerializeField] private float distToGround;
+    
+        private Rigidbody rb;
+        private Collider carCollider;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(IsGrounded())
+        private void Start()
         {
-
+            rb = car.GetComponent<Rigidbody>();
+            carCollider = car.GetComponent<Collider>();
         }
-    }
-    public bool IsGrounded()
-    {
-        return Physics.CheckCapsule(carCollider.bounds.center, new Vector3(carCollider.bounds.center.x, carCollider.bounds.min.y - 0.1f, carCollider.bounds.center.z), 0.18f);
+    
+        private void Update()
+        {
+            if(IsGrounded())
+            {
+                // ??
+            }
+        }
+        public bool IsGrounded()
+        {
+            return Physics.CheckCapsule(carCollider.bounds.center, new Vector3(carCollider.bounds.center.x, carCollider.bounds.min.y - 0.1f, carCollider.bounds.center.z), 0.18f);
+        }
     }
 }
 
