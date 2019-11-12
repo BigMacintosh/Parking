@@ -1,53 +1,51 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class AntiRoll : MonoBehaviour
+namespace Car
 {
-    public WheelCollider leftWheel;
-    public WheelCollider rightWheel;
-    public GameObject car;
-    private Rigidbody rb;
-
-    public float AntiSwayMultiplier = 5000.0f;
-
-    // Start is called before the first frame update
-    void Start()
+    public class AntiRoll : MonoBehaviour
     {
-        rb = car.GetComponent<Rigidbody>();
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        WheelHit hit = new WheelHit();
-        float travelL = 1.0f;
-        float travelR = 1.0f;
-
-        bool groundedL = leftWheel.GetGroundHit(out hit);
-
-        if (groundedL)
+        [SerializeField] private WheelCollider leftWheel;
+        [SerializeField] private WheelCollider rightWheel;
+        [SerializeField] private GameObject car;
+        [SerializeField] private float antiSwayMultiplier = 5000.0f;
+        private Rigidbody rb;
+        
+        private void Start()
         {
-            travelL = (-leftWheel.transform.InverseTransformPoint(hit.point).y
-                    - leftWheel.radius) / leftWheel.suspensionDistance;
+            rb = car.GetComponent<Rigidbody>();
         }
 
-        bool groundedR = rightWheel.GetGroundHit(out hit);
-
-        if (groundedR)
+        private void FixedUpdate()
         {
-            travelR = (-rightWheel.transform.InverseTransformPoint(hit.point).y
-                    - rightWheel.radius) / rightWheel.suspensionDistance;
+            var travelL = 1.0f;
+            var travelR = 1.0f;
+
+            WheelHit hit;
+            var groundedL = leftWheel.GetGroundHit(out hit);
+            if (groundedL)
+            {
+                travelL = (-leftWheel.transform.InverseTransformPoint(hit.point).y - leftWheel.radius) 
+                          / leftWheel.suspensionDistance;
+            }
+
+            var groundedR = rightWheel.GetGroundHit(out hit);
+            if (groundedR)
+            {
+                travelR = (-rightWheel.transform.InverseTransformPoint(hit.point).y - rightWheel.radius) 
+                          / rightWheel.suspensionDistance;
+            }
+
+            var antiRollForce = (travelL - travelR) * antiSwayMultiplier;
+            if (groundedL)
+            {
+                rb.AddForceAtPosition(leftWheel.transform.up * -antiRollForce, leftWheel.transform.position);
+            }
+
+            if (groundedR)
+            {
+                rb.AddForceAtPosition(rightWheel.transform.up * antiRollForce, rightWheel.transform.position);
+            }
         }
-
-        var antiRollForce = (travelL - travelR) * AntiSwayMultiplier;
-
-        if (groundedL)
-            rb.AddForceAtPosition(leftWheel.transform.up * -antiRollForce,
-                leftWheel.transform.position);
-        if (groundedR)
-            rb.AddForceAtPosition(rightWheel.transform.up * antiRollForce,
-                rightWheel.transform.position);
     }
 }
 

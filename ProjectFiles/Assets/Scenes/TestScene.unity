@@ -743,6 +743,16 @@ PrefabInstance:
       propertyPath: axles.Array.data[1].<Steering>k__BackingField
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2754571377349320130, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: antiSwayMultiplier
+      value: 7000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2754571377349320131, guid: 7aeb836a048c048579b51f47538106b5,
+        type: 3}
+      propertyPath: antiSwayMultiplier
+      value: 7000
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7aeb836a048c048579b51f47538106b5, type: 3}
 --- !u!1 &630470834 stripped
