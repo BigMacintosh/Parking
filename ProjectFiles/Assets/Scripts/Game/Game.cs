@@ -6,7 +6,7 @@ namespace Game
 {    
     public interface IGameLoop
     {
-        bool Init(Spawner spawner, string[] args);
+        bool Init(string[] args);
         void Shutdown();
 
         void Update();
@@ -21,8 +21,6 @@ namespace Game
         private readonly List<IGameLoop> gameLoops = new List<IGameLoop>();
         private readonly List<Type> requestedGameLoopTypes = new List<Type>();
         private readonly List<string[]> requestedGameLoopArguments = new List<string[]>();
-
-        [SerializeField] private Spawner spawner;
 
         public void RequestGameLoop(Type type, string[] args)
         {
@@ -77,7 +75,7 @@ namespace Game
                     try
                     {
                         IGameLoop gameLoop = (IGameLoop) System.Activator.CreateInstance(requestedGameLoopTypes[i]);
-                        initSucceeded = gameLoop.Init(spawner, requestedGameLoopArguments[i]);
+                        initSucceeded = gameLoop.Init(requestedGameLoopArguments[i]);
                         if (!initSucceeded)
                         {
                             Debug.Log("Game loop failed to initialise.");

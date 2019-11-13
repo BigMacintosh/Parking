@@ -7,10 +7,10 @@ namespace Game
         private Client client;
         private World world;
 
-        public bool Init(Spawner spawner, string[] args)
+        public bool Init(string[] args)
         {
             // Create world
-            world = new World(spawner);
+            world = new World();
             
             // Start server
             client = new Client(world);
@@ -20,9 +20,6 @@ namespace Game
             #else
                 var success = client.Start("18.191.231.10");
             #endif
-            
-           
-            
             
             return success;
         }
@@ -35,8 +32,8 @@ namespace Game
 
         public void Update()
         {
-            world.Update();
             client.HandleNetworkEvents();
+            world.Update();
         }
 
         public void FixedUpdate()

@@ -6,14 +6,12 @@ namespace Game
     {
         private Server server;
         private World world;
-        private Spawner spawner;
-        
-        public bool Init(Spawner spawner, string[] args)
+
+        public bool Init(string[] args)
         {
-            this.spawner = spawner;
-            
+
             // Create world
-            world = new World(spawner);
+            world = new World();
 
             // Start server
             server = new Server(world);

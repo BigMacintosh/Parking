@@ -43,7 +43,6 @@ namespace Car
                     }
                 }
             }
-        
         }
 
         private float TurnMultiplier(float v)

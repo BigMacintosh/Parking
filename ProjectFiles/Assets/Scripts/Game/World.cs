@@ -11,7 +11,6 @@ namespace Game
     public class World
     {
         private List<DriveController> cars;
-        private Spawner spawner;
         private List<NetworkChange> networkChanges;
         private DriveController carPrefab;
         
@@ -31,14 +30,12 @@ namespace Game
                 Random rand = new Random();
                 return locations[rand.Next(0, locations.Count - 1)];
             }
-            
         }
         
-        public World(Spawner spawner)
+        public World()
         {
             carPrefab = Resources.Load<DriveController>("Car");
             
-            this.spawner = spawner;
             cars = new List<DriveController>();
         }
 
@@ -53,22 +50,21 @@ namespace Game
             
             // Interpolate players to new location.
         }
-        
-        
+
+        // Server one
         public Vector3 SpawnPlayer()
         {
             var position = new SpawnLocations().GetSpawn();
-            
-            // var newCar = spawner.spawn(carPrefab, position, Quaternion.identity);
             var newCar = Object.Instantiate(carPrefab, position, Quaternion.identity);
-            newCar.isControllable = true;
+            newCar.isControllable = false;
             cars.Add(newCar);
             return position;
         }
         
+        // Client one
         public void SpawnPlayer(Vector3 position)
         {
-            var newCar = spawner.spawn(carPrefab, position, Quaternion.identity);
+            var newCar = Object.Instantiate(carPrefab, position, Quaternion.identity);
             newCar.isControllable = true;
             cars.Add(newCar);
         }
