@@ -14,9 +14,16 @@ namespace Game
         void LateUpdate();
     }
 
+    public enum ServerClientSetting
+    {
+        Client,
+        Server,
+    }
+
     [DefaultExecutionOrder(-1000)]
     public class Game : MonoBehaviour
     {
+        [SerializeField] private ServerClientSetting gameLoop = ServerClientSetting.Client;
         public bool IsHeadless { get; private set; }
         private readonly List<IGameLoop> gameLoops = new List<IGameLoop>();
         private readonly List<Type> requestedGameLoopTypes = new List<Type>();
@@ -50,10 +57,15 @@ namespace Game
             }
             else
             {
-#if UNITY_EDITOR
-                RequestGameLoop(typeof(ServerGameLoop), new string[0]);
-#endif
-                RequestGameLoop(typeof(ClientGameLoop), new string[0]);
+                if (gameLoop == ServerClientSetting.Server)
+                {
+                    RequestGameLoop(typeof(ServerGameLoop), new string[0]);
+                }
+                else if (gameLoop == ServerClientSetting.Client)
+                {
+                    RequestGameLoop(typeof(ClientGameLoop), new string[0]);
+                }
+
             }
 
             Debug.Log(requestedGameLoopTypes.Count);
@@ -65,10 +77,6 @@ namespace Game
             // Switch game loop if needed
             if (requestedGameLoopTypes.Count > 0)
             {
-                // Multiple running gameloops only allowed in editor
-#if !UNITY_EDITOR
-            ShutdownGameLoops();
-#endif
                 bool initSucceeded = false;
                 for (int i = 0; i < requestedGameLoopTypes.Count; i++)
                 {
