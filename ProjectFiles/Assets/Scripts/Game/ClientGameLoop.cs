@@ -1,4 +1,5 @@
 ﻿using Network;
+using UnityEngine;
 
 namespace Game
 {
@@ -38,7 +39,11 @@ namespace Game
 
         public void FixedUpdate()
         {
-            // Nothing required here yet.
+            if (world.ClientID >= 0)
+            {
+                Debug.Log(world.ClientID);
+                client.SendLocationUpdate();
+            }
         }
 
         public void LateUpdate()

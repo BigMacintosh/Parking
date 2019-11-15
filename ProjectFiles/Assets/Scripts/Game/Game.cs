@@ -49,7 +49,6 @@ namespace Game
         {
             var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
             IsHeadless = commandLineArgs.Contains("-batchmode");
-            Debug.Log(IsHeadless);
 
             if (IsHeadless)
             {
@@ -67,8 +66,6 @@ namespace Game
                 }
 
             }
-
-            Debug.Log(requestedGameLoopTypes.Count);
             // Inititalise level manager
         }
 

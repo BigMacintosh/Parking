@@ -50,6 +50,23 @@ namespace Network
             driver.Dispose();
         }
 
+        public void SendLocationUpdate()
+        {
+            int playerID = world.ClientID;
+            Vector3 position = world.GetPlayerPosition(playerID).position;
+            
+            using (var writer = new DataStreamWriter(14, Allocator.Temp))
+            {
+                writer.Write((byte) ClientNetworkEvent.ClientLocationUpdate);
+                writer.Write((byte) playerID);
+                writer.Write(position.x);
+                writer.Write(position.y);
+                writer.Write(position.z);
+                
+                driver.Send(pipeline, connection, writer);
+            }
+        }
+
         public void HandleNetworkEvents()
         {
             driver.ScheduleUpdate().Complete();
@@ -73,11 +90,10 @@ namespace Network
                     case NetworkEvent.Type.Connect:
                     {
                         Debug.Log($"Client: Successfully connected to {serverIP}:{serverPort}.");
-                        var value = 1;
-                        using (var writer = new DataStreamWriter(16, Allocator.Temp))
+                        
+                        using (var writer = new DataStreamWriter(1, Allocator.Temp))
                         {
                             writer.Write((byte) ClientNetworkEvent.ClientHandshake);
-                            writer.Write(value);
                             driver.Send(pipeline, connection, writer);
                         }
                         break;
@@ -102,17 +118,21 @@ namespace Network
             switch (ev)
             {
                 case ServerNetworkEvent.ServerHandshake:
-                    var number = reader.ReadUInt(ref readerContext);
-                    Debug.Log($"Client: Received {number} back from {serverIP}:{serverPort}.");
+                    Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
 
                     // Get player location from readerContext.
-                    // Create Vector3 and give to SpawnPlayer
-                    Vector3 position = new Vector3(41.5f, 39.7f, 94.671f);
-                    world.SpawnPlayer(position);
+                    int playerID = reader.ReadByte(ref readerContext);
                     
-                    done = true;
-                    connection.Disconnect(driver);
-                    connection = default(NetworkConnection);
+                    Vector3 position = new Vector3(
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext)
+                    );
+
+                    world.SpawnPlayer(playerID, position, true);
+                    world.ClientID = playerID;
+                    
+                    Debug.Log($"Client: Spawned myself (ID {playerID}) {position.x}, {position.y}, {position.z}.");
                     
                     break;
                 case ServerNetworkEvent.ServerLocationUpdate:

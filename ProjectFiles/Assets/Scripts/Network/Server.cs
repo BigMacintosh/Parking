@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game;
 using Unity.Collections;
 using Unity.Networking.Transport;
@@ -14,12 +15,16 @@ namespace Network
         private NativeList<NetworkConnection> connections;
         private NetworkPipeline pipeline;
         private World world;
+
+        private Dictionary<int, int> connectionPlayerIDs;
         
         public string IP { get; private set; }
         public ushort Port { get; private set; }
         
         public Server(World world )
         {
+            connectionPlayerIDs = new Dictionary<int, int>();
+            
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
             Driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
@@ -89,12 +94,18 @@ namespace Network
                         {
                             var readerContext = default(DataStreamReader.Context);
                             var ev = (ClientNetworkEvent) reader.ReadByte(ref readerContext);
-                            HandleEvent(connections[i], endpoint, ev, reader, readerContext);
+                            HandleEvent(connections[i], endpoint, ev, reader, readerContext, i);
                             break;
                         }
                         case NetworkEvent.Type.Disconnect:
                             Debug.Log($"Server: {endpoint.IpAddress()}:{endpoint.Port} disconnected.");
                             connections[i] = default(NetworkConnection);
+
+                            var playerID = connectionPlayerIDs[i];
+                            world.DestroyPlayer(playerID);
+                            connectionPlayerIDs.Remove(i);
+                            Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
+                            
                             break;
                     }
                 }
@@ -102,25 +113,53 @@ namespace Network
         }
         
         private void HandleEvent(NetworkConnection connection, NetworkEndPoint endpoint, ClientNetworkEvent ev, 
-                                 DataStreamReader reader, DataStreamReader.Context readerContext)
+                                 DataStreamReader reader, DataStreamReader.Context readerContext, int connectionID)
         {
             switch (ev)
             {
                 case ClientNetworkEvent.ClientHandshake:
-                    var number = reader.ReadUInt(ref readerContext);
-                    Debug.Log($"Server: Received {number} from {endpoint.IpAddress()}:{endpoint.Port}.");
-                    
-                    
-                    
-                    using (var writer = new DataStreamWriter(16, Allocator.Temp))
+                {
+                    Debug.Log($"Server: Received handshake from {endpoint.IpAddress()}:{endpoint.Port}.");
+
+                    using (var writer = new DataStreamWriter(14, Allocator.Temp))
                     {
+                        // Get a player id
+                        int playerID = world.SpawnPlayer();
+                        connectionPlayerIDs.Add(connectionID, playerID);
+
+                        // Get spawn location
+                        Transform transform = world.GetPlayerPosition(playerID);
+                        var position = transform.position;
+
                         writer.Write((byte) ServerNetworkEvent.ServerHandshake);
-                        writer.Write(number + 2);
+                        writer.Write((byte) playerID);
+                        writer.Write(position.x);
+                        writer.Write(position.y);
+                        writer.Write(position.z);
+
                         Driver.Send(pipeline, connection, writer);
                     }
+
                     break;
+                }
                 case ClientNetworkEvent.ClientLocationUpdate:
+                {
+                    // Get player location from readerContext.
+                    int playerID = reader.ReadByte(ref readerContext);
+
+                    Vector3 newPosition = new Vector3(
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext)
+                    );
+
+                    world.SetPlayerPosition(playerID, newPosition);
+
+
+                    Debug.Log($"Client: Update player location (ID {playerID}) {newPosition.x}, {newPosition.y}, {newPosition.z}.");
+
                     break;
+                }
                 default:
                     Debug.Log($"Received an invalid event ({ev}) from {endpoint.IpAddress()}:{endpoint.Port}.");
                     break;

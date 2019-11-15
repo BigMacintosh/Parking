@@ -10,18 +10,21 @@ namespace Game
     
     public class World
     {
-        private List<DriveController> cars;
+        private Dictionary<int, GameObject> cars;
+        private int nextPlayerID = 0;
         private List<NetworkChange> networkChanges;
-        private DriveController carPrefab;
+        private GameObject carPrefab;
+        public int ClientID { get; set; }
         
         private class SpawnLocations
         {
 
-            private List<Vector3> locations;
+            private List<Vector3> locations = new List<Vector3>();
 
             public SpawnLocations()
             {
                 locations.Add(new Vector3(41.5f, 39.7f, 94.671f));
+                locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
                 locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
             }
 
@@ -34,9 +37,9 @@ namespace Game
         
         public World()
         {
-            carPrefab = Resources.Load<DriveController>("Car");
-            
-            cars = new List<DriveController>();
+            carPrefab = Resources.Load<GameObject>("Car");
+            cars = new Dictionary<int, GameObject>();
+            ClientID = -1;
         }
 
         public void AddNetworkChange(NetworkChange networkChange)
@@ -52,22 +55,36 @@ namespace Game
         }
 
         // Server one
-        public Vector3 SpawnPlayer()
+        public int SpawnPlayer()
         {
             var position = new SpawnLocations().GetSpawn();
-            var newCar = Object.Instantiate(carPrefab, position, Quaternion.identity);
-            newCar.isControllable = false;
-            cars.Add(newCar);
-            return position;
+            SpawnPlayer(nextPlayerID, position, false);
+            return nextPlayerID++;
         }
         
         // Client one
-        public void SpawnPlayer(Vector3 position)
+        public void SpawnPlayer(int playerID, Vector3 position, bool isControllable)
         {
             var newCar = Object.Instantiate(carPrefab, position, Quaternion.identity);
-            newCar.isControllable = true;
-            cars.Add(newCar);
+            newCar.GetComponent<DriveController>().isControllable = isControllable;
+            cars.Add(playerID, newCar);
         }
-        
+
+        public Transform GetPlayerPosition(int playerID)
+        {
+            return cars[playerID].transform;
+        }
+
+        public void SetPlayerPosition(int playerID, Vector3 position)
+        {
+            cars[playerID].transform.position = position;
+        }
+
+        public void DestroyPlayer(int playerID)
+        {
+            Object.Destroy(cars[playerID]);
+            cars.Remove(playerID);
+        }
+
     }
 }
