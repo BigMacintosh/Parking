@@ -121,14 +121,14 @@ namespace Network
                 {
                     Debug.Log($"Server: Received handshake from {endpoint.IpAddress()}:{endpoint.Port}.");
 
-                    using (var writer = new DataStreamWriter(14, Allocator.Temp))
+                    using (var writer = new DataStreamWriter(30, Allocator.Temp))
                     {
                         // Get a player id
                         int playerID = world.SpawnPlayer();
                         connectionPlayerIDs.Add(connectionID, playerID);
 
                         // Get spawn location
-                        Transform transform = world.GetPlayerPosition(playerID);
+                        Transform transform = world.GetPlayerTransform(playerID);
                         var position = transform.position;
 
                         writer.Write((byte) ServerNetworkEvent.ServerHandshake);
@@ -152,9 +152,15 @@ namespace Network
                         reader.ReadFloat(ref readerContext),
                         reader.ReadFloat(ref readerContext)
                     );
+                    Quaternion newRotation = new Quaternion(
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext)
+                    );
 
                     world.SetPlayerPosition(playerID, newPosition);
-
+                    world.SetPlayerRotation(playerID, newRotation);
 
                     Debug.Log($"Client: Update player location (ID {playerID}) {newPosition.x}, {newPosition.y}, {newPosition.z}.");
 

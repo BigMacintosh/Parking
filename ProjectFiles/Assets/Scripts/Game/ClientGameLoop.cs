@@ -41,7 +41,6 @@ namespace Game
         {
             if (world.ClientID >= 0)
             {
-                Debug.Log(world.ClientID);
                 client.SendLocationUpdate();
             }
         }

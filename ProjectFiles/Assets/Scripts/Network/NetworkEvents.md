@@ -10,9 +10,9 @@ No params.
 
 ### `0x02` Send clients location
 
-| X Pos | Y Pos | Z Pos |
-| --- | --- | --- |
-| float | float | float |
+| X Pos | Y Pos | Z Pos | X Rot | Y Rot | Z Rot | W Rot | 
+| --- | --- | --- | --- | --- | --- | --- |
+| float | float | float | float | float | float | float |
 
 
 ## Server -> Client

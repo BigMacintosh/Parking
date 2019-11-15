@@ -70,7 +70,7 @@ namespace Game
             cars.Add(playerID, newCar);
         }
 
-        public Transform GetPlayerPosition(int playerID)
+        public Transform GetPlayerTransform(int playerID)
         {
             return cars[playerID].transform;
         }
@@ -78,6 +78,11 @@ namespace Game
         public void SetPlayerPosition(int playerID, Vector3 position)
         {
             cars[playerID].transform.position = position;
+        }
+
+        public void SetPlayerRotation(int playerID, Quaternion rotation)
+        {
+            cars[playerID].transform.rotation = rotation;
         }
 
         public void DestroyPlayer(int playerID)

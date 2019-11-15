@@ -53,15 +53,20 @@ namespace Network
         public void SendLocationUpdate()
         {
             int playerID = world.ClientID;
-            Vector3 position = world.GetPlayerPosition(playerID).position;
-            
-            using (var writer = new DataStreamWriter(14, Allocator.Temp))
+            Transform transform = world.GetPlayerTransform(playerID);
+            Vector3 position = transform.position;
+            Quaternion rotation = transform.rotation;
+            using (var writer = new DataStreamWriter(30, Allocator.Temp))
             {
                 writer.Write((byte) ClientNetworkEvent.ClientLocationUpdate);
                 writer.Write((byte) playerID);
                 writer.Write(position.x);
                 writer.Write(position.y);
                 writer.Write(position.z);
+                writer.Write(rotation.x);
+                writer.Write(rotation.y);
+                writer.Write(rotation.z);
+                writer.Write(rotation.w);
                 
                 driver.Send(pipeline, connection, writer);
             }
