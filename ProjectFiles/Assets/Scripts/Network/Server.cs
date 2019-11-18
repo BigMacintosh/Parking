@@ -21,7 +21,7 @@ namespace Network
         public string IP { get; private set; }
         public ushort Port { get; private set; }
         
-        public Server(World world )
+        public Server(World world)
         {
             connectionPlayerIDs = new Dictionary<int, int>();
             
@@ -32,10 +32,10 @@ namespace Network
             this.world = world;
         }
 
-        public bool Start(string ip = "0.0.0.0", ushort port = 25565)
+        public bool Start(ServerConfig config)
         {
-            IP = ip;
-            Port = port;
+            IP = config.IpAddress;
+            Port = config.Port;
             if (Driver.Bind(NetworkEndPoint.Parse(IP, Port)) != 0)
             {
                 Debug.Log($"Server: Failed to bind to port {Port}. Is the port already in use?");
@@ -44,7 +44,7 @@ namespace Network
             Driver.Listen();
             Debug.Log($"Server listening at port {IP}:{Port}...");
             
-            connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
+            connections = new NativeList<NetworkConnection>(config.MaxPlayers, Allocator.Persistent);
             
             return true;
         }
