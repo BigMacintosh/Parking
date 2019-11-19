@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using UnityEngine;
 
 namespace Network
 {
@@ -15,5 +17,35 @@ namespace Network
             Port = 25565,
             MaxPlayers = 64
         };
+        
+        public static ServerConfig LoadConfigOrDefault(string path)
+        {
+            try
+            {
+                using (var reader = new StreamReader(path))
+                {
+                    var json = reader.ReadToEnd();
+                    var cfg = JsonUtility.FromJson<ServerConfig>(json);
+                    Debug.Log($"Server: Successfully loaded config from {path}...");
+                    return cfg;
+                }
+            }
+            catch (Exception e) when (e is ArgumentException || e is FileNotFoundException)
+            {
+                Debug.Log(e);
+                Debug.Log($"Failed to load {path}. Generating and running default config at server-config.json...");
+                DefaultConfig.SaveConfig(path);
+                return DefaultConfig;
+            }
+        }
+        
+        public void SaveConfig(string path)
+        {
+            using (var writer = new StreamWriter(path))
+            {
+                var json = JsonUtility.ToJson(this);
+                writer.Write(json);
+            }
+        }
     }
 }
