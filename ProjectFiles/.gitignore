@@ -71,3 +71,6 @@ crashlytics-build.properties
 
 .DS_Store
 Assembly-CSharp.csproj.DotSettings
+
+# Config file
+server-config.json

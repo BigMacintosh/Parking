@@ -9,12 +9,14 @@ namespace Game
 
         public bool Init(string[] args)
         {
-
+            // TODO: make the config path an argument so we can swap configs later?
+            var config = ServerConfig.LoadConfigOrDefault("server-config.json");
+            
             // Create world
             world = new World();
 
             // Start server
-            server = new Server(world);
+            server = new Server(world, config);
             var success = server.Start();
             
             return success;

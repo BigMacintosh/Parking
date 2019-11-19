@@ -17,34 +17,34 @@ namespace Network
         private World world;
 
         private Dictionary<int, int> connectionPlayerIDs;
+
+        public ServerConfig Config { get; private set; }
+        private string IP => Config.IpAddress;
+        private ushort Port => Config.Port;
         
-        public string IP { get; private set; }
-        public ushort Port { get; private set; }
-        
-        public Server(World world )
+        public Server(World world, ServerConfig config)
         {
+            this.world = world;
+            Config = config;
+            connections = new NativeList<NetworkConnection>(Config.MaxPlayers, Allocator.Persistent);
             connectionPlayerIDs = new Dictionary<int, int>();
             
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
             Driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
-            this.world = world;
         }
 
-        public bool Start(string ip = "0.0.0.0", ushort port = 25565)
+        public bool Start()
         {
-            IP = ip;
-            Port = port;
             if (Driver.Bind(NetworkEndPoint.Parse(IP, Port)) != 0)
             {
-                Debug.Log($"Server: Failed to bind to port {Port}. Is the port already in use?");
+                Debug.Log($"Server: Failed to bind to port {IP}:{Port}. Is the port already in use?");
+                Shutdown();
                 return false;
             }
             Driver.Listen();
-            Debug.Log($"Server listening at port {IP}:{Port}...");
-            
-            connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
+            Debug.Log($"Server: Listening at port {IP}:{Port}...");
             
             return true;
         }
