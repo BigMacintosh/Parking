@@ -129,8 +129,9 @@ namespace Network
                 {
                     Debug.Log($"Server: Received handshake from {endpoint.IpAddress()}:{endpoint.Port}.");
 
-                    using (var writer = new DataStreamWriter(30, Allocator.Temp))
+                    using (var writer = ServerNetworkEvent.ServerHandshake.GetWriter(30, Allocator.Temp))
                     {
+                        
                         // Get a player id
                         int playerID = world.SpawnPlayer();
                         connectionPlayerIDs.Add(connectionID, playerID);
@@ -138,8 +139,7 @@ namespace Network
                         // Get spawn location
                         Transform transform = world.GetPlayerTransform(playerID);
                         var position = transform.position;
-
-                        writer.Write((byte) ServerNetworkEvent.ServerHandshake);
+                        
                         writer.Write((byte) playerID);
                         writer.Write(position.x);
                         writer.Write(position.y);
