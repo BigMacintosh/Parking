@@ -43,7 +43,7 @@ namespace Network
         {
             using (var writer = new StreamWriter(path))
             {
-                var json = JsonUtility.ToJson(this);
+                var json = JsonUtility.ToJson(this, true);
                 writer.Write(json);
             }
         }
