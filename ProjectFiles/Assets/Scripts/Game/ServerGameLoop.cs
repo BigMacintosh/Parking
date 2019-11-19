@@ -35,7 +35,7 @@ namespace Game
                     return JsonUtility.FromJson<ServerConfig>(json);
                 }
             }
-            catch (ArgumentException e)
+            catch (Exception e) when (e is ArgumentException || e is FileNotFoundException)
             {
                 Debug.Log(e);
                 Debug.Log($"Failed to load {path}. Generating and running default config at server-config.json...");
