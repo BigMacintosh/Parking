@@ -34,7 +34,7 @@ namespace Network
             {
                 Debug.Log(e);
                 Debug.Log($"Failed to load {path}. Generating and running default config at server-config.json...");
-                DefaultConfig.SaveConfig(path);
+                DefaultConfig.SaveConfig("server-config.json");
                 return DefaultConfig;
             }
         }
