@@ -19,8 +19,8 @@ namespace Game
             world = new World();
 
             // Start server
-            server = new Server(world);
-            var success = server.Start(config);
+            server = new Server(world, config);
+            var success = server.Start();
             
             return success;
         }
