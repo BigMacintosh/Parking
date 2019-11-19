@@ -11,7 +11,7 @@ namespace Network
         public ushort Port;
         public ushort MaxPlayers;
 
-        public static ServerConfig DefaultConfig = new ServerConfig
+        private static readonly ServerConfig DefaultConfig = new ServerConfig
         {
             IpAddress = "0.0.0.0",
             Port = 25565,
