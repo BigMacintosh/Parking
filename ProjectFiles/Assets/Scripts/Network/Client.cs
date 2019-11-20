@@ -59,7 +59,6 @@ namespace Network
             using (var writer = new DataStreamWriter(30, Allocator.Temp))
             {
                 writer.Write((byte) ClientNetworkEvent.ClientLocationUpdate);
-                writer.Write((byte) playerID);
                 writer.Write(position.x);
                 writer.Write(position.y);
                 writer.Write(position.z);

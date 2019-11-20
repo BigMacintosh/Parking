@@ -17,34 +17,34 @@ namespace Network
         private World world;
 
         private Dictionary<int, int> connectionPlayerIDs;
+
+        public ServerConfig Config { get; private set; }
+        private string IP => Config.IpAddress;
+        private ushort Port => Config.Port;
         
-        public string IP { get; private set; }
-        public ushort Port { get; private set; }
-        
-        public Server(World world )
+        public Server(World world, ServerConfig config)
         {
+            this.world = world;
+            Config = config;
+            connections = new NativeList<NetworkConnection>(Config.MaxPlayers, Allocator.Persistent);
             connectionPlayerIDs = new Dictionary<int, int>();
             
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
             Driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
-            this.world = world;
         }
 
-        public bool Start(string ip = "0.0.0.0", ushort port = 25565)
+        public bool Start()
         {
-            IP = ip;
-            Port = port;
             if (Driver.Bind(NetworkEndPoint.Parse(IP, Port)) != 0)
             {
-                Debug.Log($"Server: Failed to bind to port {Port}. Is the port already in use?");
+                Debug.Log($"Server: Failed to bind to port {IP}:{Port}. Is the port already in use?");
+                Shutdown();
                 return false;
             }
             Driver.Listen();
-            Debug.Log($"Server listening at port {IP}:{Port}...");
-            
-            connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
+            Debug.Log($"Server: Listening at port {IP}:{Port}...");
             
             return true;
         }
@@ -80,13 +80,17 @@ namespace Network
             // Process events since the last update
             for (var i = 0; i < connections.Length; i++)
             {
-                if (!connections[i].IsCreated)
+                var connection = connections[i];
+                var connectionID = connection.InternalId;
+                
+                if (!connection.IsCreated)
                 {
                     continue;
                 }
-                var endpoint = Driver.RemoteEndPoint(connections[i]);
+                
+                var endpoint = Driver.RemoteEndPoint(connection);
                 NetworkEvent.Type command;
-                while ((command = Driver.PopEventForConnection(connections[i], out var reader)) != NetworkEvent.Type.Empty)
+                while ((command = Driver.PopEventForConnection(connection, out var reader)) != NetworkEvent.Type.Empty)
                 {
                     switch (command)
                     {
@@ -94,16 +98,20 @@ namespace Network
                         {
                             var readerContext = default(DataStreamReader.Context);
                             var ev = (ClientNetworkEvent) reader.ReadByte(ref readerContext);
-                            HandleEvent(connections[i], endpoint, ev, reader, readerContext, i);
+                            HandleEvent(connections[i], endpoint, ev, reader, readerContext, connectionID);
                             break;
                         }
                         case NetworkEvent.Type.Disconnect:
                             Debug.Log($"Server: {endpoint.IpAddress()}:{endpoint.Port} disconnected.");
-                            connections[i] = default(NetworkConnection);
-
-                            var playerID = connectionPlayerIDs[i];
+                            
+                            // Remove from world and player id mapping
+                            var playerID = connectionPlayerIDs[connectionID];
                             world.DestroyPlayer(playerID);
-                            connectionPlayerIDs.Remove(i);
+                            connectionPlayerIDs.Remove(connectionID);
+                            
+                            // Destroy the actual network connection
+                            connections[i] = default(NetworkConnection);
+                            
                             Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
                             
                             break;
@@ -145,7 +153,7 @@ namespace Network
                 case ClientNetworkEvent.ClientLocationUpdate:
                 {
                     // Get player location from readerContext.
-                    int playerID = reader.ReadByte(ref readerContext);
+                    int playerID = connectionPlayerIDs[connectionID];
 
                     Vector3 newPosition = new Vector3(
                         reader.ReadFloat(ref readerContext),
@@ -162,7 +170,7 @@ namespace Network
                     world.SetPlayerPosition(playerID, newPosition);
                     world.SetPlayerRotation(playerID, newRotation);
 
-                    Debug.Log($"Client: Update player location (ID {playerID}) {newPosition.x}, {newPosition.y}, {newPosition.z}.");
+                    Debug.Log($"Server: Update player location (ID {playerID}) {newPosition.x}, {newPosition.y}, {newPosition.z}.");
 
                     break;
                 }
