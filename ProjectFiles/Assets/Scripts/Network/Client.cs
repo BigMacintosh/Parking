@@ -10,7 +10,17 @@ using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.
 
 namespace Network
 {
-    public class Client
+
+
+    public interface IClient
+    {
+        bool Start(string ip = "127.0.0.1", ushort port = 25565);
+        void Shutdown();
+        void SendLocationUpdate();
+        void HandleNetworkEvents();
+    }
+
+    public class Client : IClient
     {
         private UdpCNetworkDriver driver;
         private NetworkConnection connection;
@@ -144,6 +154,44 @@ namespace Network
                 default:
                     Debug.Log($"Received an invalid event ({ev}) from {serverIP}:{serverPort}.");
                     break;
+            }
+        }
+
+        public static IClient getDummyClient(World world)
+        {
+            return new DummyClient(world);
+        }
+        
+        private class DummyClient : IClient
+        {
+            private World world;
+            private int playerID;
+            
+            
+            public DummyClient(World world)
+            {
+                this.world = world;
+            }
+            public bool Start(string ip, ushort port)
+            {
+                playerID = world.SpawnPlayer();
+                world.SetPlayerControllable(playerID);
+                return true;
+            }
+
+            public void Shutdown()
+            {
+                
+            }
+
+            public void SendLocationUpdate()
+            {
+                
+            }
+
+            public void HandleNetworkEvents()
+            {
+                
             }
         }
     }

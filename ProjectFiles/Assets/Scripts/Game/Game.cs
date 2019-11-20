@@ -18,12 +18,13 @@ namespace Game
     {
         Client,
         Server,
+        Standalone,
     }
 
     [DefaultExecutionOrder(-1000)]
     public class Game : MonoBehaviour
     {
-        [SerializeField] private ServerClientSetting gameLoop = ServerClientSetting.Client;
+        [SerializeField] private ServerClientSetting gameLoop = ServerClientSetting.Standalone;
         public bool IsHeadless { get; private set; }
         private readonly List<IGameLoop> gameLoops = new List<IGameLoop>();
         private readonly List<Type> requestedGameLoopTypes = new List<Type>();
@@ -50,6 +51,12 @@ namespace Game
             var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
             IsHeadless = commandLineArgs.Contains("-batchmode");
 
+            if (gameLoop == ServerClientSetting.Standalone)
+            {
+                RequestGameLoop(typeof(ClientGameLoop), new []{"standalone"});
+            }
+            
+            
             if (IsHeadless)
             {
                 RequestGameLoop(typeof(ServerGameLoop), new string[0]);

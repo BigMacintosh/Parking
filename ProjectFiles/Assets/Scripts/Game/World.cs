@@ -68,7 +68,7 @@ namespace Game
             var newCar = Object.Instantiate(carPrefab, position, Quaternion.identity);
             if (isControllable)
             {
-                newCar.GetComponent<DriveController>().SetControllable();
+                SetPlayerControllable(playerID);
             }
             cars.Add(playerID, newCar);
         }
@@ -76,6 +76,11 @@ namespace Game
         public Transform GetPlayerTransform(int playerID)
         {
             return cars[playerID].transform;
+        }
+
+        public void SetPlayerControllable(int playerID)
+        {
+            cars[playerID].GetComponent<DriveController>().SetControllable();
         }
 
         public void SetPlayerPosition(int playerID, Vector3 position)
