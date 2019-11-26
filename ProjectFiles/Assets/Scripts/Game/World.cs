@@ -66,11 +66,11 @@ namespace Game
         public void SpawnPlayer(int playerID, Vector3 position, bool isControllable)
         {
             var newCar = Object.Instantiate(carPrefab, position, Quaternion.identity);
+            cars.Add(playerID, newCar);
             if (isControllable)
             {
                 SetPlayerControllable(playerID);
             }
-            cars.Add(playerID, newCar);
         }
 
         public Transform GetPlayerTransform(int playerID)
