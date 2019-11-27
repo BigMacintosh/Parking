@@ -1,26 +1,43 @@
 ﻿using Network;
+using UnityEngine;
 
 namespace Game
 {
     public class ClientGameLoop : IGameLoop
     {
-        private Client client;
+        private IClient client;
         private World world;
-
-        public bool Init(Spawner spawner, string[] args)
+        private bool isStandalone;
+        
+        public bool Init(string[] args)
         {
-            // Start server
-            client = new Client();
+            if (args.Length > 0)
+            {
+                isStandalone = args[0].Equals("standalone");
+            }
+            else
+            {
+                isStandalone = false;
+            }
+
+            // Create world
+            world = new World();
             
-            #if UNITY_EDITOR
+            // Start server
+
+            if (isStandalone)
+            {
+                client = Client.getDummyClient(world);
+            }
+            else
+            {
+                client = new Client(world);
+            }
+#if UNITY_EDITOR
                 var success = client.Start();
             #else
                 var success = client.Start("18.191.231.10");
             #endif
-            
-            // Create world
-            world = new World(spawner);
-            
             
             return success;
         }
@@ -34,11 +51,15 @@ namespace Game
         public void Update()
         {
             client.HandleNetworkEvents();
+            world.Update();
         }
 
         public void FixedUpdate()
         {
-            // Nothing required here yet.
+            if (world.ClientID >= 0)
+            {
+                client.SendLocationUpdate();
+            }
         }
 
         public void LateUpdate()

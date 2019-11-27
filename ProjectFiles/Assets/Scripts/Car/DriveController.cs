@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace Car
@@ -7,7 +8,7 @@ namespace Car
     public class DriveController : MonoBehaviour
     {
         [SerializeField] private GameObject car;
-        [SerializeField] private bool isControllable;
+        public bool isControllable { get; set; }
         [SerializeField] private List<Axle> axles;
         [SerializeField] private float maxMotorTorque;
         [SerializeField] private float maxSteeringAngle;
@@ -43,7 +44,14 @@ namespace Car
                     }
                 }
             }
-        
+        }
+
+        public void SetControllable()
+        {
+            isControllable = true; 
+            CameraFollowController camera = FindObjectOfType<CameraFollowController>();
+            camera.ObjectToFollow = transform;
+
         }
 
         private float TurnMultiplier(float v)

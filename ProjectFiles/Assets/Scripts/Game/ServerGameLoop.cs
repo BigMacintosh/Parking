@@ -6,18 +6,18 @@ namespace Game
     {
         private Server server;
         private World world;
-        private Spawner spawner;
-        
-        public bool Init(Spawner spawner, string[] args)
+
+        public bool Init(string[] args)
         {
-            // Start server
-            server = new Server();
-            var success = server.Start();
+            // TODO: make the config path an argument so we can swap configs later?
+            var config = ServerConfig.LoadConfigOrDefault("server-config.json");
             
             // Create world
-            world = new World(spawner);
+            world = new World();
 
-            this.spawner = spawner;
+            // Start server
+            server = new Server(world, config);
+            var success = server.Start();
             
             return success;
         }
@@ -31,6 +31,7 @@ namespace Game
         public void Update()
         {
             server.HandleNetworkEvents();
+            world.Update();
         }
 
         public void FixedUpdate()

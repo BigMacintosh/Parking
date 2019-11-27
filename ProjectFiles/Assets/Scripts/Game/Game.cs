@@ -6,7 +6,7 @@ namespace Game
 {    
     public interface IGameLoop
     {
-        bool Init(Spawner spawner, string[] args);
+        bool Init(string[] args);
         void Shutdown();
 
         void Update();
@@ -14,15 +14,21 @@ namespace Game
         void LateUpdate();
     }
 
+    public enum ServerClientSetting
+    {
+        Client,
+        Server,
+        Standalone,
+    }
+
     [DefaultExecutionOrder(-1000)]
     public class Game : MonoBehaviour
     {
+        [SerializeField] private ServerClientSetting gameLoop = ServerClientSetting.Standalone;
         public bool IsHeadless { get; private set; }
         private readonly List<IGameLoop> gameLoops = new List<IGameLoop>();
         private readonly List<Type> requestedGameLoopTypes = new List<Type>();
         private readonly List<string[]> requestedGameLoopArguments = new List<string[]>();
-
-        [SerializeField] private Spawner spawner;
 
         public void RequestGameLoop(Type type, string[] args)
         {
@@ -44,21 +50,29 @@ namespace Game
         {
             var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
             IsHeadless = commandLineArgs.Contains("-batchmode");
-            Debug.Log(IsHeadless);
 
+            if (gameLoop == ServerClientSetting.Standalone)
+            {
+                RequestGameLoop(typeof(ClientGameLoop), new []{"standalone"});
+            }
+            
+            
             if (IsHeadless)
             {
                 RequestGameLoop(typeof(ServerGameLoop), new string[0]);
             }
             else
             {
-#if UNITY_EDITOR
-                RequestGameLoop(typeof(ServerGameLoop), new string[0]);
-#endif
-                RequestGameLoop(typeof(ClientGameLoop), new string[0]);
-            }
+                if (gameLoop == ServerClientSetting.Server)
+                {
+                    RequestGameLoop(typeof(ServerGameLoop), new string[0]);
+                }
+                else if (gameLoop == ServerClientSetting.Client)
+                {
+                    RequestGameLoop(typeof(ClientGameLoop), new string[0]);
+                }
 
-            Debug.Log(requestedGameLoopTypes.Count);
+            }
             // Inititalise level manager
         }
 
@@ -67,17 +81,13 @@ namespace Game
             // Switch game loop if needed
             if (requestedGameLoopTypes.Count > 0)
             {
-                // Multiple running gameloops only allowed in editor
-#if !UNITY_EDITOR
-            ShutdownGameLoops();
-#endif
                 bool initSucceeded = false;
                 for (int i = 0; i < requestedGameLoopTypes.Count; i++)
                 {
                     try
                     {
                         IGameLoop gameLoop = (IGameLoop) System.Activator.CreateInstance(requestedGameLoopTypes[i]);
-                        initSucceeded = gameLoop.Init(spawner, requestedGameLoopArguments[i]);
+                        initSucceeded = gameLoop.Init(requestedGameLoopArguments[i]);
                         if (!initSucceeded)
                         {
                             Debug.Log("Game loop failed to initialise.");
