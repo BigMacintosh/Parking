@@ -52,6 +52,8 @@ namespace Car
             CameraFollowController camera = FindObjectOfType<CameraFollowController>();
             camera.ObjectToFollow = transform;
 
+            HUD hud = FindObjectOfType<HUD>();
+            hud.Car = GetComponent<Rigidbody>();
         }
 
         private float TurnMultiplier(float v)
