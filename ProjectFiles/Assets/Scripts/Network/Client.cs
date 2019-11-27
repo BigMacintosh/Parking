@@ -66,9 +66,8 @@ namespace Network
             Transform transform = world.GetPlayerTransform(playerID);
             Vector3 position = transform.position;
             Quaternion rotation = transform.rotation;
-            using (var writer = new DataStreamWriter(30, Allocator.Temp))
+            using (var writer = ClientNetworkEvent.ClientLocationUpdate.GetWriter(30, Allocator.Temp))
             {
-                writer.Write((byte) ClientNetworkEvent.ClientLocationUpdate);
                 writer.Write(position.x);
                 writer.Write(position.y);
                 writer.Write(position.z);
@@ -105,9 +104,8 @@ namespace Network
                     {
                         Debug.Log($"Client: Successfully connected to {serverIP}:{serverPort}.");
                         
-                        using (var writer = new DataStreamWriter(1, Allocator.Temp))
+                        using (var writer = ClientNetworkEvent.ClientHandshake.GetWriter(0, Allocator.Temp))
                         {
-                            writer.Write((byte) ClientNetworkEvent.ClientHandshake);
                             driver.Send(pipeline, connection, writer);
                         }
                         break;
