@@ -130,11 +130,13 @@ namespace Network
             switch (ev)
             {
                 case ServerNetworkEvent.ServerHandshake:
+                {
+
                     Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
 
                     // Get player location from readerContext.
                     int playerID = reader.ReadByte(ref readerContext);
-                    
+
                     Vector3 position = new Vector3(
                         reader.ReadFloat(ref readerContext),
                         reader.ReadFloat(ref readerContext),
@@ -143,12 +145,59 @@ namespace Network
 
                     world.SpawnPlayer(playerID, position, true);
                     world.ClientID = playerID;
-                    
+
                     Debug.Log($"Client: Spawned myself (ID {playerID}) {position.x}, {position.y}, {position.z}.");
-                    
+
                     break;
+                }
                 case ServerNetworkEvent.ServerLocationUpdate:
+                {
+
+                    int length = reader.ReadByte(ref readerContext);
+                    for (int i = 0; i < length; i++)
+                    {
+                        var playerID = reader.ReadByte(ref readerContext);
+                        Vector3 position = new Vector3(
+                            reader.ReadFloat(ref readerContext),
+                            reader.ReadFloat(ref readerContext),
+                            reader.ReadFloat(ref readerContext)
+                        );
+                        Quaternion rotation = new Quaternion(
+                            reader.ReadFloat(ref readerContext),
+                            reader.ReadFloat(ref readerContext),
+                            reader.ReadFloat(ref readerContext),
+                            reader.ReadByte(ref readerContext)
+                        );
+
+                        if (playerID != world.ClientID)
+                        {
+                            world.SetPlayerRotation(playerID, rotation);
+                            world.SetPlayerPosition(playerID, position);
+                        }
+                    }
+
                     break;
+                }
+                case ServerNetworkEvent.SpawnPlayerEvent:
+                {
+                    int playerID = reader.ReadByte(ref readerContext);
+                    Vector3 position = new Vector3(
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext)
+
+                    );
+                    Quaternion rotation = new Quaternion(
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadByte(ref readerContext)
+                    );
+
+                    world.SpawnPlayer(playerID, position, false);
+
+                    break;
+                }
                 default:
                     Debug.Log($"Received an invalid event ({ev}) from {serverIP}:{serverPort}.");
                     break;

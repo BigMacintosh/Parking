@@ -55,6 +55,59 @@ namespace Network
             connections.Dispose();
         }
 
+        public void SendLocationUpdates()
+        {
+            var numConns = connections.Length;
+
+            var length = 0;
+            for (int i = 0; i < numConns; i++)
+            {
+                if (connectionPlayerIDs.ContainsKey(connections[i].InternalId))
+                {
+                    ++length;
+                }
+            }
+
+
+            if (length == 0) return;
+            
+            using (var writer = ServerNetworkEvent.ServerLocationUpdate.GetWriter(1  + length * 29, Allocator.Temp))
+            {
+                
+                writer.Write((byte) length);
+
+                for (int i = 0; i < numConns; i++)
+                {
+                    var connectionID = connections[i].InternalId;
+                    
+                    if (connectionPlayerIDs.ContainsKey(connectionID))
+                    {
+                        var playerID = connectionPlayerIDs[connectionID];
+
+                        var transform = world.GetPlayerTransform(playerID);
+
+                        writer.Write((byte) playerID);
+                    
+                        var position = transform.position;
+                        writer.Write(position.x);
+                        writer.Write(position.y);
+                        writer.Write(position.z);
+                    
+                        var rotation = transform.rotation;
+                        writer.Write(rotation.x);
+                        writer.Write(rotation.y);
+                        writer.Write(rotation.z);
+                        writer.Write(rotation.w);       
+                    }
+                }
+
+                for (int i = 0; i < numConns; i++)
+                {
+                    Driver.Send(pipeline, connections[i], writer);
+                }
+            }
+        }
+
         public void HandleNetworkEvents()
         {
             Driver.ScheduleUpdate().Complete();
@@ -63,6 +116,18 @@ namespace Network
             {
                 if (!connections[i].IsCreated)
                 {
+                    var connectionID = connections[i].InternalId;
+                    
+                    // Remove from world and player id mapping
+                    var playerID = connectionPlayerIDs[connectionID];
+                    world.DestroyPlayer(playerID);
+                    connectionPlayerIDs.Remove(connectionID);
+                            
+                    // Destroy the actual network connection
+                    connections[i] = default(NetworkConnection);
+                            
+                    Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
+                    
                     connections.RemoveAtSwapBack(i);
                     i--;
                 }
@@ -103,20 +168,32 @@ namespace Network
                         }
                         case NetworkEvent.Type.Disconnect:
                             Debug.Log($"Server: {endpoint.IpAddress()}:{endpoint.Port} disconnected.");
-                            
-                            // Remove from world and player id mapping
-                            var playerID = connectionPlayerIDs[connectionID];
-                            world.DestroyPlayer(playerID);
-                            connectionPlayerIDs.Remove(connectionID);
-                            
-                            // Destroy the actual network connection
-                            connections[i] = default(NetworkConnection);
-                            
-                            Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
-                            
+
                             break;
                     }
                 }
+            }
+        }
+
+        private void SendSpawnPlayer(int playerID, int recipientID)
+        {
+            using (var writer = ServerNetworkEvent.SpawnPlayerEvent.GetWriter(29, Allocator.Temp))
+            {
+                // Get spawn location
+                Transform transform = world.GetPlayerTransform(playerID);
+                var position = transform.position;
+                var rotation = transform.rotation;
+                        
+                writer.Write((byte) playerID);
+                writer.Write(position.x);
+                writer.Write(position.y);
+                writer.Write(position.z);
+                writer.Write(rotation.x);
+                writer.Write(rotation.y);
+                writer.Write(rotation.z);
+                writer.Write(rotation.z);
+
+                Driver.Send(pipeline, connections[recipientID], writer);
             }
         }
         
@@ -146,6 +223,26 @@ namespace Network
                         writer.Write(position.z);
 
                         Driver.Send(pipeline, connection, writer);
+                        
+                        // tell other clients you have spawned
+                        for (int i = 0; i < connections.Length; i++)
+                        {
+                            var internalID = connections[i].InternalId;
+                            if (internalID != connectionID)
+                            {
+                                SendSpawnPlayer(playerID, internalID);
+                            }
+                        }
+                        
+                        // tell this client about the other clients
+                        for (int i = 0; i < connections.Length; i++)
+                        {
+                            var internalID = connections[i].InternalId;
+                            if (internalID != connectionID)
+                            {
+                                SendSpawnPlayer(connectionPlayerIDs[internalID], connectionID);
+                            }
+                        }
                     }
 
                     break;
