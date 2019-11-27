@@ -55,11 +55,10 @@ namespace Game
         }
 
         // Server one
-        public int SpawnPlayer()
+        public void SpawnPlayer(int playerID)
         {
             var position = new SpawnLocations().GetSpawn();
-            SpawnPlayer(nextPlayerID, position, false);
-            return nextPlayerID++;
+            SpawnPlayer(playerID, position, false);
         }
         
         // Client one
@@ -99,5 +98,16 @@ namespace Game
             cars.Remove(playerID);
         }
 
+        public bool PlayerExists(int playerID)
+        {
+            return cars.ContainsKey(playerID);
+        }
+
+        public int GetNumPlayers()
+        {
+            return cars.Count;
+        }
+
+        public IEnumerable<int> PlayerIDs => cars.Keys;
     }
 }

@@ -15,9 +15,7 @@ namespace Network
         private NativeList<NetworkConnection> connections;
         private NetworkPipeline pipeline;
         private World world;
-
-        private Dictionary<int, int> connectionPlayerIDs;
-
+        
         public ServerConfig Config { get; private set; }
         private string IP => Config.IpAddress;
         private ushort Port => Config.Port;
@@ -27,7 +25,6 @@ namespace Network
             this.world = world;
             Config = config;
             connections = new NativeList<NetworkConnection>(Config.MaxPlayers, Allocator.Persistent);
-            connectionPlayerIDs = new Dictionary<int, int>();
             
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
@@ -59,16 +56,7 @@ namespace Network
         {
             var numConns = connections.Length;
 
-            var length = 0;
-            for (int i = 0; i < numConns; i++)
-            {
-                if (connectionPlayerIDs.ContainsKey(connections[i].InternalId))
-                {
-                    ++length;
-                }
-            }
-
-
+            var length = world.GetNumPlayers();
             if (length == 0) return;
             
             using (var writer = ServerNetworkEvent.ServerLocationUpdate.GetWriter(1  + length * 29, Allocator.Temp))
@@ -76,29 +64,22 @@ namespace Network
                 
                 writer.Write((byte) length);
 
-                for (int i = 0; i < numConns; i++)
+                foreach (var playerID in world.PlayerIDs)
                 {
-                    var connectionID = connections[i].InternalId;
-                    
-                    if (connectionPlayerIDs.ContainsKey(connectionID))
-                    {
-                        var playerID = connectionPlayerIDs[connectionID];
+                    var transform = world.GetPlayerTransform(playerID);
 
-                        var transform = world.GetPlayerTransform(playerID);
-
-                        writer.Write((byte) playerID);
-                    
-                        var position = transform.position;
-                        writer.Write(position.x);
-                        writer.Write(position.y);
-                        writer.Write(position.z);
-                    
-                        var rotation = transform.rotation;
-                        writer.Write(rotation.x);
-                        writer.Write(rotation.y);
-                        writer.Write(rotation.z);
-                        writer.Write(rotation.w);       
-                    }
+                    writer.Write((byte) playerID);
+                
+                    var position = transform.position;
+                    writer.Write(position.x);
+                    writer.Write(position.y);
+                    writer.Write(position.z);
+                
+                    var rotation = transform.rotation;
+                    writer.Write(rotation.x);
+                    writer.Write(rotation.y);
+                    writer.Write(rotation.z);
+                    writer.Write(rotation.w);
                 }
 
                 for (int i = 0; i < numConns; i++)
@@ -116,13 +97,11 @@ namespace Network
             {
                 if (!connections[i].IsCreated)
                 {
-                    var connectionID = connections[i].InternalId;
+                    var playerID = connections[i].InternalId;
                     
                     // Remove from world and player id mapping
-                    var playerID = connectionPlayerIDs[connectionID];
                     world.DestroyPlayer(playerID);
-                    connectionPlayerIDs.Remove(connectionID);
-                            
+
                     // Destroy the actual network connection
                     connections[i] = default(NetworkConnection);
                             
@@ -175,7 +154,7 @@ namespace Network
             }
         }
 
-        private void SendSpawnPlayer(int playerID, int recipientID)
+        private void SendSpawnPlayer(int playerID, NetworkConnection connection)
         {
             using (var writer = ServerNetworkEvent.SpawnPlayerEvent.GetWriter(29, Allocator.Temp))
             {
@@ -193,12 +172,12 @@ namespace Network
                 writer.Write(rotation.z);
                 writer.Write(rotation.z);
 
-                Driver.Send(pipeline, connections[recipientID], writer);
+                Driver.Send(pipeline, connection, writer);
             }
         }
         
         private void HandleEvent(NetworkConnection connection, NetworkEndPoint endpoint, ClientNetworkEvent ev, 
-                                 DataStreamReader reader, DataStreamReader.Context readerContext, int connectionID)
+                                 DataStreamReader reader, DataStreamReader.Context readerContext, int playerID)
         {
             switch (ev)
             {
@@ -208,10 +187,8 @@ namespace Network
 
                     using (var writer = ServerNetworkEvent.ServerHandshake.GetWriter(30, Allocator.Temp))
                     {
-                        
                         // Get a player id
-                        int playerID = world.SpawnPlayer();
-                        connectionPlayerIDs.Add(connectionID, playerID);
+                        world.SpawnPlayer(playerID);
 
                         // Get spawn location
                         Transform transform = world.GetPlayerTransform(playerID);
@@ -227,20 +204,22 @@ namespace Network
                         // tell other clients you have spawned
                         for (int i = 0; i < connections.Length; i++)
                         {
-                            var internalID = connections[i].InternalId;
-                            if (internalID != connectionID)
+                            var ID = connections[i].InternalId;
+                            if (ID != playerID)
                             {
-                                SendSpawnPlayer(playerID, internalID);
+                                Debug.Log($"Spawning player {playerID} on client {ID}");
+                                SendSpawnPlayer(playerID, connections[i]);
                             }
                         }
                         
                         // tell this client about the other clients
                         for (int i = 0; i < connections.Length; i++)
                         {
-                            var internalID = connections[i].InternalId;
+                            var ID = connections[i].InternalId;
                             if (internalID != connectionID)
                             {
-                                SendSpawnPlayer(connectionPlayerIDs[internalID], connectionID);
+                                Debug.Log($"Spawning player {connectionPlayerIDs[internalID]} on client {connectionID}");
+                                SendSpawnPlayer(connectionPlayerIDs[internalID], connection);
                             }
                         }
                     }
@@ -266,9 +245,7 @@ namespace Network
 
                     world.SetPlayerPosition(playerID, newPosition);
                     world.SetPlayerRotation(playerID, newRotation);
-
-                    Debug.Log($"Server: Update player location (ID {playerID}) {newPosition.x}, {newPosition.y}, {newPosition.z}.");
-
+                    
                     break;
                 }
                 default:
