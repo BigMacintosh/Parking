@@ -59,7 +59,7 @@ namespace Network
             var length = world.GetNumPlayers();
             if (length == 0) return;
             
-            using (var writer = ServerNetworkEvent.ServerLocationUpdate.GetWriter(1  + length * 29, Allocator.Temp))
+            using (var writer = ServerNetworkEvent.ServerLocationUpdate.GetWriter(1  + length * 53, Allocator.Temp))
             {
                 
                 writer.Write((byte) length);
@@ -74,12 +74,22 @@ namespace Network
                     writer.Write(position.x);
                     writer.Write(position.y);
                     writer.Write(position.z);
-                
+
                     var rotation = transform.rotation;
                     writer.Write(rotation.x);
                     writer.Write(rotation.y);
                     writer.Write(rotation.z);
                     writer.Write(rotation.w);
+
+                    var velocity = world.GetPlayerVelocity(playerID);
+                    writer.Write(velocity.x);
+                    writer.Write(velocity.y);
+                    writer.Write(velocity.z);
+
+                    var angularVelocity = world.GetPlayerAngularVelocity(playerID);
+                    writer.Write(angularVelocity.x);
+                    writer.Write(angularVelocity.y);
+                    writer.Write(angularVelocity.z);
                 }
 
                 for (int i = 0; i < numConns; i++)
@@ -238,9 +248,21 @@ namespace Network
                         reader.ReadFloat(ref readerContext),
                         reader.ReadFloat(ref readerContext)
                     );
+                    Vector3 newVelocity = new Vector3(
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext)
+                    );
+                    Vector3 newAngularVelocity = new Vector3(
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext)
+                    );
 
                     world.SetPlayerPosition(playerID, newPosition);
                     world.SetPlayerRotation(playerID, newRotation);
+                    world.SetPlayerVelocity(playerID, newVelocity);
+                    world.SetPlayerAngularVelocity(playerID, newAngularVelocity);
                     
                     break;
                 }

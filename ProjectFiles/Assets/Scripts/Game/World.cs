@@ -77,6 +77,16 @@ namespace Game
             return cars[playerID].transform;
         }
 
+        public Vector3 GetPlayerVelocity(int playerID)
+        {
+            return cars[playerID].GetComponent<Rigidbody>().velocity;
+        }
+        
+        public Vector3 GetPlayerAngularVelocity(int playerID)
+        {
+            return cars[playerID].GetComponent<Rigidbody>().angularVelocity;
+        }
+
         public void SetPlayerControllable(int playerID)
         {
             cars[playerID].GetComponent<DriveController>().SetControllable();
@@ -96,6 +106,20 @@ namespace Game
             cars[playerID].transform.rotation = rotation;
         }
 
+        public void SetPlayerVelocity(int playerID, Vector3 velocity)
+        {
+            if (!cars.ContainsKey(playerID)) return;
+
+            cars[playerID].GetComponent<Rigidbody>().velocity = velocity;
+        }
+        
+        public void SetPlayerAngularVelocity(int playerID, Vector3 angularVelocity)
+        {
+            if (!cars.ContainsKey(playerID)) return;
+
+            cars[playerID].GetComponent<Rigidbody>().angularVelocity = angularVelocity;
+        }
+        
         public void DestroyPlayer(int playerID)
         {
             Object.Destroy(cars[playerID]);

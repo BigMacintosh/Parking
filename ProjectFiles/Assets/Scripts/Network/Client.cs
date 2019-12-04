@@ -66,15 +66,26 @@ namespace Network
             Transform transform = world.GetPlayerTransform(playerID);
             Vector3 position = transform.position;
             Quaternion rotation = transform.rotation;
-            using (var writer = ClientNetworkEvent.ClientLocationUpdate.GetWriter(30, Allocator.Temp))
+            Vector3 velocity = world.GetPlayerVelocity(playerID);
+            Vector3 angularVelocity = world.GetPlayerAngularVelocity(playerID);
+            using (var writer = ClientNetworkEvent.ClientLocationUpdate.GetWriter(54, Allocator.Temp))
             {
                 writer.Write(position.x);
                 writer.Write(position.y);
                 writer.Write(position.z);
+                
                 writer.Write(rotation.x);
                 writer.Write(rotation.y);
                 writer.Write(rotation.z);
                 writer.Write(rotation.w);
+                
+                writer.Write(velocity.x);
+                writer.Write(velocity.y);
+                writer.Write(velocity.z);
+                
+                writer.Write(angularVelocity.x);
+                writer.Write(angularVelocity.y);
+                writer.Write(angularVelocity.z);
                 
                 driver.Send(pipeline, connection, writer);
             }
@@ -169,13 +180,23 @@ namespace Network
                             reader.ReadFloat(ref readerContext),
                             reader.ReadFloat(ref readerContext)
                         );
-
+                        Vector3 velocity = new Vector3(
+                            reader.ReadFloat(ref readerContext),
+                            reader.ReadFloat(ref readerContext),
+                            reader.ReadFloat(ref readerContext)
+                        );
+                        Vector3 angularVelocity = new Vector3(
+                            reader.ReadFloat(ref readerContext),
+                            reader.ReadFloat(ref readerContext),
+                            reader.ReadFloat(ref readerContext)
+                        );
+        
                         if (playerID != world.ClientID)
                         {
-                            Debug.Log($"Updating transforms for player {playerID}.");
-                            
                             world.SetPlayerRotation(playerID, rotation);
                             world.SetPlayerPosition(playerID, position);
+                            world.SetPlayerVelocity(playerID, velocity);
+                            world.SetPlayerAngularVelocity(playerID, angularVelocity);
                         }
                     }
 
