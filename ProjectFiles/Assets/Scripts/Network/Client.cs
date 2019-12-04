@@ -152,7 +152,8 @@ namespace Network
                 }
                 case ServerNetworkEvent.ServerLocationUpdate:
                 {
-
+                    if (world.ClientID == -1) break;
+                    
                     int length = reader.ReadByte(ref readerContext);
                     for (int i = 0; i < length; i++)
                     {
@@ -166,11 +167,13 @@ namespace Network
                             reader.ReadFloat(ref readerContext),
                             reader.ReadFloat(ref readerContext),
                             reader.ReadFloat(ref readerContext),
-                            reader.ReadByte(ref readerContext)
+                            reader.ReadFloat(ref readerContext)
                         );
 
                         if (playerID != world.ClientID)
                         {
+                            Debug.Log($"Updating transforms for player {playerID}.");
+                            
                             world.SetPlayerRotation(playerID, rotation);
                             world.SetPlayerPosition(playerID, position);
                         }
@@ -181,6 +184,7 @@ namespace Network
                 case ServerNetworkEvent.SpawnPlayerEvent:
                 {
                     int playerID = reader.ReadByte(ref readerContext);
+                    
                     Vector3 position = new Vector3(
                         reader.ReadFloat(ref readerContext),
                         reader.ReadFloat(ref readerContext),
@@ -194,7 +198,11 @@ namespace Network
                         reader.ReadByte(ref readerContext)
                     );
 
-                    world.SpawnPlayer(playerID, position, false);
+                    if (playerID != world.ClientID)
+                    {
+                        world.SpawnPlayer(playerID, position, false);
+                        Debug.Log($"Spawned player with ID {playerID}");
+                    }
 
                     break;
                 }
@@ -221,8 +229,9 @@ namespace Network
             }
             public bool Start(string ip, ushort port)
             {
-                playerID = world.SpawnPlayer();
-                world.SetPlayerControllable(playerID);
+                world.ClientID = 0;
+                world.SpawnPlayer(world.ClientID);
+                world.SetPlayerControllable(world.ClientID);
                 return true;
             }
 

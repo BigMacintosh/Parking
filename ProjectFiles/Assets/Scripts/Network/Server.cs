@@ -207,19 +207,18 @@ namespace Network
                             var ID = connections[i].InternalId;
                             if (ID != playerID)
                             {
-                                Debug.Log($"Spawning player {playerID} on client {ID}");
+                                Debug.Log($"Spawning new player {playerID} on client {ID}");
                                 SendSpawnPlayer(playerID, connections[i]);
                             }
                         }
                         
                         // tell this client about the other clients
-                        for (int i = 0; i < connections.Length; i++)
+                        foreach (var ID in world.PlayerIDs)
                         {
-                            var ID = connections[i].InternalId;
-                            if (internalID != connectionID)
+                            if (ID != playerID)
                             {
-                                Debug.Log($"Spawning player {connectionPlayerIDs[internalID]} on client {connectionID}");
-                                SendSpawnPlayer(connectionPlayerIDs[internalID], connection);
+                                Debug.Log($"Spawning pre-existing player {ID} on {playerID}.");
+                                SendSpawnPlayer(ID, connection);
                             }
                         }
                     }
@@ -228,9 +227,6 @@ namespace Network
                 }
                 case ClientNetworkEvent.ClientLocationUpdate:
                 {
-                    // Get player location from readerContext.
-                    int playerID = connectionPlayerIDs[connectionID];
-
                     Vector3 newPosition = new Vector3(
                         reader.ReadFloat(ref readerContext),
                         reader.ReadFloat(ref readerContext),

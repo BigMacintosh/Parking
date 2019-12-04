@@ -84,11 +84,15 @@ namespace Game
 
         public void SetPlayerPosition(int playerID, Vector3 position)
         {
+            if (!cars.ContainsKey(playerID)) return;
+            
             cars[playerID].transform.position = position;
         }
 
         public void SetPlayerRotation(int playerID, Quaternion rotation)
         {
+            if (!cars.ContainsKey(playerID)) return;
+
             cars[playerID].transform.rotation = rotation;
         }
 
