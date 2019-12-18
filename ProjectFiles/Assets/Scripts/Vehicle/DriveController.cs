@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Vehicle
 {
@@ -11,20 +12,19 @@ namespace Vehicle
 
         private Rigidbody rb;
         private float v;
+        public List<Axle> Axles { get; set; }
 
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
             v = rb.velocity.magnitude * 3.6f; // km/h
-            carFactory = GetComponent<CarFactory>();
-            carProperties = carFactory.carProperties;
         }
 
         private void FixedUpdate()
         {
             var torque = Input.GetAxis("Vertical") * maxMotorTorque;
             var steering = Input.GetAxis("Horizontal") * maxSteeringAngle / TurnMultiplier(v);
-            foreach (var axle in carFactory.axles)
+            foreach (var axle in Axles)
             {
                 if (axle.Steering)
                 {
@@ -42,6 +42,7 @@ namespace Vehicle
 
         private float TurnMultiplier(float v)
         {
+            // TODO: Change this to not use steps #28
             if (v > 20) return 4;
             if (v > 40) return 5;
             if (v > 80) return 7;
