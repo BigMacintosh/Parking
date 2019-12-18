@@ -55,11 +55,10 @@ namespace Game
         }
 
         // Server one
-        public int SpawnPlayer()
+        public void SpawnPlayer(int playerID)
         {
             var position = new SpawnLocations().GetSpawn();
-            SpawnPlayer(nextPlayerID, position, false);
-            return nextPlayerID++;
+            SpawnPlayer(playerID, position, false);
         }
         
         // Client one
@@ -78,6 +77,16 @@ namespace Game
             return cars[playerID].transform;
         }
 
+        public Vector3 GetPlayerVelocity(int playerID)
+        {
+            return cars[playerID].GetComponent<Rigidbody>().velocity;
+        }
+        
+        public Vector3 GetPlayerAngularVelocity(int playerID)
+        {
+            return cars[playerID].GetComponent<Rigidbody>().angularVelocity;
+        }
+
         public void SetPlayerControllable(int playerID)
         {
             cars[playerID].GetComponent<DriveController>().SetControllable();
@@ -85,19 +94,48 @@ namespace Game
 
         public void SetPlayerPosition(int playerID, Vector3 position)
         {
+            if (!cars.ContainsKey(playerID)) return;
+            
             cars[playerID].transform.position = position;
         }
 
         public void SetPlayerRotation(int playerID, Quaternion rotation)
         {
+            if (!cars.ContainsKey(playerID)) return;
+
             cars[playerID].transform.rotation = rotation;
         }
 
+        public void SetPlayerVelocity(int playerID, Vector3 velocity)
+        {
+            if (!cars.ContainsKey(playerID)) return;
+
+            cars[playerID].GetComponent<Rigidbody>().velocity = velocity;
+        }
+        
+        public void SetPlayerAngularVelocity(int playerID, Vector3 angularVelocity)
+        {
+            if (!cars.ContainsKey(playerID)) return;
+
+            cars[playerID].GetComponent<Rigidbody>().angularVelocity = angularVelocity;
+        }
+        
         public void DestroyPlayer(int playerID)
         {
             Object.Destroy(cars[playerID]);
             cars.Remove(playerID);
         }
 
+        public bool PlayerExists(int playerID)
+        {
+            return cars.ContainsKey(playerID);
+        }
+
+        public int GetNumPlayers()
+        {
+            return cars.Count;
+        }
+
+        public IEnumerable<int> PlayerIDs => cars.Keys;
     }
 }

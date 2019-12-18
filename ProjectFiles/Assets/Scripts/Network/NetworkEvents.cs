@@ -11,10 +11,12 @@ namespace Network
         ClientLocationUpdate = 0x82,
     }
 
+    [Flags]
     public enum ServerNetworkEvent
     {
         ServerHandshake      = 0x01,
         ServerLocationUpdate = 0x02,
+        SpawnPlayerEvent     = 0x03,
     }
 
 
