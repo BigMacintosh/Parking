@@ -23,7 +23,11 @@ namespace Game
             // Create world
             world = new World();
             
-            // Start server
+            // Create HUD
+            Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);
+
+            
+            // Start client connection
 
             if (isStandalone)
             {
