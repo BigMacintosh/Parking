@@ -39,6 +39,7 @@ namespace Game
                 var success = client.Start("18.191.231.10");
             #endif
             
+            
             return success;
         }
 

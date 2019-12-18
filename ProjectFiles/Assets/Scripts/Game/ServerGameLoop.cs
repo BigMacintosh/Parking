@@ -36,6 +36,7 @@ namespace Game
 
         public void FixedUpdate()
         {
+            server.SendLocationUpdates();
             // Trigger network send.
         }
 

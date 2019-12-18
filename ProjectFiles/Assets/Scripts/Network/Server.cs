@@ -15,9 +15,7 @@ namespace Network
         private NativeList<NetworkConnection> connections;
         private NetworkPipeline pipeline;
         private World world;
-
-        private Dictionary<int, int> connectionPlayerIDs;
-
+        
         public ServerConfig Config { get; private set; }
         private string IP => Config.IpAddress;
         private ushort Port => Config.Port;
@@ -27,7 +25,6 @@ namespace Network
             this.world = world;
             Config = config;
             connections = new NativeList<NetworkConnection>(Config.MaxPlayers, Allocator.Persistent);
-            connectionPlayerIDs = new Dictionary<int, int>();
             
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
@@ -55,6 +52,53 @@ namespace Network
             connections.Dispose();
         }
 
+        public void SendLocationUpdates()
+        {
+            var numConns = connections.Length;
+
+            var length = world.GetNumPlayers();
+            if (length == 0) return;
+            
+            using (var writer = ServerNetworkEvent.ServerLocationUpdate.GetWriter(1  + length * 53, Allocator.Temp))
+            {
+                
+                writer.Write((byte) length);
+
+                foreach (var playerID in world.PlayerIDs)
+                {
+                    var transform = world.GetPlayerTransform(playerID);
+
+                    writer.Write((byte) playerID);
+                
+                    var position = transform.position;
+                    writer.Write(position.x);
+                    writer.Write(position.y);
+                    writer.Write(position.z);
+
+                    var rotation = transform.rotation;
+                    writer.Write(rotation.x);
+                    writer.Write(rotation.y);
+                    writer.Write(rotation.z);
+                    writer.Write(rotation.w);
+
+                    var velocity = world.GetPlayerVelocity(playerID);
+                    writer.Write(velocity.x);
+                    writer.Write(velocity.y);
+                    writer.Write(velocity.z);
+
+                    var angularVelocity = world.GetPlayerAngularVelocity(playerID);
+                    writer.Write(angularVelocity.x);
+                    writer.Write(angularVelocity.y);
+                    writer.Write(angularVelocity.z);
+                }
+
+                for (int i = 0; i < numConns; i++)
+                {
+                    Driver.Send(pipeline, connections[i], writer);
+                }
+            }
+        }
+
         public void HandleNetworkEvents()
         {
             Driver.ScheduleUpdate().Complete();
@@ -63,6 +107,16 @@ namespace Network
             {
                 if (!connections[i].IsCreated)
                 {
+                    var playerID = connections[i].InternalId;
+                    
+                    // Remove from world and player id mapping
+                    world.DestroyPlayer(playerID);
+
+                    // Destroy the actual network connection
+                    connections[i] = default(NetworkConnection);
+                            
+                    Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
+                    
                     connections.RemoveAtSwapBack(i);
                     i--;
                 }
@@ -103,25 +157,37 @@ namespace Network
                         }
                         case NetworkEvent.Type.Disconnect:
                             Debug.Log($"Server: {endpoint.IpAddress()}:{endpoint.Port} disconnected.");
-                            
-                            // Remove from world and player id mapping
-                            var playerID = connectionPlayerIDs[connectionID];
-                            world.DestroyPlayer(playerID);
-                            connectionPlayerIDs.Remove(connectionID);
-                            
-                            // Destroy the actual network connection
-                            connections[i] = default(NetworkConnection);
-                            
-                            Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
-                            
+
                             break;
                     }
                 }
             }
         }
+
+        private void SendSpawnPlayer(int playerID, NetworkConnection connection)
+        {
+            using (var writer = ServerNetworkEvent.SpawnPlayerEvent.GetWriter(29, Allocator.Temp))
+            {
+                // Get spawn location
+                Transform transform = world.GetPlayerTransform(playerID);
+                var position = transform.position;
+                var rotation = transform.rotation;
+                        
+                writer.Write((byte) playerID);
+                writer.Write(position.x);
+                writer.Write(position.y);
+                writer.Write(position.z);
+                writer.Write(rotation.x);
+                writer.Write(rotation.y);
+                writer.Write(rotation.z);
+                writer.Write(rotation.z);
+
+                Driver.Send(pipeline, connection, writer);
+            }
+        }
         
         private void HandleEvent(NetworkConnection connection, NetworkEndPoint endpoint, ClientNetworkEvent ev, 
-                                 DataStreamReader reader, DataStreamReader.Context readerContext, int connectionID)
+                                 DataStreamReader reader, DataStreamReader.Context readerContext, int playerID)
         {
             switch (ev)
             {
@@ -131,10 +197,8 @@ namespace Network
 
                     using (var writer = ServerNetworkEvent.ServerHandshake.GetWriter(30, Allocator.Temp))
                     {
-                        
                         // Get a player id
-                        int playerID = world.SpawnPlayer();
-                        connectionPlayerIDs.Add(connectionID, playerID);
+                        world.SpawnPlayer(playerID);
 
                         // Get spawn location
                         Transform transform = world.GetPlayerTransform(playerID);
@@ -146,15 +210,33 @@ namespace Network
                         writer.Write(position.z);
 
                         Driver.Send(pipeline, connection, writer);
+                        
+                        // tell other clients you have spawned
+                        for (int i = 0; i < connections.Length; i++)
+                        {
+                            var ID = connections[i].InternalId;
+                            if (ID != playerID)
+                            {
+                                Debug.Log($"Spawning new player {playerID} on client {ID}");
+                                SendSpawnPlayer(playerID, connections[i]);
+                            }
+                        }
+                        
+                        // tell this client about the other clients
+                        foreach (var ID in world.PlayerIDs)
+                        {
+                            if (ID != playerID)
+                            {
+                                Debug.Log($"Spawning pre-existing player {ID} on {playerID}.");
+                                SendSpawnPlayer(ID, connection);
+                            }
+                        }
                     }
 
                     break;
                 }
                 case ClientNetworkEvent.ClientLocationUpdate:
                 {
-                    // Get player location from readerContext.
-                    int playerID = connectionPlayerIDs[connectionID];
-
                     Vector3 newPosition = new Vector3(
                         reader.ReadFloat(ref readerContext),
                         reader.ReadFloat(ref readerContext),
@@ -166,12 +248,22 @@ namespace Network
                         reader.ReadFloat(ref readerContext),
                         reader.ReadFloat(ref readerContext)
                     );
+                    Vector3 newVelocity = new Vector3(
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext)
+                    );
+                    Vector3 newAngularVelocity = new Vector3(
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext),
+                        reader.ReadFloat(ref readerContext)
+                    );
 
                     world.SetPlayerPosition(playerID, newPosition);
                     world.SetPlayerRotation(playerID, newRotation);
-
-                    Debug.Log($"Server: Update player location (ID {playerID}) {newPosition.x}, {newPosition.y}, {newPosition.z}.");
-
+                    world.SetPlayerVelocity(playerID, newVelocity);
+                    world.SetPlayerAngularVelocity(playerID, newAngularVelocity);
+                    
                     break;
                 }
                 default:
