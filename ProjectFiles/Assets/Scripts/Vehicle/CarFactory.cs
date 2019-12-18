@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Vehicle
 {
-    public class Car : MonoBehaviour
+    public class CarFactory : MonoBehaviour
     {
         public List<Axle> axles;
         public CarProperties carProperties;

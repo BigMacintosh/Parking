@@ -4,7 +4,7 @@ namespace Vehicle
 {
     public class DriveController : MonoBehaviour
     {
-        private Car car;
+        private CarFactory carFactory;
         private CarProperties carProperties;
         private float maxMotorTorque = 10000;
         private float maxSteeringAngle = 30;
@@ -16,15 +16,15 @@ namespace Vehicle
         {
             rb = GetComponent<Rigidbody>();
             v = rb.velocity.magnitude * 3.6f; // km/h
-            car = GetComponent<Car>();
-            carProperties = car.carProperties;
+            carFactory = GetComponent<CarFactory>();
+            carProperties = carFactory.carProperties;
         }
 
         private void FixedUpdate()
         {
             var torque = Input.GetAxis("Vertical") * maxMotorTorque;
             var steering = Input.GetAxis("Horizontal") * maxSteeringAngle / TurnMultiplier(v);
-            foreach (var axle in car.axles)
+            foreach (var axle in carFactory.axles)
             {
                 if (axle.Steering)
                 {

@@ -247,7 +247,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a377eb7687602754fb0908f412d2391e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  car: {fileID: 0}
   velocityText: {fileID: 244088713}
 --- !u!114 &244088713
 MonoBehaviour:
@@ -1312,7 +1311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cba4e9919d9048be83a16ec2872082d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameLoop: 1
+  gameLoop: 2
 --- !u!4 &1464328877
 Transform:
   m_ObjectHideFlags: 0
