@@ -72,6 +72,7 @@ namespace Network
                 
                     var position = transform.position;
                     writer.Write(position.x);
+                    writer.Write();
                     writer.Write(position.y);
                     writer.Write(position.z);
 
@@ -180,7 +181,7 @@ namespace Network
                 writer.Write(rotation.x);
                 writer.Write(rotation.y);
                 writer.Write(rotation.z);
-                writer.Write(rotation.z);
+                writer.Write(rotation.w);
 
                 Driver.Send(pipeline, connection, writer);
             }

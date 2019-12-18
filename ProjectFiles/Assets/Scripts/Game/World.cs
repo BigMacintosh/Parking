@@ -132,5 +132,8 @@ namespace Game
                 return locations[rand.Next(0, locations.Count - 1)];
             }
         }
+        public Dictionary<int, GameObject> Players => cars;
+        
+        public IEnumerable<int> PlayerIDs => cars.Keys;
     }
 }
