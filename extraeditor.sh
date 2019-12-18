@@ -14,5 +14,3 @@ ln -s $currdirectory/ProjectFiles/Assets $newfolder/ProjectFiles/Assets
 ln -s $currdirectory/ProjectFiles/ProjectSettings $newfolder/ProjectFiles/ProjectSettings
 
 
-# multiplayer
-cp -a $currdirectory/multiplayer $newfolder
