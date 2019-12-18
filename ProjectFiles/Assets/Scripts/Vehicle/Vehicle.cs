@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Vehicle
 {
-    public class CarFactory : MonoBehaviour
+    public class Vehicle : MonoBehaviour
     {
         public List<Axle> axles;
-        public CarProperties carProperties;
+        public VehicleProperties vehicleProperties;
         private DriveController driveController;
 
 
@@ -41,8 +41,9 @@ namespace Vehicle
     // Stores properties for each type of car
     // Allows drive controller to change based on different properties.
     [Serializable]
-    public class CarProperties
+    public class VehicleProperties
     {
+        // Scale from 1 - 10
         [field: SerializeField] public int SpeedRating { get; private set; }
         [field: SerializeField] public int SteeringRating { get; private set; }
         [field: SerializeField] public int WeightRating { get; private set; }

@@ -5,8 +5,8 @@ namespace Vehicle
 {
     public class DriveController : MonoBehaviour
     {
-        private CarFactory carFactory;
-        private CarProperties carProperties;
+        private Vehicle vehicle;
+        private VehicleProperties vehicleProperties;
         private float maxMotorTorque = 10000;
         private float maxSteeringAngle = 30;
 

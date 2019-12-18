@@ -68,7 +68,7 @@ namespace Game
 
         public void SetPlayerControllable(int playerID)
         {
-            cars[playerID].GetComponent<Vehicle.CarFactory>().SetControllable();
+            cars[playerID].GetComponent<Vehicle.Vehicle>().SetControllable();
         }
 
         public void SetPlayerPosition(int playerID, Vector3 position)
