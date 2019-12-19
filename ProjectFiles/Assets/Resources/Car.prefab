@@ -238,6 +238,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -284,7 +285,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2754571377349320128}
-  - component: {fileID: 2754571377349320159}
+  - component: {fileID: 678553325776773132}
   - component: {fileID: 2754571377349320129}
   - component: {fileID: 2754571377349320130}
   - component: {fileID: 2754571377349320131}
@@ -311,7 +312,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2754571377349320159
+--- !u!114 &678553325776773132
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -320,10 +321,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2754571377349320158}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cc5e3f93d81e46d7b1645c8ed424142, type: 3}
+  m_Script: {fileID: 11500000, guid: 1e8f351e96b44f0a86499de675baa951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  car: {fileID: 2754571377349320158}
   axles:
   - <LeftWheel>k__BackingField: {fileID: 2754571378156794546}
     <RightWheel>k__BackingField: {fileID: 2754571376818001263}
@@ -331,10 +331,12 @@ MonoBehaviour:
     <Steering>k__BackingField: 1
   - <LeftWheel>k__BackingField: {fileID: 2754571376266578945}
     <RightWheel>k__BackingField: {fileID: 2754571376626538339}
-    <Motor>k__BackingField: 1
+    <Motor>k__BackingField: 0
     <Steering>k__BackingField: 0
-  maxMotorTorque: 10000
-  maxSteeringAngle: 30
+  carProperties:
+    <SpeedRating>k__BackingField: 0
+    <SteeringRating>k__BackingField: 0
+    <WeightRating>k__BackingField: 0
 --- !u!54 &2754571377349320129
 Rigidbody:
   m_ObjectHideFlags: 0
