@@ -17,6 +17,11 @@ public class BezierSplineInspector : Editor
 	
     private int selectedIndex = -1;
 
+    private static Color[] modeColors = {
+        Color.white,
+        Color.yellow,
+        Color.cyan
+    };
     
     private void OnSceneGUI () {
         //Get the bezier component
@@ -55,11 +60,7 @@ public class BezierSplineInspector : Editor
         }
     }    
     
-    private static Color[] modeColors = {
-        Color.white,
-        Color.yellow,
-        Color.cyan
-    };
+    
     //Function to display handles of points, display a handle only when selected and aa button otherwise
     private Vector3 ShowPoint (int index) {
         //Get handle location
