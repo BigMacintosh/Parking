@@ -1,24 +1,26 @@
-using System.Collections.Generic;
 using Game;
 using Unity.Networking.Transport;
 using UnityEngine;
 
 namespace Network.Events
 {
-    public class ServerSpawnPlayerEvent : Event
+    public class ClientLocationUpdate : Event
     {
         public Vector3 Position { get; private set; }
         public Quaternion Rotation { get; private set; }
+        public Vector3 Velocity { get; private set; }
+        public Vector3 AngularVelocity { get; private set; }
         
-        public ServerSpawnPlayerEvent() {}
+        public ClientLocationUpdate() {}
 
-        public ServerSpawnPlayerEvent(World world, int playerID)
+        public ClientLocationUpdate(World world)
         {
-            ID = 0x03;
-            Length = sizeof(float) * (3 + 4) + 1;
-            var transform = world.GetPlayerTransform(playerID);
+            ID = 0x82;
+            var transform = world.GetPlayerTransform(world.ClientID);
             Position = transform.position;
             Rotation = transform.rotation;
+            Velocity = world.GetPlayerVelocity(world.ClientID);
+            AngularVelocity = world.GetPlayerAngularVelocity(world.ClientID);
         }
 
         public override void Serialise(DataStreamWriter writer)
@@ -26,12 +28,16 @@ namespace Network.Events
             base.Serialise(writer);
             writer.WriteVector3(Position);
             writer.WriteQuaternion(Rotation);
+            writer.WriteVector3(Velocity);
+            writer.WriteVector3(AngularVelocity);
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
             Position = reader.ReadVector3(ref context);
             Rotation = reader.ReadQuaternion(ref context);
+            Velocity = reader.ReadVector3(ref context);
+            AngularVelocity = reader.ReadVector3(ref context);
         }
     }
 }
