@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2754571376266578944
 Transform:
   m_ObjectHideFlags: 0
@@ -77,7 +77,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2754571376626538338
 Transform:
   m_ObjectHideFlags: 0
@@ -138,7 +138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2754571376818001262
 Transform:
   m_ObjectHideFlags: 0
@@ -211,7 +211,7 @@ Transform:
   m_GameObject: {fileID: 2754571377229882394}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -0.02, z: 0}
-  m_LocalScale: {x: 1.5, y: 1, z: 3}
+  m_LocalScale: {x: 2, y: 1.5, z: 3}
   m_Children: []
   m_Father: {fileID: 2754571377349320128}
   m_RootOrder: 0
@@ -285,10 +285,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2754571377349320128}
-  - component: {fileID: 678553325776773132}
   - component: {fileID: 2754571377349320129}
   - component: {fileID: 2754571377349320130}
   - component: {fileID: 2754571377349320131}
+  - component: {fileID: 6844538934845955594}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -312,31 +312,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &678553325776773132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2754571377349320158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e8f351e96b44f0a86499de675baa951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  axles:
-  - <LeftWheel>k__BackingField: {fileID: 2754571378156794546}
-    <RightWheel>k__BackingField: {fileID: 2754571376818001263}
-    <Motor>k__BackingField: 1
-    <Steering>k__BackingField: 1
-  - <LeftWheel>k__BackingField: {fileID: 2754571376266578945}
-    <RightWheel>k__BackingField: {fileID: 2754571376626538339}
-    <Motor>k__BackingField: 0
-    <Steering>k__BackingField: 0
-  carProperties:
-    <SpeedRating>k__BackingField: 0
-    <SteeringRating>k__BackingField: 0
-    <WeightRating>k__BackingField: 0
 --- !u!54 &2754571377349320129
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -345,14 +320,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2754571377349320158}
   serializedVersion: 2
-  m_Mass: 700
-  m_Drag: 0.1
-  m_AngularDrag: 6
+  m_Mass: 1
+  m_Drag: 0.05
+  m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &2754571377349320130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,6 +360,31 @@ MonoBehaviour:
   rightWheel: {fileID: 2754571376626538339}
   car: {fileID: 2754571377349320158}
   antiSwayMultiplier: 5000
+--- !u!114 &6844538934845955594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2754571377349320158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8f351e96b44f0a86499de675baa951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axles:
+  - <LeftWheel>k__BackingField: {fileID: 2754571378156794546}
+    <RightWheel>k__BackingField: {fileID: 2754571376818001263}
+    <Motor>k__BackingField: 1
+    <Steering>k__BackingField: 1
+  - <LeftWheel>k__BackingField: {fileID: 2754571376266578945}
+    <RightWheel>k__BackingField: {fileID: 2754571376626538339}
+    <Motor>k__BackingField: 0
+    <Steering>k__BackingField: 0
+  vehicleProperties:
+    <SpeedRating>k__BackingField: 0
+    <SteeringRating>k__BackingField: 0
+    <WeightRating>k__BackingField: 0
 --- !u!1 &2754571377677959052
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,7 +435,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2754571378156794545
 Transform:
   m_ObjectHideFlags: 0

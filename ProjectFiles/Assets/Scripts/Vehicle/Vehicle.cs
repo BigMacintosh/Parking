@@ -14,8 +14,9 @@ namespace Vehicle
         public void SetControllable()
         {
             // Add DriveController to car
-            driveController = gameObject.AddComponent<DriveController>();
-            driveController.Axles = axles;
+            //driveController = gameObject.AddComponent<DriveController>();
+            gameObject.AddComponent<VehicleDriver>();
+            //driveController.Axles = axles;
             
             // Set camera to follow car
             var camera = FindObjectOfType<CameraFollowController>();
