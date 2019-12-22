@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Security;
 using UnityEngine;
 
 namespace Vehicle
@@ -13,6 +14,8 @@ namespace Vehicle
         public float maxSpeed, accel, maxSteer, steer;
 
         private float curSpeed;
+        
+        public List<DriveWheel> driveWheels;
 
     // Start is called before the first frame update
         void Start()
@@ -22,8 +25,13 @@ namespace Vehicle
 
         void FixedUpdate()
         {
-            Debug.Log("Assigning Speed: " + curSpeed);
-            if (Input.GetAxis("Vertical") != 0)
+            bool grounded = false;
+            foreach (DriveWheel wheel in driveWheels)
+            {
+                grounded = wheel.CheckGround() ? true : grounded;
+            }
+            
+            if (Input.GetAxis("Vertical") != 0 && grounded)
             {
                 curSpeed = Input.GetAxis("Vertical") > 0 ? Mathf.Min(curSpeed + Input.GetAxis("Vertical") * accel * Time.deltaTime, maxSpeed) : Mathf.Max(curSpeed + Input.GetAxis("Vertical") * accel * Time.deltaTime, -maxSpeed);
 

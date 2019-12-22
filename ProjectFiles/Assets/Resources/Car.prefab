@@ -200,6 +200,7 @@ GameObject:
   - component: {fileID: 1614705145927116350}
   - component: {fileID: 9126126177285553001}
   - component: {fileID: 4497905830164160160}
+  - component: {fileID: 9212954234082358087}
   m_Layer: 0
   m_Name: Front Left
   m_TagString: Untagged
@@ -282,6 +283,18 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &9212954234082358087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557248833853144062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0851c5703546d4a008d7e540718265a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2754571376266578975
 GameObject:
   m_ObjectHideFlags: 0
@@ -654,19 +667,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8f351e96b44f0a86499de675baa951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axles:
-  - <LeftWheel>k__BackingField: {fileID: 2754571378156794546}
-    <RightWheel>k__BackingField: {fileID: 2754571376818001263}
-    <Motor>k__BackingField: 1
-    <Steering>k__BackingField: 1
-  - <LeftWheel>k__BackingField: {fileID: 2754571376266578945}
-    <RightWheel>k__BackingField: {fileID: 2754571376626538339}
-    <Motor>k__BackingField: 0
-    <Steering>k__BackingField: 0
   vehicleProperties:
     <SpeedRating>k__BackingField: 0
     <SteeringRating>k__BackingField: 0
     <WeightRating>k__BackingField: 0
+  driveWheels:
+  - {fileID: 2403165006666639099}
+  - {fileID: 9212954234082358087}
 --- !u!1 &2754571377677959052
 GameObject:
   m_ObjectHideFlags: 0
@@ -778,6 +785,7 @@ GameObject:
   - component: {fileID: 6946349381970916819}
   - component: {fileID: 5762426551730746019}
   - component: {fileID: 6852791002537158854}
+  - component: {fileID: 2403165006666639099}
   m_Layer: 0
   m_Name: Front Right
   m_TagString: Untagged
@@ -860,3 +868,15 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &2403165006666639099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5144751688826753969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0851c5703546d4a008d7e540718265a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

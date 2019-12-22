@@ -9,6 +9,8 @@ namespace Vehicle
         public VehicleProperties vehicleProperties;
         private VehicleDriver driver;
 
+        public List<DriveWheel> driveWheels;
+
 
         public void SetControllable()
         {
@@ -16,7 +18,8 @@ namespace Vehicle
             driver  = gameObject.AddComponent<VehicleDriver>();
 
             driver.accel = 5;
-            driver.maxSpeed = 30;
+            driver.maxSpeed = 15;
+            driver.driveWheels = driveWheels;
 
             // Set camera to follow car
             var camera = FindObjectOfType<CameraFollowController>();
