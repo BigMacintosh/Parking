@@ -72,7 +72,6 @@ namespace Network
                 
                     var position = transform.position;
                     writer.Write(position.x);
-                    writer.Write();
                     writer.Write(position.y);
                     writer.Write(position.z);
 

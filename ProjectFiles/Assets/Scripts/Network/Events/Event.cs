@@ -12,6 +12,6 @@ namespace Network.Events
             writer.Write(ID);
         }
 
-        public abstract void Deserialise(DataStreamReader reader, DataStreamReader.Context context);
+        public abstract void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context);
     }
 }

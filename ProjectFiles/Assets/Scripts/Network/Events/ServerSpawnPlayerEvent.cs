@@ -7,8 +7,8 @@ namespace Network.Events
 {
     public class ServerSpawnPlayerEvent : Event
     {
-        public Vector3 position;
-        public Quaternion rotation;
+        public Vector3 Position { get; private set; }
+        public Quaternion Rotation { get; private set; }
         
         public ServerSpawnPlayerEvent() {}
 
@@ -16,25 +16,23 @@ namespace Network.Events
         {
             ID = 0x03;
             Length = sizeof(float) * (3 + 4) + 1;
-            Transform transform = world.GetPlayerTransform(playerID);
-            position = transform.position;
-            rotation = transform.rotation;
+            var transform = world.GetPlayerTransform(playerID);
+            Position = transform.position;
+            Rotation = transform.rotation;
         }
 
         public override void Serialise(DataStreamWriter writer)
         {
             base.Serialise(writer);
-            position.Serialise(writer);
-            rotation.Serialise(writer);
+            writer.WriteVector3(Position);
+            writer.WriteQuaternion(Rotation);
         }
 
-        public override void Deserialise(DataStreamReader reader, DataStreamReader.Context context)
+        public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
             var id = reader.ReadByte(ref context);
-            position = new Vector3();
-            position.Deserialise(reader, context);
-            rotation = new Quaternion();
-            rotation.Deserialise(reader, context);
+            Position = reader.ReadVector3(ref context);
+            Rotation = reader.ReadQuaternion(ref context);
         }
     }
 }

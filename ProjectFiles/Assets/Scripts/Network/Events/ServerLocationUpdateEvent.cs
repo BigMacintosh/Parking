@@ -7,10 +7,10 @@ namespace Network.Events
 {
     public class ServerLocationUpdateEvent : Event
     {
-        public Dictionary<int, Vector3> positions { get; } = new Dictionary<int, Vector3>();
-        public Dictionary<int, Quaternion> rotations { get; } = new Dictionary<int, Quaternion>();
-        public Dictionary<int, Vector3> velocities { get; } = new Dictionary<int, Vector3>();
-        public Dictionary<int, Vector3> angularVelocities { get; } = new Dictionary<int, Vector3>();
+        public Dictionary<int, Vector3> Positions { get; } = new Dictionary<int, Vector3>();
+        public Dictionary<int, Quaternion> Rotations { get; } = new Dictionary<int, Quaternion>();
+        public Dictionary<int, Vector3> Velocities { get; } = new Dictionary<int, Vector3>();
+        public Dictionary<int, Vector3> AngularVelocities { get; } = new Dictionary<int, Vector3>();
         private int count;
 
         public ServerLocationUpdateEvent() {}
@@ -25,42 +25,38 @@ namespace Network.Events
                 var car = pair.Value;
                 
                 var transform = car.transform;
-                positions[id] = transform.position;
-                rotations[id] = transform.rotation;
+                Positions[id] = transform.position;
+                Rotations[id] = transform.rotation;
 
                 var rb = car.GetComponent<Rigidbody>();
-                velocities[id] = rb.velocity;
-                angularVelocities[id] = rb.angularVelocity;
+                Velocities[id] = rb.velocity;
+                AngularVelocities[id] = rb.angularVelocity;
             }
         }
         
         public override void Serialise(DataStreamWriter writer)
         {
             base.Serialise(writer);
-            writer.Write(Length);
-            foreach (var id in positions.Keys)
+            writer.Write(Positions.Count);
+            foreach (var id in Positions.Keys)
             {
-                positions[id].Serialise(writer);
-                rotations[id].Serialise(writer);
-                velocities[id].Serialise(writer);
-                angularVelocities[id].Serialise(writer);
+                writer.WriteVector3(Positions[id]);
+                writer.WriteQuaternion(Rotations[id]);
+                writer.WriteVector3(Velocities[id]);
+                writer.WriteVector3(AngularVelocities[id]);
             }
         }
         
-        public override void Deserialise(DataStreamReader reader, DataStreamReader.Context context)
+        public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
             var length = reader.ReadByte(ref context);
             for (int i = 0; i < length; i++)
             {
                 var id = reader.ReadByte(ref context);
-                positions[id] = new Vector3();
-                positions[id].Deserialise(reader, context);
-                rotations[id] = new Quaternion();
-                rotations[id].Deserialise(reader, context);
-                velocities[id] = new Vector3();
-                velocities[id].Deserialise(reader, context);
-                angularVelocities[id] = new Vector3();
-                angularVelocities[id].Deserialise(reader, context);
+                Positions[id] = reader.ReadVector3(ref context);
+                Rotations[id] = reader.ReadQuaternion(ref context);
+                Velocities[id] = reader.ReadVector3(ref context);
+                AngularVelocities[id] = reader.ReadVector3(ref context);
             }
         }
     }
