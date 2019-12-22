@@ -17,6 +17,8 @@ public class VehicleDriver : MonoBehaviour
 
     void FixedUpdate()
     {
-        body.velocity = new Vector3(0f, body.velocity.y, 10f);
+        var drive = transform.forward * 10f;
+        drive.y = body.velocity.y;
+        body.velocity = drive;
     }
 }
