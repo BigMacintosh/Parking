@@ -39,7 +39,7 @@ namespace Vehicle
 
                 //body.velocity = vel;
 
-                body.AddForce(transform.forward * body.mass * accel * Input.GetAxis("Vertical") * 2);
+                body.AddForce(transform.forward * body.mass * accel * Input.GetAxis("Vertical") * 3);
                 Debug.Log("ADDING FORCE: " + (transform.forward * body.mass * accel * Input.GetAxis("Vertical") * 2));
             }
             /*else
