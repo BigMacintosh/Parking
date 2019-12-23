@@ -49,6 +49,16 @@ namespace Vehicle
 
                 body.velocity = vel;
             }
+
+            if (Mathf.Abs(body.rotation.eulerAngles.z) > 45)
+            {
+                var targetRotation = Quaternion.LookRotation(
+                    Vector3.ProjectOnPlane(body.transform.forward,
+                        Vector3.up));
+
+                body.MoveRotation(Quaternion.RotateTowards(
+                    body.rotation, targetRotation, Time.fixedDeltaTime * 90f));
+            }
         }
     }
 }
