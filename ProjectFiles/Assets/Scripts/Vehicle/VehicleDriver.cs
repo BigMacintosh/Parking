@@ -35,11 +35,14 @@ namespace Vehicle
             {
                 curSpeed = Input.GetAxis("Vertical") > 0 ? Mathf.Min(curSpeed + Input.GetAxis("Vertical") * accel * Time.deltaTime, maxSpeed) : Mathf.Max(curSpeed + Input.GetAxis("Vertical") * accel * Time.deltaTime, -maxSpeed);
 
-                Vector3 vel = new Vector3(0f, body.velocity.y, 0f) + transform.forward * curSpeed;
+                //Vector3 vel = new Vector3(0f, body.velocity.y, 0f) + transform.forward * curSpeed;
 
-                body.velocity = vel;
+                //body.velocity = vel;
+
+                body.AddForce(transform.forward * body.mass * accel * Input.GetAxis("Vertical") * 2);
+                Debug.Log("ADDING FORCE: " + (transform.forward * body.mass * accel * Input.GetAxis("Vertical") * 2));
             }
-            else
+            /*else
             {
                 
                 curSpeed += curSpeed > 0 ? - accel * Time.deltaTime : accel * Time.deltaTime;
@@ -48,10 +51,11 @@ namespace Vehicle
                 Vector3 vel = new Vector3(0f, body.velocity.y, 0f) + transform.forward * curSpeed;
 
                 body.velocity = vel;
-            }
+            }*/
 
-            if (Mathf.Abs(body.rotation.eulerAngles.z) > 45)
+            if (Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315)
             {
+                Debug.Log("TURNING: " +body.rotation.eulerAngles.z);
                 var targetRotation = Quaternion.LookRotation(
                     Vector3.ProjectOnPlane(body.transform.forward,
                         Vector3.up));
