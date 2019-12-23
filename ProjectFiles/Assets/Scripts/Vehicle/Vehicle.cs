@@ -20,6 +20,7 @@ namespace Vehicle
             driver.accel = 5;
             driver.maxSpeed = 15;
             driver.driveWheels = driveWheels;
+            driver.steer = 20;
 
             // Set camera to follow car
             var camera = FindObjectOfType<CameraFollowController>();
