@@ -11,7 +11,7 @@ namespace Vehicle
 
         //Car Properties
 
-        public float maxSpeed, accel, maxSteer, steer;
+        public float maxSpeed, accel, maxSteer, steer, drift;
 
         private float curSpeed;
         
@@ -40,9 +40,10 @@ namespace Vehicle
             if (Input.GetAxis("Horizontal") != 0 && grounded)
             {
                 
-                if (body.angularVelocity.magnitude < 2)
+                if (body.angularVelocity.magnitude < 0.8f)
                 {
-                    body.AddTorque(transform.up * Input.GetAxis("Horizontal") * steer * 500f);
+                    body.AddTorque(transform.up * Input.GetAxis("Horizontal") * steer * 400f);
+                    body.velocity = getForward() + getSide()*0.7f;
 
                 }
             }
@@ -56,6 +57,16 @@ namespace Vehicle
                 body.MoveRotation(Quaternion.RotateTowards(
                     body.rotation, targetRotation, Time.fixedDeltaTime * 90f));
             }
+        }
+
+        Vector3 getForward()
+        {
+            return transform.forward * Vector3.Dot(body.velocity, transform.forward);
+        }
+
+        Vector3 getSide()
+        {
+            return transform.right * Vector3.Dot(body.velocity, transform.right);
         }
     }
 }
