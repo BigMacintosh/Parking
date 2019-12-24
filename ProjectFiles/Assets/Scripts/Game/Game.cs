@@ -78,6 +78,11 @@ namespace Game
 
         public void Update()
         {
+            // Quit the game if the escape key is pressed.
+            if(Input.GetKeyDown("escape")) {
+                Application.Quit(); 
+            }
+
             // Switch game loop if needed
             if (requestedGameLoopTypes.Count > 0)
             {
@@ -108,7 +113,7 @@ namespace Game
                 {
                     ShutdownGameLoops();
 
-                    Debug.Log("Game loop initialization failed ... reverting to boot loop");
+                    Debug.Log("Game loop initialization failed.");
                 }
 
                 requestedGameLoopTypes.Clear();
