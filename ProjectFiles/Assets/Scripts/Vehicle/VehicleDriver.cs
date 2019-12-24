@@ -13,8 +13,6 @@ namespace Vehicle
 
         public float maxSpeed, accel, maxSteer, steer, drift;
 
-        private float curSpeed;
-        
         public List<DriveWheel> driveWheels;
 
     // Start is called before the first frame update
@@ -33,19 +31,14 @@ namespace Vehicle
             
             if (Input.GetAxis("Vertical") != 0 && grounded)
             {
-                body.AddForce(transform.forward * body.mass * accel * Input.GetAxis("Vertical")*4f);
+                body.AddForce(body.mass * accel * Input.GetAxis("Vertical")*4f * transform.forward);
             }
 
 
-            if (Input.GetAxis("Horizontal") != 0 && grounded)
+            if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < 0.8f)
             {
-                
-                if (body.angularVelocity.magnitude < 0.8f)
-                {
-                    body.AddTorque(transform.up * Input.GetAxis("Horizontal") * steer * 400f);
-                    body.velocity = getForward() + getSide()*0.7f;
-
-                }
+                body.AddTorque(Input.GetAxis("Horizontal") * steer * 400f * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
+                body.velocity = transform.forward * GetForward() +  GetSide() * 0.7f * transform.right;
             }
 
             if (Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315)
@@ -59,14 +52,14 @@ namespace Vehicle
             }
         }
 
-        Vector3 getForward()
+        float GetForward()
         {
-            return transform.forward * Vector3.Dot(body.velocity, transform.forward);
+            return Vector3.Dot(body.velocity, transform.forward);
         }
 
-        Vector3 getSide()
+        float GetSide()
         {
-            return transform.right * Vector3.Dot(body.velocity, transform.right);
+            return Vector3.Dot(body.velocity, transform.right);
         }
     }
 }
