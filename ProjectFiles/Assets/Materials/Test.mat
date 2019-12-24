@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Strap_Mat
-  m_Shader: {fileID: 4800000, guid: db7f7561c8be2854f85f29593611496b, type: 3}
-  m_ShaderKeywords: _METALLICGLOSSMAP _NORMALMAP
+  m_Name: Test
+  m_Shader: {fileID: 4800000, guid: 35e778fba8b2b49a198d8d7cfced67eb, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: db17334dfe5991a4bbe241ee9a728c38, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,18 +37,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 6, y: 6}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: fe547a183eb07104e8d66a3fc64a8fec, type: 3}
-        m_Scale: {x: 6, y: 6}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 0, y: 0}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: f5df2fb0c070b57429f8ca23b216093b, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 2800000, guid: f5df2fb0c070b57429f8ca23b216093b, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
@@ -64,7 +64,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Metallic: 0
+    - _Metallic: 1
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
@@ -74,5 +74,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.6603774, g: 0.43298328, b: 0.43298328, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
