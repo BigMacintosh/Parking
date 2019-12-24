@@ -11,7 +11,7 @@ namespace Vehicle
 
         //Car Properties
 
-        public float maxSpeed, accel, maxSteer, steer, drift;
+        public float maxSpeed, accel, maxSteer, steer, driftFactor;
 
         public List<DriveWheel> driveWheels;
 
@@ -31,21 +31,29 @@ namespace Vehicle
             }
             
             //Driving Forces
-            if (Input.GetAxis("Vertical") != 0 && grounded)
+            if (Input.GetAxis("Vertical") != 0 && grounded && Mathf.Abs(GetForward()) < maxSpeed)
             {
-                body.AddForce(body.mass * accel * Input.GetAxis("Vertical")*4f * transform.forward);
+                body.AddForce(body.mass * accel * Input.GetAxis("Vertical") * transform.forward);
             }
 
             //Turning Forces
             if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < 1f)
             {
-                body.AddTorque(Input.GetAxis("Horizontal") * steer * 200f * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
+                body.AddTorque(Input.GetAxis("Horizontal") * steer * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
             }
             
             //Drifting
             if (grounded)
             {
-                body.velocity = transform.forward * GetForward() +  GetSide() * 0.9f * transform.right;
+                if (Mathf.Abs(GetForward()) < maxSpeed * driftFactor)
+                {
+                    body.velocity -= GetSide() * 0.25f * transform.right;
+                }
+                else
+                {
+                    Debug.Log("DRIFITING");
+                    
+                }
             }
 
             if (Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315)

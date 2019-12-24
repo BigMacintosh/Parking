@@ -17,10 +17,11 @@ namespace Vehicle
             // Add DriveController to car
             driver  = gameObject.AddComponent<VehicleDriver>();
 
-            driver.accel = 5;
-            driver.maxSpeed = 15;
+            driver.accel = 20;
+            driver.maxSpeed = 50;
             driver.driveWheels = driveWheels;
-            driver.steer = 20;
+            driver.steer = 4000;
+            driver.driftFactor = 0.75f;
 
             // Set camera to follow car
             var camera = FindObjectOfType<CameraFollowController>();
