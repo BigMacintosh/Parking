@@ -24,21 +24,28 @@ namespace Vehicle
         void FixedUpdate()
         {
             bool grounded = false;
+            
             foreach (DriveWheel wheel in driveWheels)
             {
                 grounded = wheel.CheckGround() ? true : grounded;
             }
             
+            //Driving Forces
             if (Input.GetAxis("Vertical") != 0 && grounded)
             {
                 body.AddForce(body.mass * accel * Input.GetAxis("Vertical")*4f * transform.forward);
             }
 
-
-            if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < 0.8f)
+            //Turning Forces
+            if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < 1f)
             {
-                body.AddTorque(Input.GetAxis("Horizontal") * steer * 400f * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
-                body.velocity = transform.forward * GetForward() +  GetSide() * 0.7f * transform.right;
+                body.AddTorque(Input.GetAxis("Horizontal") * steer * 200f * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
+            }
+            
+            //Drifting
+            if (grounded)
+            {
+                body.velocity = transform.forward * GetForward() +  GetSide() * 0.9f * transform.right;
             }
 
             if (Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315)
