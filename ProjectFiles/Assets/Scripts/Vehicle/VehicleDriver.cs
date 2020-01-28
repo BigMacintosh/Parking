@@ -49,14 +49,9 @@ namespace Vehicle
                 {
                     body.velocity -= GetSide() * 0.25f * transform.right;
                 }
-                else
-                {
-                    Debug.Log("DRIFITING");
-                    
-                }
             }
 
-            if (Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315)
+            if ((Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315) || (Mathf.Abs(body.rotation.eulerAngles.x) > 60 && Mathf.Abs(body.rotation.eulerAngles.x)< 300))
             {
                 var targetRotation = Quaternion.LookRotation(
                     Vector3.ProjectOnPlane(body.transform.forward,
