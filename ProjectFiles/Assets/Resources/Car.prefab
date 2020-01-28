@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5461519423038056309}
   - component: {fileID: 1356662981119996041}
   - component: {fileID: 1115460214467729522}
+  - component: {fileID: 8601432621199621727}
   m_Layer: 0
   m_Name: Rear Left
   m_TagString: Untagged
@@ -94,6 +95,19 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &8601432621199621727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039774638012191794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0851c5703546d4a008d7e540718265a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  suspDist: 0.1
 --- !u!1 &1130308575933263039
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,6 +120,7 @@ GameObject:
   - component: {fileID: 6053601712756967684}
   - component: {fileID: 2841657645214441155}
   - component: {fileID: 6138957332035685857}
+  - component: {fileID: 7677424253972222324}
   m_Layer: 0
   m_Name: Rear Right
   m_TagString: Untagged
@@ -188,6 +203,19 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &7677424253972222324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130308575933263039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0851c5703546d4a008d7e540718265a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  suspDist: 0.1
 --- !u!1 &1557248833853144062
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,7 +323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0851c5703546d4a008d7e540718265a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extension: 1
+  suspDist: 0.1
 --- !u!1 &2754571377229882394
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,7 +448,7 @@ Rigidbody:
   m_Mass: 100
   m_Drag: 0.05
   m_AngularDrag: 0.5
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -585,4 +613,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0851c5703546d4a008d7e540718265a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extension: 1
+  suspDist: 0.1
