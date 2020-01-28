@@ -4,18 +4,21 @@ using UnityEngine;
 
 namespace Network.Events
 {
-    public class ClientLocationUpdate : Event
+    public class ClientLocationUpdateEvent : Event
     {
         public Vector3 Position { get; private set; }
         public Quaternion Rotation { get; private set; }
         public Vector3 Velocity { get; private set; }
         public Vector3 AngularVelocity { get; private set; }
-        
-        public ClientLocationUpdate() {}
 
-        public ClientLocationUpdate(World world)
+        public ClientLocationUpdateEvent()
         {
-            ID = 0x82;
+            ID = EventType.ClientLocationUpdate;
+            Length = (13 * sizeof(float)) + 1;
+        }
+
+        public ClientLocationUpdateEvent(World world) : this()
+        {
             var transform = world.GetPlayerTransform(world.ClientID);
             Position = transform.position;
             Rotation = transform.rotation;

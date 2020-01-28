@@ -13,11 +13,14 @@ namespace Network.Events
         public Dictionary<int, Vector3> AngularVelocities { get; } = new Dictionary<int, Vector3>();
         private int count;
 
-        public ServerLocationUpdateEvent() {}
-        
-        public ServerLocationUpdateEvent(World world)
+        public ServerLocationUpdateEvent()
         {
-            ID = 0x02;
+            ID = EventType.ServerLocationUpdate;
+            Length = 1;
+        }
+
+        public ServerLocationUpdateEvent(World world) : this()
+        {
             Length = ((3 + 4 + 3 + 3) * sizeof(float)) * world.GetNumPlayers() + 1;
             foreach (var pair in world.Players)
             {

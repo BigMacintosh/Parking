@@ -2,13 +2,14 @@ using Unity.Networking.Transport;
 
 namespace Network.Events
 {
-    public class ClientHandshake : Event
+    public class ClientHandshakeEvent : Event
     {
-        public ClientHandshake()
+        public ClientHandshakeEvent()
         {
-            ID = 0x81;
+            ID = EventType.ClientHandshake;
+            Length = 1;
         }
-        
+
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
             // ClientHandshake is empty, no need to deserialise

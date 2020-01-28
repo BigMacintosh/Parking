@@ -4,14 +4,24 @@ namespace Network.Events
 {
     public abstract class Event
     {
-        protected byte ID = 0xFF;
+        protected EventType ID = EventType.Undefined;
         public int Length { get; protected set; }
         
         public virtual void Serialise(DataStreamWriter writer)
         {
-            writer.Write(ID);
+            writer.Write((byte) ID);
         }
 
         public abstract void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context);
+
+        public void Handle(Server server, NetworkConnection connection)
+        {
+            server.Handle(this, connection);
+        }
+
+        public void Handle(Client client, NetworkConnection connection)
+        {
+            client.Handle(this, connection);
+        }
     }
 }

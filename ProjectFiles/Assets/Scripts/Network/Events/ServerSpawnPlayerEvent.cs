@@ -10,13 +10,15 @@ namespace Network.Events
         public int PlayerID { get; private set; }
         public Vector3 Position { get; private set; }
         public Quaternion Rotation { get; private set; }
-        
-        public ServerSpawnPlayerEvent() {}
+
+        public ServerSpawnPlayerEvent()
+        {
+            ID = EventType.ServerSpawnPlayerEvent;
+            Length = ((3 + 4) * sizeof(float)) + 2;
+        }
 
         public ServerSpawnPlayerEvent(Transform transform, int playerID)
         {
-            ID = 0x03;
-            Length = ((3 + 4) * sizeof(float)) + 2;
             Position = transform.position;
             Rotation = transform.rotation;
             PlayerID = playerID;

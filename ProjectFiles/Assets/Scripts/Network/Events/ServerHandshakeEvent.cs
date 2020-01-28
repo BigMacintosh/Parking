@@ -4,18 +4,21 @@ using UnityEngine;
 
 namespace Network.Events
 {
-    public class ServerHandshake : Event
+    public class ServerHandshakeEvent : Event
     {
         public int PlayerID { get; private set; }
         public Vector3 Position { get; private set; }
         public Quaternion Rotation { get; private set; }
-        
-        public ServerHandshake() {}
 
-        public ServerHandshake(Transform transform, int playerID)
+        
+        public ServerHandshakeEvent()
         {
-            ID = 0x01;
+            ID = EventType.ServerHandshake;
             Length = ((3 + 4) * sizeof(float)) + 2;
+        }
+
+        public ServerHandshakeEvent(Transform transform, int playerID) : this()
+        {
             Position = transform.position;
             Rotation = transform.rotation;
             PlayerID = playerID;
