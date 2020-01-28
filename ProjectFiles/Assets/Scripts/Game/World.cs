@@ -116,22 +116,28 @@ namespace Game
             return cars.Count;
         }
 
-        private class SpawnLocations
+        public List<int> GetPlayersNotInSpace()
         {
-            private readonly List<Vector3> locations = new List<Vector3>();
+            // TODO: Implement me ;)
+            throw new System.NotImplementedException();
+        }
+    }
+    
+    public class SpawnLocations
+    {
+        private readonly List<Vector3> locations = new List<Vector3>();
 
-            public SpawnLocations()
-            {
-                locations.Add(new Vector3(41.5f, 39.7f, 94.671f));
-                locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
-                locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
-            }
+        public SpawnLocations()
+        {
+            locations.Add(new Vector3(41.5f, 39.7f, 94.671f));
+            locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
+            locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
+        }
 
-            public Vector3 GetSpawn()
-            {
-                var rand = new Random();
-                return locations[rand.Next(0, locations.Count - 1)];
-            }
+        public Vector3 GetSpawn()
+        {
+            var rand = new Random();
+            return locations[rand.Next(0, locations.Count - 1)];
         }
     }
 }

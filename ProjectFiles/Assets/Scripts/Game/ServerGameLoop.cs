@@ -1,4 +1,5 @@
 ﻿using Network;
+using UnityEngine;
 
 namespace Game
 {
@@ -6,6 +7,7 @@ namespace Game
     {
         private Server server;
         private World world;
+        private RoundManager roundManager;
 
         public bool Init(string[] args)
         {
@@ -15,9 +17,14 @@ namespace Game
             // Create world
             world = new World();
 
+            
+            
             // Start server
             server = new Server(world, config);
             var success = server.Start();
+            
+            roundManager = new RoundManager(world);
+            roundManager.Subscribe(server);
             
             return success;
         }
@@ -30,8 +37,13 @@ namespace Game
 
         public void Update()
         {
+            if(Input.GetKeyDown("a") && Input.GetKeyDown("b"))
+            {
+                roundManager.StartGame();
+            }
             server.HandleNetworkEvents();
             world.Update();
+            
         }
 
         public void FixedUpdate()

@@ -23,6 +23,9 @@ namespace Game
             // Create world
             world = new World();
             
+            
+            
+            
             // Create HUD
             Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);
 
@@ -42,6 +45,7 @@ namespace Game
             #else
                 var success = client.Start("18.191.231.10");
             #endif
+
             
             
             return success;
