@@ -14,14 +14,9 @@ namespace Network.Events
 
         public abstract void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context);
 
-        public void Handle(Server server, NetworkConnection connection)
-        {
-            server.Handle(this, connection);
-        }
+        public abstract void Handle(Server server, NetworkConnection connection);
 
-        public void Handle(Client client, NetworkConnection connection)
-        {
-            client.Handle(this, connection);
-        }
+        public abstract void Handle(Client client, NetworkConnection connection);
+
     }
 }

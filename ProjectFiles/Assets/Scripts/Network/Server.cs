@@ -188,8 +188,9 @@ namespace Network
             using (var writer = new DataStreamWriter(spawnNewPlayer.Length, Allocator.Temp))
             {
                 spawnNewPlayer.Serialise(writer);
-                foreach (var otherClient in connections.Where(otherClient => otherClient.InternalId != playerID))
+                foreach (var otherClient in connections)
                 {
+                    if (otherClient.InternalId == playerID) continue;
                     Driver.Send(pipeline, otherClient, writer);
                 }
             }

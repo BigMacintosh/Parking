@@ -14,7 +14,7 @@ namespace Network.Events
         public ClientLocationUpdateEvent()
         {
             ID = EventType.ClientLocationUpdate;
-            Length = (13 * sizeof(float)) + 1;
+            Length = (3 + 3 + 3 + 4) * sizeof(float) + 1;
         }
 
         public ClientLocationUpdateEvent(World world) : this()
@@ -41,6 +41,16 @@ namespace Network.Events
             Rotation = reader.ReadQuaternion(ref context);
             Velocity = reader.ReadVector3(ref context);
             AngularVelocity = reader.ReadVector3(ref context);
+        }
+        
+        public override void Handle(Server server, NetworkConnection connection)
+        {
+            server.Handle(this, connection);
+        }
+
+        public override void Handle(Client client, NetworkConnection connection)
+        {
+            client.Handle(this, connection);
         }
     }
 }

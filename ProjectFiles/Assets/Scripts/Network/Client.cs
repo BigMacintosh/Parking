@@ -99,6 +99,7 @@ namespace Network
                         var handshake = new ClientHandshakeEvent();
                         using (var writer = new DataStreamWriter(handshake.Length, Allocator.Temp))
                         {
+                            handshake.Serialise(writer);
                             driver.Send(pipeline, connection, writer);
                         }
                         break;

@@ -21,7 +21,7 @@ namespace Network.Events
 
         public ServerLocationUpdateEvent(World world) : this()
         {
-            Length = ((3 + 4 + 3 + 3) * sizeof(float)) * world.GetNumPlayers() + 1;
+            Length = ((3 + 4 + 3 + 3) * sizeof(float) + 1) * world.GetNumPlayers() + 2;
             foreach (var pair in world.Players)
             {
                 var id = pair.Key;
@@ -40,9 +40,10 @@ namespace Network.Events
         public override void Serialise(DataStreamWriter writer)
         {
             base.Serialise(writer);
-            writer.Write(Positions.Count);
+            writer.Write((byte) Positions.Count);
             foreach (var id in Positions.Keys)
             {
+                writer.Write((byte) id);
                 writer.WriteVector3(Positions[id]);
                 writer.WriteQuaternion(Rotations[id]);
                 writer.WriteVector3(Velocities[id]);
@@ -61,6 +62,16 @@ namespace Network.Events
                 Velocities[id] = reader.ReadVector3(ref context);
                 AngularVelocities[id] = reader.ReadVector3(ref context);
             }
+        }
+        
+        public override void Handle(Server server, NetworkConnection connection)
+        {
+            server.Handle(this, connection);
+        }
+
+        public override void Handle(Client client, NetworkConnection connection)
+        {
+            client.Handle(this, connection);
         }
     }
 }

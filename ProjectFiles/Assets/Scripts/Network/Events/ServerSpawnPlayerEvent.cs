@@ -17,7 +17,7 @@ namespace Network.Events
             Length = ((3 + 4) * sizeof(float)) + 2;
         }
 
-        public ServerSpawnPlayerEvent(Transform transform, int playerID)
+        public ServerSpawnPlayerEvent(Transform transform, int playerID) : this()
         {
             Position = transform.position;
             Rotation = transform.rotation;
@@ -37,6 +37,16 @@ namespace Network.Events
             PlayerID = reader.ReadByte(ref context);
             Position = reader.ReadVector3(ref context);
             Rotation = reader.ReadQuaternion(ref context);
+        }
+        
+        public override void Handle(Server server, NetworkConnection connection)
+        {
+            server.Handle(this, connection);
+        }
+
+        public override void Handle(Client client, NetworkConnection connection)
+        {
+            client.Handle(this, connection);
         }
     }
 }
