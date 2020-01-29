@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using Game;
+using Network.Events;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEngine;
+using Event = Network.Events.Event;
 using NetworkConnection = Unity.Networking.Transport.NetworkConnection;
 using Object = UnityEngine.Object;
 using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.Networking.Transport.IPv4UDPSocket,Unity.Networking.Transport.DefaultPipelineStageCollection>;
@@ -62,31 +65,10 @@ namespace Network
 
         public void SendLocationUpdate()
         {
-            int playerID = world.ClientID;
-            Transform transform = world.GetPlayerTransform(playerID);
-            Vector3 position = transform.position;
-            Quaternion rotation = transform.rotation;
-            Vector3 velocity = world.GetPlayerVelocity(playerID);
-            Vector3 angularVelocity = world.GetPlayerAngularVelocity(playerID);
-            using (var writer = ClientNetworkEvent.ClientLocationUpdate.GetWriter(54, Allocator.Temp))
+            var locationUpdate = new ClientLocationUpdateEvent(world);
+            using (var writer = new DataStreamWriter(locationUpdate.Length, Allocator.Temp))
             {
-                writer.Write(position.x);
-                writer.Write(position.y);
-                writer.Write(position.z);
-                
-                writer.Write(rotation.x);
-                writer.Write(rotation.y);
-                writer.Write(rotation.z);
-                writer.Write(rotation.w);
-                
-                writer.Write(velocity.x);
-                writer.Write(velocity.y);
-                writer.Write(velocity.z);
-                
-                writer.Write(angularVelocity.x);
-                writer.Write(angularVelocity.y);
-                writer.Write(angularVelocity.z);
-                
+                locationUpdate.Serialise(writer);
                 driver.Send(pipeline, connection, writer);
             }
         }
@@ -114,9 +96,10 @@ namespace Network
                     case NetworkEvent.Type.Connect:
                     {
                         Debug.Log($"Client: Successfully connected to {serverIP}:{serverPort}.");
-                        
-                        using (var writer = ClientNetworkEvent.ClientHandshake.GetWriter(0, Allocator.Temp))
+                        var handshake = new ClientHandshakeEvent();
+                        using (var writer = new DataStreamWriter(handshake.Length, Allocator.Temp))
                         {
+                            handshake.Serialise(writer);
                             driver.Send(pipeline, connection, writer);
                         }
                         break;
@@ -124,7 +107,7 @@ namespace Network
                     case NetworkEvent.Type.Data:
                     {
                         var readerContext = default(DataStreamReader.Context);
-                        var ev = (ServerNetworkEvent) reader.ReadByte(ref readerContext);
+                        var ev = (EventType) reader.ReadByte(ref readerContext);
                         HandleEvent(ev, reader, readerContext);
                         break;
                     }
@@ -136,101 +119,33 @@ namespace Network
             }
         }
         
-        private void HandleEvent(ServerNetworkEvent ev, DataStreamReader reader, DataStreamReader.Context readerContext)
+        private void HandleEvent(EventType eventType, DataStreamReader reader, DataStreamReader.Context readerContext)
         {
-            switch (ev)
+            Event ev;
+            switch (eventType)
             {
-                case ServerNetworkEvent.ServerHandshake:
+                case EventType.ServerHandshake:
                 {
-
-                    Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
-
-                    // Get player location from readerContext.
-                    int playerID = reader.ReadByte(ref readerContext);
-
-                    Vector3 position = new Vector3(
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext)
-                    );
-
-                    world.SpawnPlayer(playerID, position, true);
-                    world.ClientID = playerID;
-
-                    Debug.Log($"Client: Spawned myself (ID {playerID}) {position.x}, {position.y}, {position.z}.");
-
+                    ev = new ServerHandshakeEvent();
                     break;
                 }
-                case ServerNetworkEvent.ServerLocationUpdate:
+                case EventType.ServerLocationUpdate:
                 {
-                    if (world.ClientID == -1) break;
-                    
-                    int length = reader.ReadByte(ref readerContext);
-                    for (int i = 0; i < length; i++)
-                    {
-                        var playerID = reader.ReadByte(ref readerContext);
-                        Vector3 position = new Vector3(
-                            reader.ReadFloat(ref readerContext),
-                            reader.ReadFloat(ref readerContext),
-                            reader.ReadFloat(ref readerContext)
-                        );
-                        Quaternion rotation = new Quaternion(
-                            reader.ReadFloat(ref readerContext),
-                            reader.ReadFloat(ref readerContext),
-                            reader.ReadFloat(ref readerContext),
-                            reader.ReadFloat(ref readerContext)
-                        );
-                        Vector3 velocity = new Vector3(
-                            reader.ReadFloat(ref readerContext),
-                            reader.ReadFloat(ref readerContext),
-                            reader.ReadFloat(ref readerContext)
-                        );
-                        Vector3 angularVelocity = new Vector3(
-                            reader.ReadFloat(ref readerContext),
-                            reader.ReadFloat(ref readerContext),
-                            reader.ReadFloat(ref readerContext)
-                        );
-        
-                        if (playerID != world.ClientID)
-                        {
-                            world.SetPlayerRotation(playerID, rotation);
-                            world.SetPlayerPosition(playerID, position);
-                            world.SetPlayerVelocity(playerID, velocity);
-                            world.SetPlayerAngularVelocity(playerID, angularVelocity);
-                        }
-                    }
-
+                    ev = new ServerLocationUpdateEvent();
                     break;
                 }
-                case ServerNetworkEvent.SpawnPlayerEvent:
+                case EventType.ServerSpawnPlayerEvent:
                 {
-                    int playerID = reader.ReadByte(ref readerContext);
-                    
-                    Vector3 position = new Vector3(
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext)
-
-                    );
-                    Quaternion rotation = new Quaternion(
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadByte(ref readerContext)
-                    );
-
-                    if (playerID != world.ClientID)
-                    {
-                        world.SpawnPlayer(playerID, position, false);
-                        Debug.Log($"Spawned player with ID {playerID}");
-                    }
-
+                    ev = new ServerSpawnPlayerEvent();
                     break;
                 }
                 default:
-                    Debug.Log($"Received an invalid event ({ev}) from {serverIP}:{serverPort}.");
-                    break;
+                    Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
+                    return;
             }
+            ev.Deserialise(reader, ref readerContext);
+            
+            ev.Handle(this, connection);
         }
 
         public static IClient getDummyClient(World world)
@@ -269,6 +184,48 @@ namespace Network
             public void HandleNetworkEvents()
             {
                 
+            }
+        }
+        
+        public void Handle(Event ev, NetworkConnection conn) {
+            throw new ArgumentException("Client received an event that it cannot handle");
+        }
+ 
+        public void Handle(ServerHandshakeEvent ev, NetworkConnection conn)
+        {                    
+            Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
+            var playerID = ev.PlayerID;
+            var position = ev.Position;
+            
+            world.SpawnPlayer(playerID, position, true);
+            world.ClientID = playerID;
+
+            Debug.Log($"Client: Spawned myself (ID {playerID}) {position.x}, {position.y}, {position.z}.");
+        }
+
+        public void Handle(ServerSpawnPlayerEvent ev, NetworkConnection conn)
+        {
+            var playerID = ev.PlayerID;
+            var position = ev.Position;
+            var rotation = ev.Rotation;
+            
+            if (playerID != world.ClientID)
+            {
+                world.SpawnPlayer(playerID, position, false);
+                world.SetPlayerRotation(playerID, rotation);
+                Debug.Log($"Spawned player with ID {playerID}");
+            }
+        }
+
+        public void Handle(ServerLocationUpdateEvent ev, NetworkConnection conn)
+        {
+            if (world.ClientID == -1) return;
+            foreach (var playerID in ev.Positions.Keys.Where(k => k != world.ClientID))
+            {
+                world.SetPlayerRotation(playerID, ev.Rotations[playerID]);
+                world.SetPlayerPosition(playerID, ev.Positions[playerID]);
+                world.SetPlayerVelocity(playerID, ev.Velocities[playerID]);
+                world.SetPlayerAngularVelocity(playerID, ev.AngularVelocities[playerID]);
             }
         }
     }

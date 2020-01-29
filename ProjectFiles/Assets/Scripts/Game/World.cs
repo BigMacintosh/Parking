@@ -11,6 +11,7 @@ namespace Game
         private readonly Dictionary<int, GameObject> cars;
         private List<NetworkChange> networkChanges;
         private int nextPlayerID = 0;
+        public Dictionary<int, GameObject> Players => cars;
 
         public World()
         {
