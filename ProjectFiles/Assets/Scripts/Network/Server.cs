@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game;
+using Network.Events;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEngine;
+using Event = Network.Events.Event;
 using NetworkConnection = Unity.Networking.Transport.NetworkConnection; 
 using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.Networking.Transport.IPv4UDPSocket,Unity.Networking.Transport.DefaultPipelineStageCollection>;
 
@@ -54,47 +58,14 @@ namespace Network
 
         public void SendLocationUpdates()
         {
-            var numConns = connections.Length;
-
-            var length = world.GetNumPlayers();
-            if (length == 0) return;
-            
-            using (var writer = ServerNetworkEvent.ServerLocationUpdate.GetWriter(1  + length * 53, Allocator.Temp))
+            if (world.GetNumPlayers() == 0) return;
+            var locationUpdate = new ServerLocationUpdateEvent(world);
+            using (var writer = new DataStreamWriter(locationUpdate.Length, Allocator.Temp))
             {
-                
-                writer.Write((byte) length);
-
-                foreach (var playerID in world.PlayerIDs)
+                locationUpdate.Serialise(writer);
+                foreach (var connection in connections)
                 {
-                    var transform = world.GetPlayerTransform(playerID);
-
-                    writer.Write((byte) playerID);
-                
-                    var position = transform.position;
-                    writer.Write(position.x);
-                    writer.Write(position.y);
-                    writer.Write(position.z);
-
-                    var rotation = transform.rotation;
-                    writer.Write(rotation.x);
-                    writer.Write(rotation.y);
-                    writer.Write(rotation.z);
-                    writer.Write(rotation.w);
-
-                    var velocity = world.GetPlayerVelocity(playerID);
-                    writer.Write(velocity.x);
-                    writer.Write(velocity.y);
-                    writer.Write(velocity.z);
-
-                    var angularVelocity = world.GetPlayerAngularVelocity(playerID);
-                    writer.Write(angularVelocity.x);
-                    writer.Write(angularVelocity.y);
-                    writer.Write(angularVelocity.z);
-                }
-
-                for (int i = 0; i < numConns; i++)
-                {
-                    Driver.Send(pipeline, connections[i], writer);
+                    Driver.Send(pipeline, connection, writer);
                 }
             }
         }
@@ -135,7 +106,6 @@ namespace Network
             for (var i = 0; i < connections.Length; i++)
             {
                 var connection = connections[i];
-                var connectionID = connection.InternalId;
                 
                 if (!connection.IsCreated)
                 {
@@ -151,8 +121,8 @@ namespace Network
                         case NetworkEvent.Type.Data:
                         {
                             var readerContext = default(DataStreamReader.Context);
-                            var ev = (ClientNetworkEvent) reader.ReadByte(ref readerContext);
-                            HandleEvent(connections[i], endpoint, ev, reader, readerContext, connectionID);
+                            var ev = (EventType) reader.ReadByte(ref readerContext);
+                            HandleEvent(connections[i], endpoint, ev, reader, readerContext);
                             break;
                         }
                         case NetworkEvent.Type.Disconnect:
@@ -164,112 +134,88 @@ namespace Network
             }
         }
 
-        private void SendSpawnPlayer(int playerID, NetworkConnection connection)
+        private void HandleEvent(NetworkConnection connection, NetworkEndPoint endpoint, EventType eventType, 
+                                 DataStreamReader reader, DataStreamReader.Context readerContext)
         {
-            using (var writer = ServerNetworkEvent.SpawnPlayerEvent.GetWriter(29, Allocator.Temp))
-            {
-                // Get spawn location
-                Transform transform = world.GetPlayerTransform(playerID);
-                var position = transform.position;
-                var rotation = transform.rotation;
-                        
-                writer.Write((byte) playerID);
-                writer.Write(position.x);
-                writer.Write(position.y);
-                writer.Write(position.z);
-                writer.Write(rotation.x);
-                writer.Write(rotation.y);
-                writer.Write(rotation.z);
-                writer.Write(rotation.z);
+            Event ev;
 
-                Driver.Send(pipeline, connection, writer);
-            }
-        }
-        
-        private void HandleEvent(NetworkConnection connection, NetworkEndPoint endpoint, ClientNetworkEvent ev, 
-                                 DataStreamReader reader, DataStreamReader.Context readerContext, int playerID)
-        {
-            switch (ev)
+            switch (eventType)
             {
-                case ClientNetworkEvent.ClientHandshake:
+                case EventType.ClientHandshake:
                 {
-                    Debug.Log($"Server: Received handshake from {endpoint.IpAddress()}:{endpoint.Port}.");
-
-                    using (var writer = ServerNetworkEvent.ServerHandshake.GetWriter(30, Allocator.Temp))
-                    {
-                        // Get a player id
-                        world.SpawnPlayer(playerID);
-
-                        // Get spawn location
-                        Transform transform = world.GetPlayerTransform(playerID);
-                        var position = transform.position;
-                        
-                        writer.Write((byte) playerID);
-                        writer.Write(position.x);
-                        writer.Write(position.y);
-                        writer.Write(position.z);
-
-                        Driver.Send(pipeline, connection, writer);
-                        
-                        // tell other clients you have spawned
-                        for (int i = 0; i < connections.Length; i++)
-                        {
-                            var ID = connections[i].InternalId;
-                            if (ID != playerID)
-                            {
-                                Debug.Log($"Spawning new player {playerID} on client {ID}");
-                                SendSpawnPlayer(playerID, connections[i]);
-                            }
-                        }
-                        
-                        // tell this client about the other clients
-                        foreach (var ID in world.PlayerIDs)
-                        {
-                            if (ID != playerID)
-                            {
-                                Debug.Log($"Spawning pre-existing player {ID} on {playerID}.");
-                                SendSpawnPlayer(ID, connection);
-                            }
-                        }
-                    }
-
+                    ev = new ClientHandshakeEvent();
                     break;
                 }
-                case ClientNetworkEvent.ClientLocationUpdate:
+                case EventType.ClientLocationUpdate:
                 {
-                    Vector3 newPosition = new Vector3(
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext)
-                    );
-                    Quaternion newRotation = new Quaternion(
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext)
-                    );
-                    Vector3 newVelocity = new Vector3(
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext)
-                    );
-                    Vector3 newAngularVelocity = new Vector3(
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext),
-                        reader.ReadFloat(ref readerContext)
-                    );
-
-                    world.SetPlayerPosition(playerID, newPosition);
-                    world.SetPlayerRotation(playerID, newRotation);
-                    world.SetPlayerVelocity(playerID, newVelocity);
-                    world.SetPlayerAngularVelocity(playerID, newAngularVelocity);
-                    
+                    ev = new ClientLocationUpdateEvent();
                     break;
                 }
                 default:
-                    Debug.Log($"Received an invalid event ({ev}) from {endpoint.IpAddress()}:{endpoint.Port}.");
-                    break;
+                {
+                    Debug.Log($"Server: Received unexpected event { eventType }.");
+                    return;
+                }
             }
+            ev.Deserialise(reader, ref readerContext);
+            ev.Handle(this, connection);
+        }
+        
+        public void Handle(Event ev, NetworkConnection srcConnection) {
+            throw new ArgumentException("Server received an event that it cannot handle");
+        }
+
+        public void Handle(ClientHandshakeEvent ev, NetworkConnection srcConnection)
+        {
+            var playerID = srcConnection.InternalId;
+            Debug.Log($"Server: Received handshake from { playerID }.");
+            
+            // Get a player id
+            world.SpawnPlayer(playerID);
+
+            // Get spawn location
+            var transform = world.GetPlayerTransform(playerID);
+            var handshakeResponse = new ServerHandshakeEvent(transform, playerID);
+            using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
+            {
+                handshakeResponse.Serialise(writer);
+                // respond to the handshake
+                Driver.Send(pipeline, srcConnection, writer);
+            }
+
+            // tell other clients this client has spawned
+            var spawnNewPlayer = new ServerSpawnPlayerEvent(transform, playerID);
+            using (var writer = new DataStreamWriter(spawnNewPlayer.Length, Allocator.Temp))
+            {
+                spawnNewPlayer.Serialise(writer);
+                foreach (var otherClient in connections)
+                {
+                    if (otherClient.InternalId == playerID) continue;
+                    Driver.Send(pipeline, otherClient, writer);
+                }
+            }
+
+            // tell new player about the existing players
+            foreach (var otherPlayer in world.PlayerIDs.Where(otherPlayer => otherPlayer != playerID))
+            {
+                var otherTransform = world.GetPlayerTransform(otherPlayer);
+                var spawnOtherPlayer = new ServerSpawnPlayerEvent(otherTransform, otherPlayer);
+                using (var writer = new DataStreamWriter(spawnOtherPlayer.Length, Allocator.Temp))
+                {
+                    spawnOtherPlayer.Serialise(writer);
+                    Driver.Send(pipeline, srcConnection, writer);
+                }
+            }
+        }
+
+        public void Handle(ClientLocationUpdateEvent ev, NetworkConnection srcConnection)
+        {
+            var playerID = srcConnection.InternalId;
+            
+            world.SetPlayerPosition(playerID, ev.Position);
+            world.SetPlayerRotation(playerID, ev.Rotation);
+            world.SetPlayerVelocity(playerID, ev.Velocity);
+            world.SetPlayerAngularVelocity(playerID, ev.AngularVelocity);
         }
     }
 }

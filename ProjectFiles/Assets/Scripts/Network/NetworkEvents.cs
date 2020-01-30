@@ -5,37 +5,13 @@ using Unity.Networking.Transport;
 namespace Network
 {
     [Flags]
-    public enum ClientNetworkEvent
+    public enum EventType
     {
-        ClientHandshake      = 0x81,
-        ClientLocationUpdate = 0x82,
+        Undefined              = 0xFF,
+        ClientHandshake        = 0x81,
+        ClientLocationUpdate   = 0x82,
+        ServerHandshake        = 0x01,
+        ServerLocationUpdate   = 0x02,
+        ServerSpawnPlayerEvent = 0x03,
     }
-
-    [Flags]
-    public enum ServerNetworkEvent
-    {
-        ServerHandshake      = 0x01,
-        ServerLocationUpdate = 0x02,
-        SpawnPlayerEvent     = 0x03,
-    }
-
-
-
-    public static class NetworkEventExtension
-    {
-        public static DataStreamWriter GetWriter(this ClientNetworkEvent ev, int capacity, Allocator allocator)
-        {
-            var writer = new DataStreamWriter(capacity + 1, allocator);
-            writer.Write((byte) ev);
-            return writer;
-        }
-        
-        public static DataStreamWriter GetWriter(this ServerNetworkEvent ev, int capacity, Allocator allocator)
-        {
-            var writer = new DataStreamWriter(capacity + 1, allocator);
-            writer.Write((byte) ev);
-            return writer;
-        }
-    }
-    
 }
