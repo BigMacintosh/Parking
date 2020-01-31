@@ -15,16 +15,16 @@ using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.
 namespace Network
 {
     
-    public delegate void GameStartDelegate(int nPlayers);
+    public delegate void GameStartDelegate(ushort nPlayers);
     
     public delegate void PreRoundStartDelegate(
-        int roundNumber, int preRoundLength, int roundLength, int nPlayers, List<byte> spacesActive);
+        ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive);
     
-    public delegate void RoundStartDelegate(int roundNumber);
+    public delegate void RoundStartDelegate(ushort roundNumber);
     
-    public delegate void RoundEndDelegate(int roundNumber);
+    public delegate void RoundEndDelegate(ushort roundNumber);
     
-    public delegate void EliminatePlayersDelegate(int roundNumber, List<int> eliminatedPlayers);
+    public delegate void EliminatePlayersDelegate(ushort roundNumber, List<ushort> eliminatedPlayers);
 
 
     public interface IClient

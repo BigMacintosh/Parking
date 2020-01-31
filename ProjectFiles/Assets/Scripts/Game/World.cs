@@ -105,12 +105,12 @@ namespace Game
             return cars.ContainsKey(playerID);
         }
 
-        public int GetNumPlayers()
+        public ushort GetNumPlayers()
         {
-            return cars.Count;
+            return (ushort) cars.Count;
         }
 
-        public List<int> GetPlayersNotInSpace()
+        public List<ushort> GetPlayersNotInSpace()
         {
             // TODO: Implement me ;)
             throw new System.NotImplementedException();

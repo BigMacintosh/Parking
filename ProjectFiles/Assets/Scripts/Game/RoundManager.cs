@@ -8,22 +8,21 @@ namespace Game
     static class RoundTimings
     {
         // All times in seconds
-        public const int PreRoundLength = 10;
-        public const int RoundLength = 45;
+        public const ushort PreRoundLength = 10;
+        public const ushort RoundLength = 45;
     }
     
     public class RoundManager
     {
         public bool Started { get; private set; }
         private World world;
-        private int roundNumber = 0;
+        private ushort roundNumber = 0;
         
         // Timer to countdown to the start of the round.
         private Timer roundTimer;
-        private int preRoundLength;
-        private int roundLength;
-        private int nPlayers;
-        
+        private ushort preRoundLength;
+        private ushort roundLength;
+
         public event GameStartDelegate GameStartEvent;
         public event PreRoundStartDelegate PreRoundStartEvent;
         public event RoundStartDelegate RoundStartEvent;
@@ -38,23 +37,23 @@ namespace Game
         public void StartGame()
         {
             Started = true;
-            NotifyGameStart(world.GetNumPlayers());
+            NotifyGameStart();
             preRoundLength = RoundTimings.PreRoundLength;
             roundLength = RoundTimings.RoundLength;
-            nPlayers = world.GetNumPlayers();
 
             StartPreRound();
         }
 
         public void StartPreRound()
         {
-            List<byte> activeSpaces = new List<byte>();
+            List<ushort> activeSpaces = new List<ushort>();
             
             // Send 5 seconds round warning.
-            NotifyPreRoundStart(preRoundLength, roundLength, nPlayers, activeSpaces);
+            NotifyPreRoundStart(activeSpaces);
             
             // Start timer to for PreRoundCountdown 
             roundTimer = new Timer(preRoundLength * 1000);
+            
             // Add StartRoundEvent to timer observers.
             roundTimer.Elapsed += StartRoundEvent;
             roundTimer.Start();
@@ -73,18 +72,18 @@ namespace Game
         private void EndRoundEvent(Object source, ElapsedEventArgs e)
         {
             NotifyRoundEnd();
-            List<int> eliminatedPlayers = world.GetPlayersNotInSpace();
+            List<ushort> eliminatedPlayers = world.GetPlayersNotInSpace();
             NotifyEliminatePlayers(eliminatedPlayers);
         }
 
-        private void NotifyGameStart(int nPlayers)
+        private void NotifyGameStart()
         {
-            GameStartEvent?.Invoke(nPlayers);
+            GameStartEvent?.Invoke(world.GetNumPlayers());
         }
 
-        private void NotifyPreRoundStart(int preRoundLength, int roundLength, int nPlayers, List<byte> spacesActive)
+        private void NotifyPreRoundStart(List<ushort> spacesActive)
         {
-            PreRoundStartEvent?.Invoke(roundNumber, preRoundLength, roundLength, nPlayers, spacesActive);
+            PreRoundStartEvent?.Invoke(roundNumber, preRoundLength, roundLength, world.GetNumPlayers(), spacesActive);
         }
 
         private void NotifyRoundStart()
@@ -97,7 +96,7 @@ namespace Game
             RoundEndEvent?.Invoke(roundNumber);
         }
 
-        private void NotifyEliminatePlayers(List<int> eliminatedPlayers)
+        private void NotifyEliminatePlayers(List<ushort> eliminatedPlayers)
         {
             EliminatePlayersEvent?.Invoke(roundNumber, eliminatedPlayers);
         }
