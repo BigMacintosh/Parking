@@ -4,13 +4,13 @@ namespace Network.Events
 {
     public class ClientSpaceEvent : Event
     {
-        public byte RoundNumber { get; private set; }
-        public byte SpaceID { get; private set; }
+        public ushort RoundNumber { get; private set; }
+        public ushort SpaceID { get; private set; }
 
         public ClientSpaceEvent()
         {
             ID = EventType.ClientSpaceEvent;
-            Length = 3;
+            Length = sizeof(byte) + sizeof(ushort) * 2;
         }
 
         public ClientSpaceEvent(byte roundNumber, byte spaceId)
@@ -28,8 +28,8 @@ namespace Network.Events
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
-            RoundNumber = reader.ReadByte(ref context);
-            SpaceID = reader.ReadByte(ref context);
+            RoundNumber = reader.ReadUShort(ref context);
+            SpaceID = reader.ReadUShort(ref context);
         }
 
         public override void Handle(Server server, NetworkConnection connection)
