@@ -21,7 +21,7 @@ namespace Network.Events
 
         public ServerLocationUpdateEvent(World world) : this()
         {
-            Length = (sizeof(ushort) + (1 + 3 + 4 + 3 + 3) * sizeof(float)) * world.GetNumPlayers() + 2;
+            Length = (sizeof(ushort) + (1 + 3 + 4 + 3 + 3) * sizeof(float)) * world.GetNumPlayers() + sizeof(ushort) + sizeof(byte);
             foreach (var pair in world.Players)
             {
                 var id = pair.Key;
@@ -40,10 +40,10 @@ namespace Network.Events
         public override void Serialise(DataStreamWriter writer)
         {
             base.Serialise(writer);
-            writer.Write((byte) Positions.Count);
+            writer.Write((ushort) Positions.Count);
             foreach (var id in Positions.Keys)
             {
-                writer.Write((byte) id);
+                writer.Write((ushort) id);
                 writer.WriteVector3(Positions[id]);
                 writer.WriteQuaternion(Rotations[id]);
                 writer.WriteVector3(Velocities[id]);
@@ -53,16 +53,16 @@ namespace Network.Events
         
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
-            var length = reader.ReadByte(ref context);
+            var length = reader.ReadUShort(ref context);
             for (int i = 0; i < length; i++)
             {
-                var id = reader.ReadByte(ref context);
+                var id = reader.ReadUShort(ref context);
                 Positions[id] = reader.ReadVector3(ref context);
                 Rotations[id] = reader.ReadQuaternion(ref context);
                 Velocities[id] = reader.ReadVector3(ref context);
                 AngularVelocities[id] = reader.ReadVector3(ref context);
             }
-            Length = (sizeof(ushort) + (3 + 4 + 3 + 3) * sizeof(float)) * length + sizeof(ushort) + 1;
+            Length = (sizeof(ushort) + (1 + 3 + 4 + 3 + 3) * sizeof(float)) * length + sizeof(ushort) + sizeof(byte);
         }
         
         public override void Handle(Server server, NetworkConnection connection)

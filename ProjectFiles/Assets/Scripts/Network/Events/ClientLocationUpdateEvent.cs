@@ -14,7 +14,7 @@ namespace Network.Events
         public ClientLocationUpdateEvent()
         {
             ID = EventType.ClientLocationUpdate;
-            Length = (3 + 3 + 3 + 4) * sizeof(float) + 1;
+            Length = (3 + 3 + 3 + 4) * sizeof(float) + sizeof(byte);
         }
 
         public ClientLocationUpdateEvent(World world) : this()

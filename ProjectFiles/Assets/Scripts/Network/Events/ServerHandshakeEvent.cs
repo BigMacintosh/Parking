@@ -14,7 +14,7 @@ namespace Network.Events
         public ServerHandshakeEvent()
         {
             ID = EventType.ServerHandshake;
-            Length = ((3 + 4) * sizeof(float)) + 2;
+            Length = ((3 + 4) * sizeof(float)) + sizeof(ushort) + sizeof(byte);
         }
 
         public ServerHandshakeEvent(Transform transform, int playerID) : this()
