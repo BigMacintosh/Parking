@@ -21,7 +21,7 @@ namespace Network.Events
 
         public ServerLocationUpdateEvent(World world) : this()
         {
-            Length = ((3 + 4 + 3 + 3) * sizeof(float) + 1) * world.GetNumPlayers() + 2;
+            Length = (sizeof(ushort) + (1 + 3 + 4 + 3 + 3) * sizeof(float)) * world.GetNumPlayers() + 2;
             foreach (var pair in world.Players)
             {
                 var id = pair.Key;
@@ -62,6 +62,7 @@ namespace Network.Events
                 Velocities[id] = reader.ReadVector3(ref context);
                 AngularVelocities[id] = reader.ReadVector3(ref context);
             }
+            Length = (sizeof(ushort) + (3 + 4 + 3 + 3) * sizeof(float)) * length + sizeof(ushort) + 1;
         }
         
         public override void Handle(Server server, NetworkConnection connection)

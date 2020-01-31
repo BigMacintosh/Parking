@@ -5,8 +5,8 @@ namespace Network.Events
 {
     public class ServerEliminatePlayersEvent : Event
     {
-        public byte RoundNumber { get; private set; }
-        public List<byte> Players { get; private set; }
+        public ushort RoundNumber { get; private set; }
+        public List<ushort> Players { get; private set; }
 
         public ServerEliminatePlayersEvent()
         {
@@ -14,18 +14,18 @@ namespace Network.Events
             Length = 1;
         }
 
-        public ServerEliminatePlayersEvent(byte roundNumber, List<byte> players)
+        public ServerEliminatePlayersEvent(ushort roundNumber, List<ushort> players)
         {
             RoundNumber = roundNumber;
             Players = players;
-            Length = sizeof(byte) * (Players.Count + 2);
+            Length = sizeof(ushort) * (Players.Count + 2);
         }
 
         public override void Serialise(DataStreamWriter writer)
         {
             base.Serialise(writer);
             writer.Write(RoundNumber);
-            writer.Write((byte) Players.Count);
+            writer.Write((ushort) Players.Count);
             foreach (var p in Players)
             {
                 writer.Write(p);
@@ -37,11 +37,12 @@ namespace Network.Events
             RoundNumber = reader.ReadByte(ref context);
 
             var playerCount = reader.ReadByte(ref context);
-            Players = new List<byte>();
+            Players = new List<ushort>();
             for (int i = 0; i < playerCount; i++)
             {
                 Players.Add(reader.ReadByte(ref context));
             }
+            Length = sizeof(ushort) * (Players.Count + 2);
         }
 
         public override void Handle(Server server, NetworkConnection connection)

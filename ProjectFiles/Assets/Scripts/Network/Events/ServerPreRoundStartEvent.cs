@@ -5,11 +5,11 @@ namespace Network.Events
 {
     public class ServerPreRoundStartEvent : Event
     {
-        public byte RoundNumber { get; private set; }
-        public byte PreRoundLength { get; private set; }
-        public byte RoundLength { get; private set; }
-        public byte PlayerCount { get; private set; }
-        public List<byte> Spaces { get; private set; }
+        public ushort RoundNumber { get; private set; }
+        public ushort PreRoundLength { get; private set; }
+        public ushort RoundLength { get; private set; }
+        public ushort PlayerCount { get; private set; }
+        public List<ushort> Spaces { get; private set; }
 
         public ServerPreRoundStartEvent()
         {
@@ -17,14 +17,14 @@ namespace Network.Events
             Length = 1;
         }
 
-        public ServerPreRoundStartEvent(byte roundNumber, byte preRoundLength, byte roundLength, byte playerCount, List<byte> spaces) : this()
+        public ServerPreRoundStartEvent(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort playerCount, List<ushort> spaces) : this()
         {
             RoundNumber = roundNumber;
             PreRoundLength = preRoundLength;
             RoundLength = roundLength;
             PlayerCount = playerCount;
             Spaces = spaces;
-            Length = sizeof(byte) * (Spaces.Count + 5);
+            Length = sizeof(ushort) * (Spaces.Count + 5);
         }
 
         public override void Serialise(DataStreamWriter writer)
@@ -43,17 +43,18 @@ namespace Network.Events
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
-            RoundNumber = reader.ReadByte(ref context);
-            PreRoundLength = reader.ReadByte(ref context);
-            RoundLength = reader.ReadByte(ref context);
-            PlayerCount = reader.ReadByte(ref context);
+            RoundNumber = reader.ReadUShort(ref context);
+            PreRoundLength = reader.ReadUShort(ref context);
+            RoundLength = reader.ReadUShort(ref context);
+            PlayerCount = reader.ReadUShort(ref context);
 
-            var spacesCount = reader.ReadByte(ref context);
-            Spaces = new List<byte>();
+            var spacesCount = reader.ReadUShort(ref context);
+            Spaces = new List<ushort>();
             for (int i = 0; i < spacesCount; i++)
             {
-                Spaces.Add(reader.ReadByte(ref context));
+                Spaces.Add(reader.ReadUShort(ref context));
             }
+            Length = sizeof(ushort) * (Spaces.Count + 5);
         }
 
         public override void Handle(Server server, NetworkConnection connection)
