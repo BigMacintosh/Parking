@@ -22,16 +22,12 @@ namespace Game
 
             // Create world
             world = new World();
-            
-            
-            
-            
+
             // Create HUD
             Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);
 
             
             // Start client connection
-
             if (isStandalone)
             {
                 client = Client.getDummyClient(world);
@@ -46,6 +42,9 @@ namespace Game
                 var success = client.Start("18.191.231.10");
             #endif
 
+            // Create HUD class
+            
+            // Subscribe HUD to client events.
             
             
             return success;

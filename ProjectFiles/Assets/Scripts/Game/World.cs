@@ -24,12 +24,6 @@ namespace Game
 
         public IEnumerable<int> PlayerIDs => cars.Keys;
 
-        // Is this needed anymore?
-        public void AddNetworkChange(NetworkChange networkChange)
-        {
-            networkChanges.Add(networkChange);
-        }
-
         public void Update()
         {
             // Loop here and apply all network changes.

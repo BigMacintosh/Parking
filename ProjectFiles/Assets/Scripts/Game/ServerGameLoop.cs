@@ -17,15 +17,20 @@ namespace Game
             // Create world
             world = new World();
 
-            
-            
             // Start server
             server = new Server(world, config);
             var success = server.Start();
             
             roundManager = new RoundManager(world);
-            roundManager.Subscribe(server);
             
+            
+            // Subscribe to events.
+            roundManager.GameStartEvent += server.OnStartGame;
+            roundManager.RoundStartEvent += server.OnRoundStart;
+            roundManager.PreRoundStartEvent += server.OnPreRoundStart;
+            roundManager.RoundEndEvent += server.OnRoundEnd;
+            roundManager.EliminatePlayersEvent += server.OnEliminatePlayers;
+
             return success;
         }
 
@@ -37,7 +42,7 @@ namespace Game
 
         public void Update()
         {
-            if(Input.GetKeyDown("a") && Input.GetKeyDown("b"))
+            if(Input.GetKeyDown("a") && Input.GetKeyDown("b") && !roundManager.Started)
             {
                 roundManager.StartGame();
             }
@@ -48,8 +53,8 @@ namespace Game
 
         public void FixedUpdate()
         {
-            server.SendLocationUpdates();
             // Trigger network send.
+            server.SendLocationUpdates();
         }
 
         public void LateUpdate()

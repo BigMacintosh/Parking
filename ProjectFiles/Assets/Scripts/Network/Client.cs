@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Game;
 using Network.Events;
@@ -13,6 +14,17 @@ using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.
 
 namespace Network
 {
+    
+    public delegate void GameStartDelegate(int nPlayers);
+    
+    public delegate void PreRoundStartDelegate(
+        int roundNumber, int preRoundLength, int roundLength, int nPlayers, List<byte> spacesActive);
+    
+    public delegate void RoundStartDelegate(int roundNumber);
+    
+    public delegate void RoundEndDelegate(int roundNumber);
+    
+    public delegate void EliminatePlayersDelegate(int roundNumber, List<int> eliminatedPlayers);
 
 
     public interface IClient
@@ -21,6 +33,11 @@ namespace Network
         void Shutdown();
         void SendLocationUpdate();
         void HandleNetworkEvents();
+        event GameStartDelegate GameStartEvent;
+        event PreRoundStartDelegate PreRoundStartEvent;
+        event RoundStartDelegate RoundStartEvent;
+        event RoundEndDelegate RoundEndEvent;
+        event EliminatePlayersDelegate EliminatePlayersEvent;
     }
 
     public class Client : IClient
@@ -118,7 +135,9 @@ namespace Network
                 }
             }
         }
+
         
+
         private void HandleEvent(EventType eventType, DataStreamReader reader, DataStreamReader.Context readerContext)
         {
             Event ev;
@@ -185,6 +204,11 @@ namespace Network
             {
                 
             }
+            public event GameStartDelegate GameStartEvent;
+            public event PreRoundStartDelegate PreRoundStartEvent;
+            public event RoundStartDelegate RoundStartEvent;
+            public event RoundEndDelegate RoundEndEvent;
+            public event EliminatePlayersDelegate EliminatePlayersEvent;
         }
         
         public void Handle(Event ev, NetworkConnection conn) {
@@ -228,5 +252,10 @@ namespace Network
                 world.SetPlayerAngularVelocity(playerID, ev.AngularVelocities[playerID]);
             }
         }
+        public event GameStartDelegate GameStartEvent;
+        public event PreRoundStartDelegate PreRoundStartEvent;
+        public event RoundStartDelegate RoundStartEvent;
+        public event RoundEndDelegate RoundEndEvent;
+        public event EliminatePlayersDelegate EliminatePlayersEvent;
     }
 }

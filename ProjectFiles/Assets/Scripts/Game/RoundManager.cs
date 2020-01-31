@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Timers;
+using Network;
 
 namespace Game
 {
-
     static class RoundTimings
     {
         // All times in seconds
-        public const int PreRoundLength = 5; 
+        public const int PreRoundLength = 10;
         public const int RoundLength = 45;
     }
     
     public class RoundManager
     {
-        private List<IRoundObserver> observers;
+        public bool Started { get; private set; }
         private World world;
         private int roundNumber = 0;
         
@@ -23,19 +23,26 @@ namespace Game
         private int preRoundLength;
         private int roundLength;
         private int nPlayers;
+        
+        public event GameStartDelegate GameStartEvent;
+        public event PreRoundStartDelegate PreRoundStartEvent;
+        public event RoundStartDelegate RoundStartEvent;
+        public event RoundEndDelegate RoundEndEvent;
+        public event EliminatePlayersDelegate EliminatePlayersEvent;
 
         public RoundManager(World world)
         {
-            observers = new List<IRoundObserver>();
             this.world = world;
         }
         
         public void StartGame()
         {
+            Started = true;
+            NotifyGameStart(world.GetNumPlayers());
             preRoundLength = RoundTimings.PreRoundLength;
             roundLength = RoundTimings.RoundLength;
             nPlayers = world.GetNumPlayers();
-            
+
             StartPreRound();
         }
 
@@ -56,6 +63,7 @@ namespace Game
         private void StartRoundEvent(Object source, ElapsedEventArgs e)
         {
             NotifyRoundStart();
+            
             roundTimer = new Timer(roundLength * 1000);
             roundTimer.Elapsed += EndRoundEvent;
             roundTimer.Start();
@@ -69,66 +77,29 @@ namespace Game
             NotifyEliminatePlayers(eliminatedPlayers);
         }
 
-
-
-        // IRoundObserver required functions.
-        public void Subscribe(IRoundObserver roundObserver)
+        private void NotifyGameStart(int nPlayers)
         {
-            observers.Add(roundObserver);
+            GameStartEvent?.Invoke(nPlayers);
         }
 
         private void NotifyPreRoundStart(int preRoundLength, int roundLength, int nPlayers, List<byte> spacesActive)
         {
-            foreach (var observer in observers)
-            {
-                observer.OnPreRoundStart(roundNumber, preRoundLength, roundLength, nPlayers, spacesActive);
-            }
+            PreRoundStartEvent?.Invoke(roundNumber, preRoundLength, roundLength, nPlayers, spacesActive);
         }
 
         private void NotifyRoundStart()
         {
-            foreach (var observer in observers)
-            {
-                observer.OnRoundStart(roundNumber);
-            }
+            RoundStartEvent?.Invoke(roundNumber);
         }
 
         private void NotifyRoundEnd()
         {
-            foreach (var observer in observers)
-            {
-                observer.OnRoundEnd(roundNumber);
-            }
+            RoundEndEvent?.Invoke(roundNumber);
         }
 
         private void NotifyEliminatePlayers(List<int> eliminatedPlayers)
         {
-            foreach (var observer in observers)
-            {
-                observer.OnEliminatePlayers(roundNumber, eliminatedPlayers);
-            }
+            EliminatePlayersEvent?.Invoke(roundNumber, eliminatedPlayers);
         }
-    }
-
-    public interface IRoundObserver
-    {
-        // All Players connected, round starting in 5 seconds? Start countdown?
-        // All clients know to setup the game.
-        void OnPreRoundStart(int roundNumber, int preRoundLength, int roundLength, int nPlayers, List<byte> spacesActive);
-        
-        // Round actually starts. All clients start when instructed.
-        void OnRoundStart(int roundNumber);
-
-        // Ensure all clients round timers stay in sync. Sent every 10/20 seconds maybe?
-//        void NotifyTimerSync();
-        
-        // Pre-warn all clients round is about to end. Start countdown?
-//        void NotifyPreRoundEnd();
-        
-        // Round has actually ended.
-        void OnRoundEnd(int roundNumber);
-        
-        // Elimate players.
-        void OnEliminatePlayers(int roundNumber, List<int> eliminatedPlayers);
     }
 }

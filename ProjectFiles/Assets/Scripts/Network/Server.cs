@@ -13,7 +13,7 @@ using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.
 
 namespace Network
 {
-    public class Server : IRoundObserver
+    public class Server
     {
         private UdpCNetworkDriver Driver;
         private NativeList<NetworkConnection> connections;
@@ -218,28 +218,34 @@ namespace Network
             world.SetPlayerAngularVelocity(playerID, ev.AngularVelocity);
         }
 
+        public void OnStartGame(int nPlayers)
+        {
+            // Once this is called, do not accept new connections.
+            throw new NotImplementedException();
+        }
+
         public void OnPreRoundStart(int roundNumber, int preRoundLength, int roundLength, int nPlayers, List<byte> spacesActive)
         {
             // Pls deal with me :'(
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnRoundStart(int roundNumber)
         {
             // Pls deal with me :'(
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnRoundEnd(int roundNumber)
         {
             // Pls deal with me :'(
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnEliminatePlayers(int roundNumber, List<int> eliminatedPlayers)
         {
             // Pls deal with me :'(
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }
