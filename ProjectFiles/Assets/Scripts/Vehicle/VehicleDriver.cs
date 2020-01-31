@@ -37,7 +37,7 @@ namespace Vehicle
             }
 
             //Turning Forces
-            if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < 1f)
+            if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < 1f && Mathf.Abs(GetForward()) > 1)
             {
                 body.AddTorque(Input.GetAxis("Horizontal") * steer * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
             }
