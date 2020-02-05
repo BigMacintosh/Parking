@@ -228,7 +228,7 @@ namespace Network
         {
             // Once this is called, do not accept new connections.
             // Create ServerStartGameEvent.
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
         
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)

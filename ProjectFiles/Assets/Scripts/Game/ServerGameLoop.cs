@@ -48,6 +48,7 @@ namespace Game
             }
             server.HandleNetworkEvents();
             world.Update();
+            roundManager.Update();
             
         }
 

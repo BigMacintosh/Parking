@@ -1,7 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Timers;
+
 using Network;
+using UnityEngine;
+using Object = System.Object;
 
 namespace Game
 {
@@ -11,6 +12,37 @@ namespace Game
         public const ushort PreRoundLength = 10;
         public const ushort RoundLength = 45;
     }
+    public delegate void TimerOverDelegate();
+    
+    
+    public class Timer
+    {
+        public event TimerOverDelegate Elapsed;
+        private float timeLeft;
+        private bool started;
+        
+        public Timer(float length)
+        {
+            timeLeft = length;
+        }
+
+        public void Update()
+        {
+            timeLeft -= Time.deltaTime;
+            if (timeLeft < 0 & started)
+            {
+                started = false;
+                Elapsed?.Invoke();
+            }
+        }
+
+        public void Start()
+        {
+            started = true;
+        }
+
+    }
+    
     
     public class RoundManager
     {
@@ -44,6 +76,11 @@ namespace Game
             StartPreRound();
         }
 
+        public void Update()
+        {
+            roundTimer.Update();
+        }
+
         public void StartPreRound()
         {
             List<ushort> activeSpaces = new List<ushort>();
@@ -52,24 +89,23 @@ namespace Game
             NotifyPreRoundStart(activeSpaces);
             
             // Start timer to for PreRoundCountdown 
-            roundTimer = new Timer(preRoundLength * 1000);
+            roundTimer = new Timer(preRoundLength);
             
             // Add StartRoundEvent to timer observers.
             roundTimer.Elapsed += StartRoundEvent;
             roundTimer.Start();
         }
 
-        private void StartRoundEvent(Object source, ElapsedEventArgs e)
+        private void StartRoundEvent()
         {
             NotifyRoundStart();
             
-            roundTimer = new Timer(roundLength * 1000);
+            roundTimer = new Timer(roundLength);
             roundTimer.Elapsed += EndRoundEvent;
             roundTimer.Start();
-            
         }
 
-        private void EndRoundEvent(Object source, ElapsedEventArgs e)
+        private void EndRoundEvent()
         {
             NotifyRoundEnd();
             List<ushort> eliminatedPlayers = world.GetPlayersNotInSpace();

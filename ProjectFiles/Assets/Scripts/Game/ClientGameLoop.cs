@@ -36,16 +36,20 @@ namespace Game
             {
                 client = new Client(world);
             }
+            
 #if UNITY_EDITOR
-                var success = client.Start();
-            #else
-                var success = client.Start("18.191.231.10");
-            #endif
+            var success = client.Start();
+#else
+            var success = client.Start("18.191.231.10");
+#endif
 
             // Create HUD class
             
             // Subscribe HUD to client events.
-            
+            client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
+                Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
+            client.RoundStartEvent += number => Debug.Log($"Round start event received rN:{number}");
+            client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
             
             return success;
         }
