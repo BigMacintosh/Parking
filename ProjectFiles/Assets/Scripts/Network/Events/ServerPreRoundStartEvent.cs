@@ -24,7 +24,7 @@ namespace Network.Events
             RoundLength = roundLength;
             PlayerCount = playerCount;
             Spaces = spaces;
-            Length = sizeof(ushort) * (Spaces.Count + 5);
+            Length = sizeof(ushort) * (Spaces.Count + 5) + 1;
         }
 
         public override void Serialise(DataStreamWriter writer)
@@ -34,7 +34,7 @@ namespace Network.Events
             writer.Write(PreRoundLength);
             writer.Write(RoundLength);
             writer.Write(PlayerCount);
-            writer.Write((byte) Spaces.Count);
+            writer.Write((ushort) Spaces.Count);
             foreach (var s in Spaces)
             {
                 writer.Write(s);
@@ -54,7 +54,7 @@ namespace Network.Events
             {
                 Spaces.Add(reader.ReadUShort(ref context));
             }
-            Length = sizeof(ushort) * (Spaces.Count + 5);
+            Length = sizeof(ushort) * (Spaces.Count + 5) + 1;
         }
 
         public override void Handle(Server server, NetworkConnection connection)
