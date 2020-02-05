@@ -92,11 +92,11 @@ public class BezierSpline : MonoBehaviour
     
     public void AddCurve () {
         Vector3 point = points[points.Count - 1];
-        point.z += 1f;
+        point.z += 3f;
         points.Add(point);
-        point.z += 1f;
+        point.z += 3f;
         points.Add(point);
-        point.z += 1f;
+        point.z += 3f;
         points.Add(point);
         
         modes.Add(modes[modes.Count - 1]);
