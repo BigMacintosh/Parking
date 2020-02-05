@@ -46,7 +46,7 @@ namespace Game
     
     public class RoundManager
     {
-        public bool Started { get; private set; }
+        public bool GameInProgress { get; private set; }
         private World world;
         private ushort roundNumber = 0;
         
@@ -68,17 +68,21 @@ namespace Game
         
         public void StartGame()
         {
-            Started = true;
+            
             NotifyGameStart();
             preRoundLength = RoundTimings.PreRoundLength;
             roundLength = RoundTimings.RoundLength;
 
             StartPreRound();
+            GameInProgress = true;
         }
 
         public void Update()
         {
-            roundTimer.Update();
+            if (GameInProgress)
+            {
+                roundTimer.Update();
+            }
         }
 
         public void StartPreRound()

@@ -42,7 +42,7 @@ namespace Game
 
         public void Update()
         {
-            if(Input.GetKeyDown("a") && Input.GetKeyDown("b") && !roundManager.Started)
+            if(Input.GetKeyDown("a") && Input.GetKeyDown("b") && !roundManager.GameInProgress)
             {
                 roundManager.StartGame();
             }
