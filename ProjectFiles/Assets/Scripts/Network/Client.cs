@@ -158,6 +158,26 @@ namespace Network
                     ev = new ServerSpawnPlayerEvent();
                     break;
                 }
+                case EventType.ServerPreRoundStartEvent:
+                {
+                    ev = new ServerPreRoundStartEvent();
+                    break;
+                }
+                case EventType.ServerRoundStartEvent:
+                {
+                    ev = new ServerRoundStartEvent();
+                    break;
+                }
+                case EventType.ServerRoundEndEvent:
+                {
+                    ev = new ServerRoundEndEvent();
+                    break;
+                }
+                case EventType.ServerEliminatePlayersEvent:
+                {
+                    ev = new ServerEliminatePlayersEvent();
+                    break;
+                }
                 default:
                     Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
                     return;
@@ -252,6 +272,27 @@ namespace Network
                 world.SetPlayerAngularVelocity(playerID, ev.AngularVelocities[playerID]);
             }
         }
+
+        public void Handle(ServerPreRoundStartEvent ev, NetworkConnection conn)
+        {
+            PreRoundStartEvent?.Invoke(ev.RoundNumber, ev.PreRoundLength, ev.RoundLength, ev.PlayerCount, ev.Spaces);
+        }
+
+        public void Handle(ServerRoundStartEvent ev, NetworkConnection conn)
+        {
+            RoundStartEvent?.Invoke(ev.RoundNumber);
+        }
+
+        public void Handle(ServerRoundEndEvent ev, NetworkConnection conn)
+        {
+            RoundEndEvent?.Invoke(ev.RoundNumber);
+        }
+
+        public void Handle(ServerEliminatePlayersEvent ev, NetworkConnection conn)
+        {
+            EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
+        }
+
         public event GameStartDelegate GameStartEvent;
         public event PreRoundStartDelegate PreRoundStartEvent;
         public event RoundStartDelegate RoundStartEvent;
