@@ -9,7 +9,7 @@ namespace Network.Events
         public ServerRoundStartEvent()
         {
             ID = EventType.ServerRoundStartEvent;
-            Length = 5;
+            Length = sizeof(byte) + sizeof(ushort);
         }
 
         public ServerRoundStartEvent(ushort roundNumber) : this()
