@@ -8,7 +8,6 @@ namespace Game
     {
         bool Init(string[] args);
         void Shutdown();
-
         void Update();
         void FixedUpdate();
         void LateUpdate();
@@ -25,6 +24,7 @@ namespace Game
     public class Game : MonoBehaviour
     {
         [SerializeField] private ServerClientSetting gameLoop = ServerClientSetting.Standalone;
+        [SerializeField] private List<Vector3> spawnLocations = new List<Vector3>();
         public bool IsHeadless { get; private set; }
         private readonly List<IGameLoop> gameLoops = new List<IGameLoop>();
         private readonly List<Type> requestedGameLoopTypes = new List<Type>();
@@ -53,10 +53,9 @@ namespace Game
 
             if (gameLoop == ServerClientSetting.Standalone)
             {
-                RequestGameLoop(typeof(ClientGameLoop), new []{"standalone"});
+                RequestGameLoop(typeof(ClientGameLoop), new[] {"standalone"});
             }
-            
-            
+
             if (IsHeadless)
             {
                 RequestGameLoop(typeof(ServerGameLoop), new string[0]);
@@ -71,9 +70,10 @@ namespace Game
                 {
                     RequestGameLoop(typeof(ClientGameLoop), new string[0]);
                 }
-
             }
-            // Inititalise level manager
+            
+            // Update spawn locations
+            SpawnLocations.Locations = spawnLocations;
         }
 
         public void Update()

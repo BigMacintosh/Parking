@@ -34,7 +34,7 @@ namespace Game
         // Server one
         public void SpawnPlayer(int playerID)
         {
-            var position = new SpawnLocations().GetSpawn();
+            var position = SpawnLocations.GetSpawn();
             SpawnPlayer(playerID, position, false);
         }
 
@@ -116,22 +116,37 @@ namespace Game
             throw new System.NotImplementedException();
         }
     }
-    
-    public class SpawnLocations
+
+    public static class SpawnLocations
     {
-        private readonly List<Vector3> locations = new List<Vector3>();
+        public static List<Vector3> Locations { get; set; }
 
-        public SpawnLocations()
-        {
-            locations.Add(new Vector3(41.5f, 39.7f, 94.671f));
-            locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
-            locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
-        }
 
-        public Vector3 GetSpawn()
+        public static Vector3 GetSpawn()
         {
+            
             var rand = new Random();
-            return locations[rand.Next(0, locations.Count - 1)];
+            return Locations[rand.Next(0, Locations.Count - 1)];
         }
     }
+    
+    // public class SpawnLocations
+    // {
+    //     private readonly List<Vector3> locations = new List<Vector3>();
+    //
+    //     public SpawnLocations()
+    //     {
+    //         locations.Add(new Vector3(41.5f, 39.7f, 94.671f));
+    //         locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
+    //         locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
+    //     }
+    //
+    //     public Vector3 GetSpawn()
+    //     {
+    //         
+    //         
+    //         var rand = new Random();
+    //         return locations[rand.Next(0, locations.Count - 1)];
+    //     }
+    // }
 }
