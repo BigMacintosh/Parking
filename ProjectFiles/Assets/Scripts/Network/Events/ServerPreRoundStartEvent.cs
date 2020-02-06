@@ -24,7 +24,7 @@ namespace Network.Events
             RoundLength = roundLength;
             PlayerCount = playerCount;
             Spaces = spaces;
-            Length = sizeof(ushort) * (Spaces.Count + 5) + 1;
+            Length = sizeof(ushort) * (Spaces.Count + 5) + sizeof(byte);
         }
 
         public override void Serialise(DataStreamWriter writer)
