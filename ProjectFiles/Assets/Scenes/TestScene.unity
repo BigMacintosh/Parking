@@ -496,7 +496,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 8, z: -10}
   followSpeed: 10
-  lookSpeed: 10
+  lookSpeed: 2
 --- !u!1001 &516747276
 PrefabInstance:
   m_ObjectHideFlags: 0
