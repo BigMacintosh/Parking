@@ -1,6 +1,7 @@
 using Network;
 using UnityEngine;
 using Gameplay;
+using UI;
 
 namespace Game
 {
@@ -8,6 +9,7 @@ namespace Game
     {
         private IClient client;
         private World world;
+        private UIController uiController;
         private bool isStandalone;
         private ClientParkingSpaceManager parkingSpaceManager;
         
@@ -29,8 +31,8 @@ namespace Game
             parkingSpaceManager = new ClientParkingSpaceManager();
 
             // Create HUD
-            Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);
             Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
+            uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
             
             
             // Initialise the client
