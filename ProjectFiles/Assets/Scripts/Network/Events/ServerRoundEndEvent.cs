@@ -10,7 +10,7 @@ namespace Network.Events
         public ServerRoundEndEvent()
         {
             ID = EventType.ServerRoundEndEvent;
-            Length = 5;
+            Length = sizeof(byte) + sizeof(ushort);
         }
 
         public ServerRoundEndEvent(ushort roundNumber) : this()
