@@ -18,7 +18,7 @@ namespace Network.Events
         {
             RoundNumber = roundNumber;
             Players = players;
-            Length = sizeof(ushort) * (Players.Count + 2) + 1;
+            Length = sizeof(ushort) * (Players.Count + 2) + sizeof(byte);
         }
 
         public override void Serialise(DataStreamWriter writer)
