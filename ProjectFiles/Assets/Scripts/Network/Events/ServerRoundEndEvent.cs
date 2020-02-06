@@ -5,15 +5,15 @@ namespace Network.Events
     // TODO: this event is exactly the same as ServerRoundStartEvent, might need merging?
     public class ServerRoundEndEvent : Event
     {
-        public byte RoundNumber { get; private set; }
+        public ushort RoundNumber { get; private set; }
 
         public ServerRoundEndEvent()
         {
             ID = EventType.ServerRoundEndEvent;
-            Length = 2;
+            Length = sizeof(byte) + sizeof(ushort);
         }
 
-        public ServerRoundEndEvent(byte roundNumber) : this()
+        public ServerRoundEndEvent(ushort roundNumber) : this()
         {
             RoundNumber = roundNumber;
         }
@@ -26,7 +26,7 @@ namespace Network.Events
         
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
-            RoundNumber = reader.ReadByte(ref context);
+            RoundNumber = reader.ReadUShort(ref context);
         }
 
         public override void Handle(Server server, NetworkConnection connection)

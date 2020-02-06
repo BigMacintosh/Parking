@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Game;
 using Network.Events;
@@ -13,6 +14,17 @@ using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.
 
 namespace Network
 {
+    
+    public delegate void GameStartDelegate(ushort nPlayers);
+    
+    public delegate void PreRoundStartDelegate(
+        ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive);
+    
+    public delegate void RoundStartDelegate(ushort roundNumber);
+    
+    public delegate void RoundEndDelegate(ushort roundNumber);
+    
+    public delegate void EliminatePlayersDelegate(ushort roundNumber, List<ushort> eliminatedPlayers);
 
 
     public interface IClient
@@ -21,6 +33,11 @@ namespace Network
         void Shutdown();
         void SendLocationUpdate();
         void HandleNetworkEvents();
+        event GameStartDelegate GameStartEvent;
+        event PreRoundStartDelegate PreRoundStartEvent;
+        event RoundStartDelegate RoundStartEvent;
+        event RoundEndDelegate RoundEndEvent;
+        event EliminatePlayersDelegate EliminatePlayersEvent;
     }
 
     public class Client : IClient
@@ -118,7 +135,9 @@ namespace Network
                 }
             }
         }
+
         
+
         private void HandleEvent(EventType eventType, DataStreamReader reader, DataStreamReader.Context readerContext)
         {
             Event ev;
@@ -137,6 +156,26 @@ namespace Network
                 case EventType.ServerSpawnPlayerEvent:
                 {
                     ev = new ServerSpawnPlayerEvent();
+                    break;
+                }
+                case EventType.ServerPreRoundStartEvent:
+                {
+                    ev = new ServerPreRoundStartEvent();
+                    break;
+                }
+                case EventType.ServerRoundStartEvent:
+                {
+                    ev = new ServerRoundStartEvent();
+                    break;
+                }
+                case EventType.ServerRoundEndEvent:
+                {
+                    ev = new ServerRoundEndEvent();
+                    break;
+                }
+                case EventType.ServerEliminatePlayersEvent:
+                {
+                    ev = new ServerEliminatePlayersEvent();
                     break;
                 }
                 default:
@@ -185,6 +224,11 @@ namespace Network
             {
                 
             }
+            public event GameStartDelegate GameStartEvent;
+            public event PreRoundStartDelegate PreRoundStartEvent;
+            public event RoundStartDelegate RoundStartEvent;
+            public event RoundEndDelegate RoundEndEvent;
+            public event EliminatePlayersDelegate EliminatePlayersEvent;
         }
         
         public void Handle(Event ev, NetworkConnection conn) {
@@ -228,5 +272,31 @@ namespace Network
                 world.SetPlayerAngularVelocity(playerID, ev.AngularVelocities[playerID]);
             }
         }
+
+        public void Handle(ServerPreRoundStartEvent ev, NetworkConnection conn)
+        {
+            PreRoundStartEvent?.Invoke(ev.RoundNumber, ev.PreRoundLength, ev.RoundLength, ev.PlayerCount, ev.Spaces);
+        }
+
+        public void Handle(ServerRoundStartEvent ev, NetworkConnection conn)
+        {
+            RoundStartEvent?.Invoke(ev.RoundNumber);
+        }
+
+        public void Handle(ServerRoundEndEvent ev, NetworkConnection conn)
+        {
+            RoundEndEvent?.Invoke(ev.RoundNumber);
+        }
+
+        public void Handle(ServerEliminatePlayersEvent ev, NetworkConnection conn)
+        {
+            EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
+        }
+
+        public event GameStartDelegate GameStartEvent;
+        public event PreRoundStartDelegate PreRoundStartEvent;
+        public event RoundStartDelegate RoundStartEvent;
+        public event RoundEndDelegate RoundEndEvent;
+        public event EliminatePlayersDelegate EliminatePlayersEvent;
     }
 }

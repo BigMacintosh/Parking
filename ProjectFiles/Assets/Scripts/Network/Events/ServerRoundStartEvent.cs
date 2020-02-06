@@ -4,15 +4,15 @@ namespace Network.Events
 {
     public class ServerRoundStartEvent : Event
     {
-        public byte RoundNumber { get; private set; }
+        public ushort RoundNumber { get; private set; }
 
         public ServerRoundStartEvent()
         {
             ID = EventType.ServerRoundStartEvent;
-            Length = 2;
+            Length = sizeof(byte) + sizeof(ushort);
         }
 
-        public ServerRoundStartEvent(byte roundNumber) : this()
+        public ServerRoundStartEvent(ushort roundNumber) : this()
         {
             RoundNumber = roundNumber;
         }
@@ -25,7 +25,7 @@ namespace Network.Events
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
-            RoundNumber = reader.ReadByte(ref context);
+            RoundNumber = reader.ReadUShort(ref context);
         }
 
         public override void Handle(Server server, NetworkConnection connection)

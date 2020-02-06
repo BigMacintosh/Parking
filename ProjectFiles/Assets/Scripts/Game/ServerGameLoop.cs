@@ -1,4 +1,5 @@
 ﻿using Network;
+using UnityEngine;
 
 namespace Game
 {
@@ -6,6 +7,7 @@ namespace Game
     {
         private Server server;
         private World world;
+        private RoundManager roundManager;
 
         public bool Init(string[] args)
         {
@@ -19,6 +21,16 @@ namespace Game
             server = new Server(world, config);
             var success = server.Start();
             
+            roundManager = new RoundManager(world);
+            
+            
+            // Subscribe to events.
+            roundManager.GameStartEvent += server.OnStartGame;
+            roundManager.RoundStartEvent += server.OnRoundStart;
+            roundManager.PreRoundStartEvent += server.OnPreRoundStart;
+            roundManager.RoundEndEvent += server.OnRoundEnd;
+            roundManager.EliminatePlayersEvent += server.OnEliminatePlayers;
+
             return success;
         }
 
@@ -30,14 +42,20 @@ namespace Game
 
         public void Update()
         {
+            if(Input.GetKeyDown("a") && Input.GetKeyDown("b") && !roundManager.GameInProgress)
+            {
+                roundManager.StartGame();
+            }
             server.HandleNetworkEvents();
             world.Update();
+            roundManager.Update();
+            
         }
 
         public void FixedUpdate()
         {
-            server.SendLocationUpdates();
             // Trigger network send.
+            server.SendLocationUpdates();
         }
 
         public void LateUpdate()

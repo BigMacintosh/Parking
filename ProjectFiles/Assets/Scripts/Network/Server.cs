@@ -15,7 +15,7 @@ namespace Network
 {
     public class Server
     {
-        private UdpCNetworkDriver Driver;
+        private UdpCNetworkDriver driver;
         private NativeList<NetworkConnection> connections;
         private NetworkPipeline pipeline;
         private World world;
@@ -32,19 +32,19 @@ namespace Network
             
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
-            Driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
-            pipeline = Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
+            driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
+            pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
         }
 
         public bool Start()
         {
-            if (Driver.Bind(NetworkEndPoint.Parse(IP, Port)) != 0)
+            if (driver.Bind(NetworkEndPoint.Parse(IP, Port)) != 0)
             {
                 Debug.Log($"Server: Failed to bind to port {IP}:{Port}. Is the port already in use?");
                 Shutdown();
                 return false;
             }
-            Driver.Listen();
+            driver.Listen();
             Debug.Log($"Server: Listening at port {IP}:{Port}...");
             
             return true;
@@ -52,27 +52,13 @@ namespace Network
         
         public void Shutdown()
         {
-            Driver.Dispose();
+            driver.Dispose();
             connections.Dispose();
-        }
-
-        public void SendLocationUpdates()
-        {
-            if (world.GetNumPlayers() == 0) return;
-            var locationUpdate = new ServerLocationUpdateEvent(world);
-            using (var writer = new DataStreamWriter(locationUpdate.Length, Allocator.Temp))
-            {
-                locationUpdate.Serialise(writer);
-                foreach (var connection in connections)
-                {
-                    Driver.Send(pipeline, connection, writer);
-                }
-            }
         }
 
         public void HandleNetworkEvents()
         {
-            Driver.ScheduleUpdate().Complete();
+            driver.ScheduleUpdate().Complete();
             // Clean up connections
             for (var i = 0; i < connections.Length; i++)
             {
@@ -95,10 +81,10 @@ namespace Network
 
             // Process new connections
             NetworkConnection c;
-            while ((c = Driver.Accept()) != default(NetworkConnection))
+            while ((c = driver.Accept()) != default(NetworkConnection))
             {
                 connections.Add(c);
-                var endpoint = Driver.RemoteEndPoint(c);
+                var endpoint = driver.RemoteEndPoint(c);
                 Debug.Log($"Server: Accepted a connection from {endpoint.IpAddress()}:{endpoint.Port}.");
             }
         
@@ -112,9 +98,9 @@ namespace Network
                     continue;
                 }
                 
-                var endpoint = Driver.RemoteEndPoint(connection);
+                var endpoint = driver.RemoteEndPoint(connection);
                 NetworkEvent.Type command;
-                while ((command = Driver.PopEventForConnection(connection, out var reader)) != NetworkEvent.Type.Empty)
+                while ((command = driver.PopEventForConnection(connection, out var reader)) != NetworkEvent.Type.Empty)
                 {
                     switch (command)
                     {
@@ -180,7 +166,7 @@ namespace Network
             {
                 handshakeResponse.Serialise(writer);
                 // respond to the handshake
-                Driver.Send(pipeline, srcConnection, writer);
+                driver.Send(pipeline, srcConnection, writer);
             }
 
             // tell other clients this client has spawned
@@ -191,7 +177,7 @@ namespace Network
                 foreach (var otherClient in connections)
                 {
                     if (otherClient.InternalId == playerID) continue;
-                    Driver.Send(pipeline, otherClient, writer);
+                    driver.Send(pipeline, otherClient, writer);
                 }
             }
 
@@ -203,7 +189,7 @@ namespace Network
                 using (var writer = new DataStreamWriter(spawnOtherPlayer.Length, Allocator.Temp))
                 {
                     spawnOtherPlayer.Serialise(writer);
-                    Driver.Send(pipeline, srcConnection, writer);
+                    driver.Send(pipeline, srcConnection, writer);
                 }
             }
         }
@@ -216,6 +202,61 @@ namespace Network
             world.SetPlayerRotation(playerID, ev.Rotation);
             world.SetPlayerVelocity(playerID, ev.Velocity);
             world.SetPlayerAngularVelocity(playerID, ev.AngularVelocity);
+        }
+
+        private void SendToAll(Event ev)
+        {
+            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp))
+            {
+                ev.Serialise(writer);
+                foreach (var connection in connections)
+                {
+                    driver.Send(pipeline, connection, writer);
+                }
+            }
+        }
+
+        // Send Messages.
+        public void SendLocationUpdates()
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var locationUpdate = new ServerLocationUpdateEvent(world);
+            SendToAll(locationUpdate);
+        }
+
+        public void OnStartGame(ushort nPlayers)
+        {
+            // Once this is called, do not accept new connections.
+            // Create ServerStartGameEvent.
+            // throw new NotImplementedException();
+        }
+        
+        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var preRoundStart = new ServerPreRoundStartEvent(roundNumber, preRoundLength, roundLength, nPlayers, spacesActive);
+            SendToAll(preRoundStart);
+        }
+
+        public void OnRoundStart(ushort roundNumber)
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var roundStart = new ServerRoundStartEvent(roundNumber);
+            SendToAll(roundStart);
+        }
+
+        public void OnRoundEnd(ushort roundNumber)
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var roundEnd = new ServerRoundEndEvent(roundNumber);
+            SendToAll(roundEnd);
+        }
+
+        public void OnEliminatePlayers(ushort roundNumber, List<ushort> players)
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
+            SendToAll(eliminatePlayers);
         }
     }
 }
