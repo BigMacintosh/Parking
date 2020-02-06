@@ -1,5 +1,6 @@
 using Network;
 using UnityEngine;
+using UI;
 
 namespace Game
 {
@@ -7,6 +8,7 @@ namespace Game
     {
         private IClient client;
         private World world;
+        private UIController uiController;
         private bool isStandalone;
         
         public bool Init(string[] args)
@@ -24,9 +26,8 @@ namespace Game
             world = new World();
 
             // Create HUD
-            // TODO: look at merging the HUD into one big canvas or something?
-            Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);
             Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
+            uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
             
             // Start client connection
             if (isStandalone)
