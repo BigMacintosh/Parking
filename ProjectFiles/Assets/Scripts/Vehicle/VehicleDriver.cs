@@ -41,6 +41,11 @@ namespace Vehicle
             {
                 body.AddTorque(Input.GetAxis("Horizontal") * steer * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
             }
+
+            if (Input.GetAxis("Jump") != 0 && grounded)
+            {
+                body.AddForce(body.mass * accel * Input.GetAxis("Jump") * transform.up * 10f);
+            }
             
             //Drifting
             if (grounded)
