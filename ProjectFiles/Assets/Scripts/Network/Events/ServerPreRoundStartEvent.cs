@@ -54,7 +54,7 @@ namespace Network.Events
             {
                 Spaces.Add(reader.ReadUShort(ref context));
             }
-            Length = sizeof(ushort) * (Spaces.Count + 5) + 1;
+            Length = sizeof(ushort) * (Spaces.Count + 5) + sizeof(byte);
         }
 
         public override void Handle(Server server, NetworkConnection connection)
