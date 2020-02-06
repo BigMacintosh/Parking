@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-
 using Network;
 using UnityEngine;
-using Object = System.Object;
 
 namespace Game
 {
@@ -12,15 +10,16 @@ namespace Game
         public const ushort PreRoundLength = 10;
         public const ushort RoundLength = 45;
     }
+
     public delegate void TimerOverDelegate();
-    
-    
+
+
     public class Timer
     {
         public event TimerOverDelegate Elapsed;
         private float timeLeft;
         private bool started;
-        
+
         public Timer(float length)
         {
             timeLeft = length;
@@ -40,16 +39,15 @@ namespace Game
         {
             started = true;
         }
-
     }
-    
-    
+
+
     public class RoundManager
     {
         public bool GameInProgress { get; private set; }
         private World world;
         private ushort roundNumber = 0;
-        
+
         // Timer to countdown to the start of the round.
         private Timer roundTimer;
         private ushort preRoundLength;
@@ -65,10 +63,9 @@ namespace Game
         {
             this.world = world;
         }
-        
+
         public void StartGame()
         {
-            
             NotifyGameStart();
             preRoundLength = RoundTimings.PreRoundLength;
             roundLength = RoundTimings.RoundLength;
@@ -88,13 +85,13 @@ namespace Game
         public void StartPreRound()
         {
             List<ushort> activeSpaces = new List<ushort>();
-            
+
             // Send 5 seconds round warning.
             NotifyPreRoundStart(activeSpaces);
-            
+
             // Start timer to for PreRoundCountdown 
             roundTimer = new Timer(preRoundLength);
-            
+
             // Add StartRoundEvent to timer observers.
             roundTimer.Elapsed += StartRoundEvent;
             roundTimer.Start();
@@ -103,7 +100,7 @@ namespace Game
         private void StartRoundEvent()
         {
             NotifyRoundStart();
-            
+
             roundTimer = new Timer(roundLength);
             roundTimer.Elapsed += EndRoundEvent;
             roundTimer.Start();
