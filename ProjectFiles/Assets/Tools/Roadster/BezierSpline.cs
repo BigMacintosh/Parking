@@ -80,10 +80,10 @@ public class BezierSpline : MonoBehaviour
     public void Reset ()
     {
         points = new List<Vector3>();
-        points.Add(new Vector3(0f, 0f, 1f));
-        points.Add(new Vector3(0f, 0f, 2f));
         points.Add(new Vector3(0f, 0f, 3f));
-        points.Add(new Vector3(0f, 0f, 4f));
+        points.Add(new Vector3(0f, 0f, 6f));
+        points.Add(new Vector3(0f, 0f, 9f));
+        points.Add(new Vector3(0f, 0f, 12f));
 
         modes = new List<BezierControlPointMode>();
         modes.Add(BezierControlPointMode.Free);
@@ -92,11 +92,11 @@ public class BezierSpline : MonoBehaviour
     
     public void AddCurve () {
         Vector3 point = points[points.Count - 1];
-        point.z += 1f;
+        point.z += 3f;
         points.Add(point);
-        point.z += 1f;
+        point.z += 3f;
         points.Add(point);
-        point.z += 1f;
+        point.z += 3f;
         points.Add(point);
         
         modes.Add(modes[modes.Count - 1]);

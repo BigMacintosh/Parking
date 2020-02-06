@@ -494,9 +494,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44c07d85576ad4116ab7ccf23790c418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 2, z: -6}
+  offset: {x: 0, y: 8, z: -10}
   followSpeed: 10
-  lookSpeed: 10
+  lookSpeed: 2
 --- !u!1001 &516747276
 PrefabInstance:
   m_ObjectHideFlags: 0
