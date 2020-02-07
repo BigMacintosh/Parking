@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4302617596909867571}
   - component: {fileID: 5979946588476398068}
   - component: {fileID: 2409252170683123137}
+  - component: {fileID: 1060954402389675765}
   m_Layer: 0
   m_Name: skull
   m_TagString: Untagged
@@ -79,6 +80,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &1060954402389675765
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4468150431677323575}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.0000005, y: 2.0000007, z: 1.804035}
+  m_Center: {x: 0.0000019077136, y: -9.125359e-11, z: -0.09798282}
 --- !u!1 &5508424401779608566
 GameObject:
   m_ObjectHideFlags: 0
