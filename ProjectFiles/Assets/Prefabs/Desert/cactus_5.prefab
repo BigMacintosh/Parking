@@ -282,6 +282,7 @@ GameObject:
   - component: {fileID: 6927362284663262350}
   - component: {fileID: 172332834142016271}
   - component: {fileID: 4973146850173591588}
+  - component: {fileID: 6527813378677136568}
   m_Layer: 0
   m_Name: cactus.001
   m_TagString: Untagged
@@ -350,3 +351,16 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &6527813378677136568
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7578592776144020236}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.8788278, y: 2.0245807, z: 1.9973657}
+  m_Center: {x: 0.059453197, y: -0.012290065, z: -0.0005034209}
