@@ -1,4 +1,4 @@
-﻿using Network;
+using Network;
 using UnityEngine;
 
 namespace Game
@@ -38,7 +38,7 @@ namespace Game
             }
             
 #if UNITY_EDITOR
-            var success = client.Start("35.177.253.83");
+            var success = client.Start();
 #else
             var success = client.Start("35.177.253.83");
 #endif
