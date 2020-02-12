@@ -1,46 +1,19 @@
 using System.Collections.Generic;
 using Network;
 using UnityEngine;
+using Utils;
 
 namespace Game
 {
     static class RoundTimings
     {
         // All times in seconds
+        public const ushort FreeroamLength = 10;
         public const ushort PreRoundLength = 10;
         public const ushort RoundLength = 45;
     }
 
     public delegate void TimerOverDelegate();
-
-
-    public class Timer
-    {
-        public event TimerOverDelegate Elapsed;
-        private float timeLeft;
-        private bool started;
-
-        public Timer(float length)
-        {
-            timeLeft = length;
-        }
-
-        public void Update()
-        {
-            timeLeft -= Time.deltaTime;
-            if (timeLeft < 0 & started)
-            {
-                started = false;
-                Elapsed?.Invoke();
-            }
-        }
-
-        public void Start()
-        {
-            started = true;
-        }
-    }
-
 
     public class RoundManager
     {
@@ -50,12 +23,20 @@ namespace Game
 
         // Timer to countdown to the start of the round.
         private Timer roundTimer;
+        private ushort freeroamLength;
         private ushort preRoundLength;
         private ushort roundLength;
 
+        // Spawn all the players that have connected. Allow free-roam for the players. Disallow new connections.
         public event GameStartDelegate GameStartEvent;
+
+        // Start a countdown until the beginning of a new round.
         public event PreRoundStartDelegate PreRoundStartEvent;
+
+        // Immediately start a round.
         public event RoundStartDelegate RoundStartEvent;
+
+        // Immediately end a around.
         public event RoundEndDelegate RoundEndEvent;
         public event EliminatePlayersDelegate EliminatePlayersEvent;
 
@@ -64,22 +45,32 @@ namespace Game
             this.world = world;
         }
 
-        public void StartGame()
-        {
-            NotifyGameStart();
-            preRoundLength = RoundTimings.PreRoundLength;
-            roundLength = RoundTimings.RoundLength;
-
-            StartPreRound();
-            GameInProgress = true;
-        }
-
         public void Update()
         {
             if (GameInProgress)
             {
                 roundTimer.Update();
             }
+        }
+
+        public void StartGame()
+        {
+            NotifyGameStart();
+            preRoundLength = RoundTimings.PreRoundLength;
+            roundLength = RoundTimings.RoundLength;
+            freeroamLength = RoundTimings.FreeroamLength;
+            StartFreeroam();
+            GameInProgress = true;
+        }
+
+        public void StartFreeroam()
+        {
+            // Start timer to for PreRoundCountdown 
+            roundTimer = new Timer(freeroamLength);
+
+            // Add StartRoundEvent to timer observers.
+            roundTimer.Elapsed += StartPreRound;
+            roundTimer.Start();
         }
 
         public void StartPreRound()
