@@ -19,6 +19,7 @@ namespace Vehicle
         void Start()
         {
             body = gameObject.GetComponent<Rigidbody>();
+            body.centerOfMass = transform.Find("centreOfMass").transform.localPosition;
         }
 
         void FixedUpdate()
