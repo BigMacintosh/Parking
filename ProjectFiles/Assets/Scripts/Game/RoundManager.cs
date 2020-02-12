@@ -5,12 +5,13 @@ using Utils;
 
 namespace Game
 {
-    static class RoundTimings
+    static class DefaultRoundProperties
     {
         // All times in seconds
         public const ushort FreeroamLength = 10;
         public const ushort PreRoundLength = 10;
-        public const ushort RoundLength = 45;
+        public const ushort RoundLength = 5;
+        public const ushort MaxRounds = 5;
     }
 
     public delegate void TimerOverDelegate();
@@ -26,6 +27,7 @@ namespace Game
         private ushort freeroamLength;
         private ushort preRoundLength;
         private ushort roundLength;
+        private ushort maxRounds;
 
         // Spawn all the players that have connected. Allow free-roam for the players. Disallow new connections.
         public event GameStartDelegate GameStartEvent;
@@ -56,9 +58,10 @@ namespace Game
         public void StartGame()
         {
             NotifyGameStart();
-            preRoundLength = RoundTimings.PreRoundLength;
-            roundLength = RoundTimings.RoundLength;
-            freeroamLength = RoundTimings.FreeroamLength;
+            preRoundLength = DefaultRoundProperties.PreRoundLength;
+            roundLength = DefaultRoundProperties.RoundLength;
+            freeroamLength = DefaultRoundProperties.FreeroamLength;
+            maxRounds = DefaultRoundProperties.MaxRounds;
             StartFreeroam();
             GameInProgress = true;
         }
@@ -100,8 +103,13 @@ namespace Game
         private void EndRoundEvent()
         {
             NotifyRoundEnd();
-            List<ushort> eliminatedPlayers = world.GetPlayersNotInSpace();
-            NotifyEliminatePlayers(eliminatedPlayers);
+//            List<ushort> eliminatedPlayers = world.GetPlayersNotInSpace();
+//            NotifyEliminatePlayers(eliminatedPlayers);
+            roundNumber++;
+            if (roundNumber < maxRounds)
+            {
+                StartPreRound();
+            }
         }
 
         private void NotifyGameStart()
