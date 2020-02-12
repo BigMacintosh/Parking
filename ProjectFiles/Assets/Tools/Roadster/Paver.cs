@@ -10,6 +10,8 @@ public class Paver : MonoBehaviour
     [SerializeField] private float divisions;
     [SerializeField] private float width;
     [SerializeField] private float thickness;
+    [SerializeField] private float maxGroundDistance;
+    [SerializeField] private float raiseAboveGround;
     [SerializeField] private bool signpost = false;
     [SerializeField] private Material surface;
     
@@ -78,10 +80,36 @@ public class Paver : MonoBehaviour
                 alpha *= -1;
             }
 
+            
             Vector3 rightPoint = new Vector3(roadPoint.x + ((width/2)*Mathf.Cos(alpha)),roadPoint.y,roadPoint.z - ((width/2)*Mathf.Sin(alpha))) - this.transform.position;
+            
+            RaycastHit rightHit;
+            if (Physics.Raycast(new Ray(rightPoint + transform.position, Vector3.down), out rightHit, maxGroundDistance))
+            {
+                rightPoint.y = rightHit.transform.position.y-transform.position.y + raiseAboveGround;
+                if (signpost)
+                {
+                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                    cube.transform.position = rightHit.transform.position;
+                    cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                }
+            }
             Vector3 rightLowerPoint = rightPoint - new Vector3(0f, thickness, 0f);
             
             Vector3 leftPoint = new Vector3(roadPoint.x - ((width/2)*Mathf.Cos(alpha)),roadPoint.y,roadPoint.z + ((width/2)*Mathf.Sin(alpha))) - this.transform.position;
+            
+            RaycastHit leftHit;
+            if (Physics.Raycast(new Ray(leftPoint + transform.position, Vector3.down), out leftHit, maxGroundDistance))
+            {
+                leftPoint.y = leftHit.transform.position.y - transform.position.y + raiseAboveGround;
+                Debug.Log(leftHit.transform.position);
+                if (signpost)
+                {
+                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                    cube.transform.position = leftHit.transform.position;
+                    cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                }
+            }
             Vector3 leftLowerPoint = leftPoint - new Vector3(0f, thickness, 0f);
 
             vertices.Add(leftPoint);
