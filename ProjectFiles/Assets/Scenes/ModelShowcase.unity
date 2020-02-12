@@ -7808,9 +7808,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spline: {fileID: 748054121}
-  divisions: 50
+  divisions: 100
   width: 10
   thickness: 2
+  maxGroundDistance: 100
+  raiseAboveGround: 0.2
   signpost: 0
   surface: {fileID: 2100000, guid: f6f4c662571e442caa823f47dec6acbf, type: 2}
 --- !u!4 &748054123
@@ -7821,8 +7823,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 748054120}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 19.51, y: 0.27, z: 0.7}
-  m_LocalScale: {x: 1.205, y: 1.205, z: 1.205}
+  m_LocalPosition: {x: 19.51, y: 1, z: 0.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2

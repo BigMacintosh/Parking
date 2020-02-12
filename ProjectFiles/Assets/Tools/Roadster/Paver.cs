@@ -82,32 +82,37 @@ public class Paver : MonoBehaviour
 
             
             Vector3 rightPoint = new Vector3(roadPoint.x + ((width/2)*Mathf.Cos(alpha)),roadPoint.y,roadPoint.z - ((width/2)*Mathf.Sin(alpha))) - this.transform.position;
+            Vector3 signRightPoint = rightPoint;
             
             RaycastHit rightHit;
             if (Physics.Raycast(new Ray(rightPoint + transform.position, Vector3.down), out rightHit, maxGroundDistance))
             {
-                rightPoint.y = rightHit.transform.position.y-transform.position.y + raiseAboveGround;
+                rightPoint.y -= rightHit.distance - raiseAboveGround;
                 if (signpost)
                 {
-                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                    cube.transform.position = rightHit.transform.position;
-                    cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                    GameObject cap = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                    Vector3 signPos = rightPoint + transform.position;
+                    signPos.y -= rightHit.distance;
+                    cap.transform.position = signPos;
+                    cap.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
                 }
             }
             Vector3 rightLowerPoint = rightPoint - new Vector3(0f, thickness, 0f);
-            
+
             Vector3 leftPoint = new Vector3(roadPoint.x - ((width/2)*Mathf.Cos(alpha)),roadPoint.y,roadPoint.z + ((width/2)*Mathf.Sin(alpha))) - this.transform.position;
+            Vector3 signLeftPoint = leftPoint;
             
             RaycastHit leftHit;
             if (Physics.Raycast(new Ray(leftPoint + transform.position, Vector3.down), out leftHit, maxGroundDistance))
             {
-                leftPoint.y = leftHit.transform.position.y - transform.position.y + raiseAboveGround;
-                Debug.Log(leftHit.transform.position);
+                leftPoint.y -= leftHit.distance - raiseAboveGround;
                 if (signpost)
                 {
-                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                    cube.transform.position = leftHit.transform.position;
-                    cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                    GameObject cap = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                    Vector3 signPos = leftPoint + transform.position;
+                    signPos.y -= leftHit.distance;
+                    cap.transform.position = signPos;
+                    cap.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
                 }
             }
             Vector3 leftLowerPoint = leftPoint - new Vector3(0f, thickness, 0f);
@@ -124,11 +129,11 @@ public class Paver : MonoBehaviour
             if (signpost)
             {
                 GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.transform.position = leftPoint + this.transform.position;
+                cube.transform.position = signLeftPoint + this.transform.position;
                 cube.transform.localScale = new Vector3(0.5f,0.5f,0.5f);
             
                 cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.transform.position = rightPoint + this.transform.position;
+                cube.transform.position = signRightPoint + this.transform.position;
                 cube.transform.localScale = new Vector3(0.5f,0.5f,0.5f);
             }
         }
