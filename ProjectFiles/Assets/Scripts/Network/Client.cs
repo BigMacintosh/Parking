@@ -135,9 +135,7 @@ namespace Network
                 }
             }
         }
-
         
-
         private void HandleEvent(EventType eventType, DataStreamReader reader, DataStreamReader.Context readerContext)
         {
             Event ev;
@@ -176,6 +174,11 @@ namespace Network
                 case EventType.ServerEliminatePlayersEvent:
                 {
                     ev = new ServerEliminatePlayersEvent();
+                    break;
+                }
+                case EventType.ServerDisconnectEvent:
+                {
+                    ev = new ServerDisconnectEvent();
                     break;
                 }
                 default:
@@ -271,6 +274,12 @@ namespace Network
                 world.SetPlayerVelocity(playerID, ev.Velocities[playerID]);
                 world.SetPlayerAngularVelocity(playerID, ev.AngularVelocities[playerID]);
             }
+        }
+
+        public void Handle(ServerDisconnectEvent ev, NetworkConnection conn)
+        {
+            world.DestroyPlayer(ev.PlayerID);
+            Debug.Log($"Client: Destroyed player { ev.PlayerID } due to disconnect.");
         }
 
         public void Handle(ServerPreRoundStartEvent ev, NetworkConnection conn)
