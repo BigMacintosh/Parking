@@ -70,11 +70,7 @@ namespace Network
                     world.DestroyPlayer(playerID);
 
                     // Destroy the actual network connection
-                    // TODO: Is this needed???
-                    connections[i] = default(NetworkConnection);
-                            
                     Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
-                    
                     connections.RemoveAtSwapBack(i);
                     i--;
                 }
@@ -113,11 +109,8 @@ namespace Network
                             break;
                         }
                         case NetworkEvent.Type.Disconnect:
+                            connections[i] = default(NetworkConnection);
                             Debug.Log($"Server: {endpoint.IpAddress()}:{endpoint.Port} disconnected.");
-                            //TODO Duplicate with the loop above!
-                            var playerID = connections[i].InternalId;
-                            world.DestroyPlayer(playerID);
-                            connections.RemoveAtSwapBack(i);
                             break;
                     }
                 }
