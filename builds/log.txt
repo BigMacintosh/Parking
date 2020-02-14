@@ -1,0 +1,869 @@
+[LicensingClient] ERROR Failed to connect to local IPC
+[Licensing::Module] Failed to connect to channel: LicenseClient-rileyevans
+Launching external process: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Frameworks/UnityLicensingClient.app/Contents/Resources/Unity.Licensing.Client
+[Licensing::Module] Successfully launched the LicensingClient
+[Licensing::Module] Successfully connected to LicensingClient on channel: LicenseClient-rileyevans
+[Licensing::Module] Successfully launched and connected to LicensingClient
+Entitlement-based licensing initiated
+[LicensingClient] Licenses Updated successfully in LicensingClient
+DisplayProgressbar: Unity license
+
+LICENSE SYSTEM [2020214 17:28:37] Next license update check is after 2020-02-13T15:58:00
+
+[Licensing::Module] Serial number assigned to: "F4-VC2N-GJWG-JW5P-CK99-XXXX"\n[Package Manager] Server::Start -- Port 60416 was selected
+Launching external process: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/Server/UnityPackageManager
+
+ COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MacOS/Unity
+-batchmode
+-projectPath
+./ProjectFiles
+-executeMethod
+Build.ServerBuild.Build
+-buildFolder
+./builds/server
+-quit
+-logFile
+./builds/log.txt
+Successfully changed project path to: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles
+/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles
+Using Asset Import Pipeline V2.
+DisplayProgressbar: Unity Package Manager
+Adding genesis user token [Package Manager] Done resolving packages in 0.65s seconds
+[Package Manager] Done checking package constraints in 0.00s seconds
+[Package Manager] 
+Registered 48 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.burst@1.1.2 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.burst@1.1.2)
+    com.unity.collab-proxy@1.2.16 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.collab-proxy@1.2.16)
+    com.unity.ext.nunit@1.0.0 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.ext.nunit@1.0.0)
+    com.unity.ide.rider@1.1.4 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.ide.rider@1.1.4)
+    com.unity.ide.vscode@1.1.3 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.ide.vscode@1.1.3)
+    com.unity.polybrush@1.0.1 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.polybrush@1.0.1)
+    com.unity.probuilder@4.1.2 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.probuilder@4.1.2)
+    com.unity.test-framework@1.1.3 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.test-framework@1.1.3)
+    com.unity.textmeshpro@2.0.1 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.textmeshpro@2.0.1)
+    com.unity.timeline@1.2.6 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.timeline@1.2.6)
+    com.unity.transport@0.2.3-preview.0 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.transport@0.2.3-preview.0)
+    com.unity.mathematics@1.1.0 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.mathematics@1.1.0)
+    com.unity.settings-manager@1.0.0 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0)
+    com.unity.collections@0.3.0-preview.0 (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.collections@0.3.0-preview.0)
+    com.unity.test-framework.performance@1.3.0-preview (location: /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.test-framework.performance@1.3.0-preview)
+  Built-in packages:
+    com.unity.ugui@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.ugui)
+    com.unity.modules.ai@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.physics2d)
+    com.unity.modules.screencapture@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vehicles@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.video)
+    com.unity.modules.vr@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.vr)
+    com.unity.modules.wind@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/PackageManager/BuiltInPackages/com.unity.modules.subsystems)
+
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.00s seconds
+Refreshing native plugins compatible for Editor in 123.89 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 2019.3.0f3 (6c9e2bfd6f81)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Assets
+GfxDevice: creating device client; threaded=0
+2020-02-14 17:28:40.330 Unity[38805:880968] Color LCD preferred device: Intel(R) Iris(TM) Graphics 550 (low power)
+2020-02-14 17:28:40.330 Unity[38805:880968] Metal devices available: 1
+2020-02-14 17:28:40.330 Unity[38805:880968] 0: Intel(R) Iris(TM) Graphics 550 (low power)
+2020-02-14 17:28:40.331 Unity[38805:880968] Using device Intel(R) Iris(TM) Graphics 550 (low power)
+Initializing Metal device caps: Intel(R) Iris(TM) Graphics 550
+WARNING: Shader Unsupported: 'Polybrush/Standard Vertex Color' - Pass 'FORWARD' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Vertex Color' - Pass 'FORWARD_DELTA' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Vertex Color' - Pass 'Meta' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Vertex Color' - All passes removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+[EnlightenBakeManager] m_Clear = false;
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/unityjit'
+Mono config path = '/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56805
+ImportWorker Server TCP listen port: 51482
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Registered in 0.001647 seconds.
+Native extension for OSXStandalone target not found
+Refreshing native plugins compatible for Editor in 25.03 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  2.634 seconds
+Registering precompiled user dll's ...
+Registered in 0.071172 seconds.
+Platform modules already initialized, skipping
+Validating Project structure ... 0.005645 seconds.
+Shader import version has changed; will reimport all shaders...
+Upgrading shader files ...0.020260 seconds.
+Start importing Assets/Scripts/Build/ServerBuild.cs using Guid(89185f79da79b4f9fb876e47d2b5bf63) Importer(-1,)
+Done importing asset: 'Assets/Scripts/Build/ServerBuild.cs' (target hash: '0804dbc395a9af7d3a4b7b5b9116e457') in 0.089022 seconds
+Start importing Packages/com.unity.settings-manager/Editor/UserSettingsProvider.cs using Guid(0dc75b34a006d47f48c004031e6ef14d) Importer(-1,)
+Done importing asset: 'Packages/com.unity.settings-manager/Editor/UserSettingsProvider.cs' (target hash: '07c5adca6b989bb3aa308cbcf7caba21') in 0.038872 seconds
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory doesn't match image /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll
+Native extension for OSXStandalone target not found
+Refreshing native plugins compatible for Editor in 28.03 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+Refresh completed in 0.000003 seconds.
+- Completed reload, in  1.991 seconds
+Platform modules already initialized, skipping
+AssetDatabase: script compilation time: 0.036384s
+- Starting script compilation
+- Starting compile Library/ScriptAssemblies/Unity.Settings.Editor.dll
+- Finished compile Library/ScriptAssemblies/Unity.Settings.Editor.dll in 0.959684 seconds
+- Starting compile Library/ScriptAssemblies/Unity.Polybrush.Editor.dll
+- Starting compile Library/ScriptAssemblies/Unity.ProBuilder.Editor.dll
+- Finished compile Library/ScriptAssemblies/Unity.Polybrush.Editor.dll in 1.353826 seconds
+- Finished compile Library/ScriptAssemblies/Unity.ProBuilder.Editor.dll in 1.356413 seconds
+- Starting compile Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll
+- Finished compile Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll in 0.436697 seconds
+- Starting compile Library/ScriptAssemblies/Assembly-CSharp.dll
+- Finished compile Library/ScriptAssemblies/Assembly-CSharp.dll in 0.480438 seconds
+- Starting compile Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+- Finished compile Library/ScriptAssemblies/Assembly-CSharp-Editor.dll in 0.436722 seconds
+- Finished script compilation in 3.787513 seconds
+Assets/Tools/Roadster/Paver.cs(14,36): warning CS0649: Field 'Paver.raiseAboveGround' is never assigned to, and will always have its default value 0
+Assets/Scripts/Network/Client.cs(231,51): warning CS0067: The event 'Client.DummyClient.EliminatePlayersEvent' is never used
+Assets/Scripts/HUD.cs(7,35): warning CS0649: Field 'HUD.velocityText' is never assigned to, and will always have its default value null
+Assets/Scripts/Network/Client.cs(296,40): warning CS0067: The event 'Client.GameStartEvent' is never used
+Assets/Scripts/Network/Client.cs(228,48): warning CS0067: The event 'Client.DummyClient.PreRoundStartEvent' is never used
+Assets/Scripts/Network/Client.cs(229,45): warning CS0067: The event 'Client.DummyClient.RoundStartEvent' is never used
+Assets/Tools/Roadster/Paver.cs(10,36): warning CS0649: Field 'Paver.divisions' is never assigned to, and will always have its default value 0
+Assets/Tools/Roadster/Paver.cs(13,36): warning CS0649: Field 'Paver.maxGroundDistance' is never assigned to, and will always have its default value 0
+Assets/Scripts/Network/Client.cs(230,43): warning CS0067: The event 'Client.DummyClient.RoundEndEvent' is never used
+Assets/Tools/Roadster/Paver.cs(9,43): warning CS0649: Field 'Paver.spline' is never assigned to, and will always have its default value null
+Assets/Tools/Roadster/Paver.cs(16,39): warning CS0649: Field 'Paver.surface' is never assigned to, and will always have its default value null
+Assets/Scripts/Network/Client.cs(227,44): warning CS0067: The event 'Client.DummyClient.GameStartEvent' is never used
+Assets/Tools/Roadster/Paver.cs(11,36): warning CS0649: Field 'Paver.width' is never assigned to, and will always have its default value 0
+Assets/Scripts/SimpleCameraController.cs(75,18): warning CS0649: Field 'SimpleCameraController.invertY' is never assigned to, and will always have its default value false
+Assets/Scripts/CameraFollowController.cs(5,35): warning CS0649: Field 'CameraFollowController.offset' is never assigned to, and will always have its default value 
+Assets/Tools/Roadster/Paver.cs(12,36): warning CS0649: Field 'Paver.thickness' is never assigned to, and will always have its default value 0
+Assets/Scripts/Game/World.cs(13,21): warning CS0414: The field 'World.nextPlayerID' is assigned but its value is never used
+Assets/Tools/Roadster/Editor/BezierSplineInspector.cs(71,87): warning CS0618: 'Handles.DotCap(int, Vector3, Quaternion, float)' is obsolete: 'Use DotHandleCap instead'
+Assets/Tools/Roadster/Editor/BezierSplineInspector.cs(71,13): warning CS0618: 'Handles.Button(Vector3, Quaternion, float, float, Handles.DrawCapFunction)' is obsolete: 'DrawCapFunction is obsolete. Use the version with CapFunction instead. Example: Change SphereCap to SphereHandleCap.'
+Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/UserSettingsProvider.cs(413,84): warning CS0618: 'InternalEditorUtility.RequestScriptReload()' is obsolete: 'RequestScriptReload has been deprecated. Use UnityEditor.EditorUtility.RequestScriptReload instead (UnityUpgradable) -> [UnityEditor] UnityEditor.EditorUtility.RequestScriptReload(*)'
+- Starting script compilation
+Filename: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/bin/mono
+Arguments: "/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Tools/ScriptUpdater/ScriptUpdater.exe" cs "/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents" Library/Temp/ScriptUpdater/453472461/ "Unity[^/]+\.dll$" /var/folders/nr/jtq4f1bx5h563c3g3g89cl9w0000gn/T/tmp1549c677.tmp Temp/UnityTempFile-c8a865dcdeb45412eac9aa41f04ce06d
+Responsefile: Temp/UnityTempFile-c8a865dcdeb45412eac9aa41f04ce06d Contents: 
+/target:library
+/nowarn:0169
+/out:"Temp/Unity.Settings.Editor.dll"
+/debug:portable
+/optimize-
+/nostdlib+
+/preferreduilang:en-US
+/langversion:latest
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.AIModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.ARModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.AccessibilityModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.AndroidJNIModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.AnimationModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.AssetBundleModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.AudioModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.ClothModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.ClusterInputModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.ClusterRendererModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.CoreModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.CrashReportingModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.DSPGraphModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.DirectorModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.GameCenterModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.GridModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.HotReloadModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.IMGUIModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.ImageConversionModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.InputModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.InputLegacyModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.JSONSerializeModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.LocalizationModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.ParticleSystemModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.PerformanceReportingModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.PhysicsModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.Physics2DModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.ProfilerModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.ScreenCaptureModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.SharedInternalsModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.SpriteMaskModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.SpriteShapeModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.StreamingModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.SubstanceModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.SubsystemsModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.TLSModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.TerrainModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.TerrainPhysicsModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.TextCoreModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.TextRenderingModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.TilemapModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UIModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UIElementsModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UNETModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UmbraModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UnityAnalyticsModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UnityConnectModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UnityTestProtocolModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UnityWebRequestModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UnityWebRequestAssetBundleModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UnityWebRequestAudioModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UnityWebRequestTextureModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.UnityWebRequestWWWModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.VFXModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.VRModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.VehiclesModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.VideoModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.WindModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEngine/UnityEngine.XRModule.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEditor.dll"
+/reference:"Library/ScriptAssemblies/UnityEditor.UI.dll"
+/reference:"Library/ScriptAssemblies/UnityEngine.UI.dll"
+/reference:"Library/ScriptAssemblies/UnityEditor.TestRunner.dll"
+/reference:"Library/ScriptAssemblies/UnityEngine.TestRunner.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/UnityExtensions/Unity/UnityVR/Editor/UnityEditor.VR.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Managed/UnityEditor.Graphs.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll"
+/reference:"/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/AddIns/MonoDevelop.Unity/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll"
+/reference:"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.burst@1.1.2/Unity.Burst.Unsafe.dll"
+/reference:"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.collections@0.3.0-preview.0/System.Runtime.CompilerServices.Unsafe.dll"
+/reference:"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/System.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/System.Core.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/System.Runtime.Serialization.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/System.Xml.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/System.Xml.Linq.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/System.Numerics.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/System.Numerics.Vectors.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/System.Net.Http.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Microsoft.CSharp.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/System.Data.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/Microsoft.Win32.Primitives.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.AppContext.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Collections.Concurrent.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Collections.NonGeneric.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Collections.Specialized.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Collections.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ComponentModel.Annotations.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ComponentModel.EventBasedAsync.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ComponentModel.Primitives.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ComponentModel.TypeConverter.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ComponentModel.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Console.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Data.Common.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Diagnostics.Contracts.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Diagnostics.Debug.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Diagnostics.FileVersionInfo.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Diagnostics.Process.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Diagnostics.StackTrace.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Diagnostics.TextWriterTraceListener.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Diagnostics.Tools.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Diagnostics.TraceSource.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Drawing.Primitives.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Dynamic.Runtime.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Globalization.Calendars.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Globalization.Extensions.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Globalization.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.Compression.ZipFile.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.FileSystem.DriveInfo.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.FileSystem.Primitives.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.FileSystem.Watcher.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.FileSystem.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.IsolatedStorage.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.MemoryMappedFiles.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.Pipes.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.UnmanagedMemoryStream.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.IO.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Linq.Expressions.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Linq.Parallel.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Linq.Queryable.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Linq.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.Http.Rtc.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.NameResolution.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.NetworkInformation.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.Ping.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.Primitives.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.Requests.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.Security.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.Sockets.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.WebHeaderCollection.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.WebSockets.Client.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Net.WebSockets.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ObjectModel.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Reflection.Emit.ILGeneration.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Reflection.Emit.Lightweight.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Reflection.Emit.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Reflection.Extensions.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Reflection.Primitives.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Reflection.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Resources.Reader.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Resources.ResourceManager.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Resources.Writer.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.CompilerServices.VisualC.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.Extensions.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.Handles.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.InteropServices.RuntimeInformation.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.InteropServices.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.Numerics.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.Serialization.Formatters.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.Serialization.Json.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.Serialization.Primitives.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.Serialization.Xml.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Runtime.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Security.Claims.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Security.Cryptography.Algorithms.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Security.Cryptography.Csp.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Security.Cryptography.Encoding.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Security.Cryptography.Primitives.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Security.Cryptography.X509Certificates.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Security.Principal.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Security.SecureString.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ServiceModel.Duplex.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ServiceModel.Http.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ServiceModel.NetTcp.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ServiceModel.Primitives.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ServiceModel.Security.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Text.Encoding.Extensions.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Text.Encoding.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Text.RegularExpressions.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Threading.Overlapped.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Threading.Tasks.Parallel.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Threading.Tasks.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Threading.Thread.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Threading.ThreadPool.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Threading.Timer.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Threading.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.ValueTuple.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Xml.ReaderWriter.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Xml.XDocument.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Xml.XPath.XDocument.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Xml.XPath.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Xml.XmlDocument.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Xml.XmlSerializer.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/netstandard.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/unityscript/UnityScript.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/unityscript/UnityScript.Lang.dll"
+/reference:"/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll"
+/define:UNITY_2019_3_0
+/define:UNITY_2019_3
+/define:UNITY_2019
+/define:UNITY_5_3_OR_NEWER
+/define:UNITY_5_4_OR_NEWER
+/define:UNITY_5_5_OR_NEWER
+/define:UNITY_5_6_OR_NEWER
+/define:UNITY_2017_1_OR_NEWER
+/define:UNITY_2017_2_OR_NEWER
+/define:UNITY_2017_3_OR_NEWER
+/define:UNITY_2017_4_OR_NEWER
+/define:UNITY_2018_1_OR_NEWER
+/define:UNITY_2018_2_OR_NEWER
+/define:UNITY_2018_3_OR_NEWER
+/define:UNITY_2018_4_OR_NEWER
+/define:UNITY_2019_1_OR_NEWER
+/define:UNITY_2019_2_OR_NEWER
+/define:UNITY_2019_3_OR_NEWER
+/define:PLATFORM_ARCH_64
+/define:UNITY_64
+/define:UNITY_INCLUDE_TESTS
+/define:ENABLE_AR
+/define:ENABLE_AUDIO
+/define:ENABLE_CACHING
+/define:ENABLE_CLOTH
+/define:ENABLE_MICROPHONE
+/define:ENABLE_MULTIPLE_DISPLAYS
+/define:ENABLE_PHYSICS
+/define:ENABLE_TEXTURE_STREAMING
+/define:ENABLE_UNET
+/define:ENABLE_LZMA
+/define:ENABLE_UNITYEVENTS
+/define:ENABLE_VR
+/define:ENABLE_WEBCAM
+/define:ENABLE_UNITYWEBREQUEST
+/define:ENABLE_WWW
+/define:ENABLE_CLOUD_SERVICES
+/define:ENABLE_CLOUD_SERVICES_COLLAB
+/define:ENABLE_CLOUD_SERVICES_COLLAB_SOFTLOCKS
+/define:ENABLE_CLOUD_SERVICES_ADS
+/define:ENABLE_CLOUD_SERVICES_USE_WEBREQUEST
+/define:ENABLE_CLOUD_SERVICES_CRASH_REPORTING
+/define:ENABLE_CLOUD_SERVICES_NATIVE_CRASH_REPORTING
+/define:ENABLE_CLOUD_SERVICES_PURCHASING
+/define:ENABLE_CLOUD_SERVICES_ANALYTICS
+/define:ENABLE_CLOUD_SERVICES_UNET
+/define:ENABLE_CLOUD_SERVICES_BUILD
+/define:ENABLE_CLOUD_LICENSE
+/define:ENABLE_EDITOR_HUB_LICENSE
+/define:ENABLE_WEBSOCKET_CLIENT
+/define:ENABLE_DIRECTOR_AUDIO
+/define:ENABLE_DIRECTOR_TEXTURE
+/define:ENABLE_MANAGED_JOBS
+/define:ENABLE_MANAGED_TRANSFORM_JOBS
+/define:ENABLE_MANAGED_ANIMATION_JOBS
+/define:ENABLE_MANAGED_AUDIO_JOBS
+/define:INCLUDE_DYNAMIC_GI
+/define:ENABLE_MONO_BDWGC
+/define:ENABLE_SCRIPTING_GC_WBARRIERS
+/define:PLATFORM_SUPPORTS_MONO
+/define:RENDER_SOFTWARE_CURSOR
+/define:ENABLE_VIDEO
+/define:PLATFORM_STANDALONE
+/define:PLATFORM_STANDALONE_OSX
+/define:UNITY_STANDALONE_OSX
+/define:UNITY_STANDALONE
+/define:ENABLE_GAMECENTER
+/define:ENABLE_RUNTIME_GI
+/define:ENABLE_MOVIES
+/define:ENABLE_NETWORK
+/define:ENABLE_CRUNCH_TEXTURE_COMPRESSION
+/define:ENABLE_CLUSTER_SYNC
+/define:ENABLE_CLUSTERINPUT
+/define:ENABLE_SPATIALTRACKING
+/define:ENABLE_WEBSOCKET_HOST
+/define:ENABLE_MONO
+/define:NET_4_6
+/define:ENABLE_PROFILER
+/define:DEBUG
+/define:TRACE
+/define:UNITY_ASSERTIONS
+/define:UNITY_EDITOR
+/define:UNITY_EDITOR_64
+/define:UNITY_EDITOR_OSX
+/define:ENABLE_UNITY_COLLECTIONS_CHECKS
+/define:ENABLE_BURST_AOT
+/define:UNITY_TEAM_LICENSE
+/define:ENABLE_VSTU
+/define:ENABLE_CUSTOM_RENDER_TEXTURE
+/define:ENABLE_DIRECTOR
+/define:ENABLE_LOCALIZATION
+/define:ENABLE_SPRITES
+/define:ENABLE_TERRAIN
+/define:ENABLE_TILEMAP
+/define:ENABLE_TIMELINE
+/define:ENABLE_LEGACY_INPUT_MANAGER
+/define:UNITY_POST_PROCESSING_STACK_V2
+/define:CSHARP_7_OR_LATER
+/define:CSHARP_7_3_OR_NEWER
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/Attributes.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/ISettingsRepository.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/PackageSettingsRepository.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/Settings.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/SettingsDictionary.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/SettingsGUILayout.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/UserSetting.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/UserSettings.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/UserSettingsProvider.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/UserSettingsRepository.cs"
+"/Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.settings-manager@1.0.0/Editor/ValueWrapper.cs"
+
+[Script Updater] 	Replace ((413, 84):(413, 144) = UnityEditor.EditorUtility.RequestScriptReload)
+2602ms to update / 10 to save (1/11 files).
+
+[API Updater] Updated Files:
+Packages/com.unity.settings-manager/Editor/UserSettingsProvider.cs
+
+- Starting compile Library/ScriptAssemblies/Unity.Settings.Editor.dll
+- Finished compile Library/ScriptAssemblies/Unity.Settings.Editor.dll in 0.687722 seconds
+- Starting compile Library/ScriptAssemblies/Unity.Polybrush.Editor.dll
+- Starting compile Library/ScriptAssemblies/Unity.ProBuilder.Editor.dll
+- Finished compile Library/ScriptAssemblies/Unity.Polybrush.Editor.dll in 1.033687 seconds
+- Finished compile Library/ScriptAssemblies/Unity.ProBuilder.Editor.dll in 1.432991 seconds
+- Starting compile Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll
+- Finished compile Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll in 0.509539 seconds
+- Finished script compilation in 6.783551 seconds
+Reloading assemblies after forced synchronous recompile.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory doesn't match image /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll
+Native extension for OSXStandalone target not found
+Refreshing native plugins compatible for Editor in 29.19 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+Refresh completed in 0.000002 seconds.
+- Completed reload, in  1.438 seconds
+Platform modules already initialized, skipping
+Building style catalogs (6)
+	StyleSheets/Extensions/base/common.uss
+	StyleSheets/Northstar/common.uss
+	StyleSheets/Extensions/fonts/inter.uss
+	StyleSheets/Extensions/base/light.uss
+	Packages/com.unity.timeline/Editor/StyleSheets/Extensions/common.uss
+	Packages/com.unity.timeline/Editor/StyleSheets/Extensions/light.uss
+Refreshing native plugins compatible for Editor in 3.71 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+RefreshInfo: InitialScriptRefreshV2(NoUpdateAssetOptions)
+RefreshProfiler: Total: 19413.253ms
+	InvokeBeforeRefreshCallbacks: 0.941ms
+	ApplyChangesToAssetFolders: 0.119ms
+	WriteModifiedImportersToTextMetaFiles: 0.000ms
+	CleanLegacyArtifacts: 0.000ms
+	Scan: 52.555ms
+	UnregisterDeletedAssets: 0.000ms
+	InitializeImportedAssetsSnapshot: 0.323ms
+	GetAllGuidsForCategorization: 0.372ms
+	CategorizeAssets: 33.556ms
+	ImportAndPostprocessOutOfDateAssets: 19270.871ms (7382.139ms without children)
+		ImportManagerImport: 135.784ms (0.596ms without children)
+			ImportInProcess: 135.155ms
+			ImportOutOfProcess: 0.000ms
+			UpdateCategorizedAssets: 0.033ms
+			RemoteAssetCacheGetArtifact: 0.000ms (0.000ms without children)
+				RemoteAssetCacheResolve: 0.000ms
+				RemoteAssetCacheDownloadFile: 0.000ms
+		CompileScripts: 11228.341ms
+		PostProcessAllAssets: 503.615ms
+		ReloadImportedAssets: 0.001ms
+	InvokeProjectHasChanged: 1.085ms
+	UpdateImportedAssetsSnapshot: 10.810ms
+	ReloadSourceAssets: 0.753ms
+	UnloadImportedAssets: 0.007ms
+	Hotreload: 14.533ms
+	FixTempGuids: 0.007ms
+	Untracked: 38.134ms
+AssetDatabase: script compilation time: 0.033500s
+- Starting script compilation
+- Starting compile Library/ScriptAssemblies/Unity.Settings.Editor.dll
+- Finished compile Library/ScriptAssemblies/Unity.Settings.Editor.dll in 0.63876 seconds
+- Starting compile Library/ScriptAssemblies/Unity.Polybrush.Editor.dll
+- Starting compile Library/ScriptAssemblies/Unity.ProBuilder.Editor.dll
+- Finished compile Library/ScriptAssemblies/Unity.Polybrush.Editor.dll in 0.870415 seconds
+- Finished compile Library/ScriptAssemblies/Unity.ProBuilder.Editor.dll in 1.578532 seconds
+- Starting compile Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll
+- Finished compile Library/ScriptAssemblies/Unity.ProBuilder.AddOns.Editor.dll in 0.446087 seconds
+- Finished script compilation in 2.729047 seconds
+Reloading assemblies after forced synchronous recompile.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory doesn't match image /Users/rileyevans/University/Year-3/GamesProject/Parking/ProjectFiles/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll
+Native extension for OSXStandalone target not found
+Refreshing native plugins compatible for Editor in 39.23 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+Refresh completed in 0.000006 seconds.
+- Completed reload, in  1.495 seconds
+Platform modules already initialized, skipping
+Building style catalogs (6)
+	StyleSheets/Extensions/base/common.uss
+	StyleSheets/Northstar/common.uss
+	StyleSheets/Extensions/fonts/inter.uss
+	StyleSheets/Extensions/base/light.uss
+	Packages/com.unity.timeline/Editor/StyleSheets/Extensions/common.uss
+	Packages/com.unity.timeline/Editor/StyleSheets/Extensions/light.uss
+Refreshing native plugins compatible for Editor in 3.94 ms, found 1 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Refresh completed in 4.846519 seconds.
+RefreshInfo: RefreshV2(ForceSynchronousImport)
+RefreshProfiler: Total: 4846.494ms
+	InvokeBeforeRefreshCallbacks: 1.122ms
+	ApplyChangesToAssetFolders: 0.118ms
+	WriteModifiedImportersToTextMetaFiles: 0.000ms
+	CleanLegacyArtifacts: 0.000ms
+	Scan: 82.746ms
+	UnregisterDeletedAssets: 0.000ms
+	InitializeImportedAssetsSnapshot: 3.869ms
+	GetAllGuidsForCategorization: 0.419ms
+	CategorizeAssets: 30.095ms
+	ImportAndPostprocessOutOfDateAssets: 4701.906ms (1607.812ms without children)
+		ImportManagerImport: 0.000ms (0.000ms without children)
+			ImportInProcess: 0.000ms
+			ImportOutOfProcess: 0.000ms
+			UpdateCategorizedAssets: 0.000ms
+			RemoteAssetCacheGetArtifact: 0.000ms (0.000ms without children)
+				RemoteAssetCacheResolve: 0.000ms
+				RemoteAssetCacheDownloadFile: 0.000ms
+		CompileScripts: 2829.282ms
+		PostProcessAllAssets: 250.853ms
+		ReloadImportedAssets: 2.676ms
+	InvokeProjectHasChanged: 1.091ms
+	UpdateImportedAssetsSnapshot: 10.175ms
+	ReloadSourceAssets: 1.398ms
+	UnloadImportedAssets: 0.492ms
+	Hotreload: 9.732ms
+	FixTempGuids: 0.004ms
+	Untracked: 13.502ms
+WARNING: Shader Unsupported: 'Hidden/ProBuilder/LineBillboard' - Pass 'EdgePass' has no vertex shader
+WARNING: Shader Unsupported: 'Hidden/ProBuilder/LineBillboard' - Setting to default shader.
+WARNING: Shader Unsupported: 'Hidden/ProBuilder/PointBillboard' - Pass 'VertexPass' has no vertex shader
+WARNING: Shader Unsupported: 'Hidden/ProBuilder/PointBillboard' - Setting to default shader.
+WARNING: Shader Unsupported: 'Polybrush/Standard Texture Blend Bump' - Pass 'FORWARD' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Texture Blend Bump' - Pass 'FORWARD_DELTA' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Texture Blend Bump' - Pass 'Meta' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Texture Blend Bump' - All passes removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+Refresh completed in 0.078980 seconds.
+RefreshInfo: RefreshV2(ForceSynchronousImport)
+RefreshProfiler: Total: 78.960ms
+	InvokeBeforeRefreshCallbacks: 0.222ms
+	ApplyChangesToAssetFolders: 0.106ms
+	WriteModifiedImportersToTextMetaFiles: 0.000ms
+	CleanLegacyArtifacts: 0.000ms
+	Scan: 39.346ms
+	UnregisterDeletedAssets: 0.000ms
+	InitializeImportedAssetsSnapshot: 4.882ms
+	GetAllGuidsForCategorization: 0.197ms
+	CategorizeAssets: 19.099ms
+	ImportAndPostprocessOutOfDateAssets: 4.786ms (4.786ms without children)
+		ImportManagerImport: 0.000ms (0.000ms without children)
+			ImportInProcess: 0.000ms
+			ImportOutOfProcess: 0.000ms
+			UpdateCategorizedAssets: 0.000ms
+			RemoteAssetCacheGetArtifact: 0.000ms (0.000ms without children)
+				RemoteAssetCacheResolve: 0.000ms
+				RemoteAssetCacheDownloadFile: 0.000ms
+		CompileScripts: 0.000ms
+		PostProcessAllAssets: 0.000ms
+		ReloadImportedAssets: 0.000ms
+	InvokeProjectHasChanged: 0.000ms
+	UpdateImportedAssetsSnapshot: -0.000ms
+	ReloadSourceAssets: 0.624ms
+	UnloadImportedAssets: 0.198ms
+	Hotreload: 0.023ms
+	FixTempGuids: 0.013ms
+	Untracked: 9.465ms
+Refresh completed in 0.078620 seconds.
+RefreshInfo: RefreshV2(NoUpdateAssetOptions)
+RefreshProfiler: Total: 78.604ms
+	InvokeBeforeRefreshCallbacks: 0.430ms
+	ApplyChangesToAssetFolders: 0.163ms
+	WriteModifiedImportersToTextMetaFiles: 0.000ms
+	CleanLegacyArtifacts: 0.000ms
+	Scan: 39.944ms
+	UnregisterDeletedAssets: 0.000ms
+	InitializeImportedAssetsSnapshot: 6.168ms
+	GetAllGuidsForCategorization: 0.212ms
+	CategorizeAssets: 16.473ms
+	ImportAndPostprocessOutOfDateAssets: 4.814ms (4.813ms without children)
+		ImportManagerImport: 0.000ms (0.000ms without children)
+			ImportInProcess: 0.000ms
+			ImportOutOfProcess: 0.000ms
+			UpdateCategorizedAssets: 0.000ms
+			RemoteAssetCacheGetArtifact: 0.000ms (0.000ms without children)
+				RemoteAssetCacheResolve: 0.000ms
+				RemoteAssetCacheDownloadFile: 0.000ms
+		CompileScripts: 0.000ms
+		PostProcessAllAssets: 0.001ms
+		ReloadImportedAssets: 0.000ms
+	InvokeProjectHasChanged: 0.000ms
+	UpdateImportedAssetsSnapshot: -0.001ms
+	ReloadSourceAssets: 1.081ms
+	UnloadImportedAssets: 0.250ms
+	Hotreload: 0.040ms
+	FixTempGuids: 0.004ms
+	Untracked: 9.025ms
+Refresh completed in 0.075533 seconds.
+RefreshInfo: RefreshV2(NoUpdateAssetOptions)
+RefreshProfiler: Total: 75.517ms
+	InvokeBeforeRefreshCallbacks: 0.264ms
+	ApplyChangesToAssetFolders: 0.080ms
+	WriteModifiedImportersToTextMetaFiles: 0.000ms
+	CleanLegacyArtifacts: 0.000ms
+	Scan: 38.815ms
+	UnregisterDeletedAssets: 0.000ms
+	InitializeImportedAssetsSnapshot: 4.060ms
+	GetAllGuidsForCategorization: 0.239ms
+	CategorizeAssets: 17.203ms
+	ImportAndPostprocessOutOfDateAssets: 4.836ms (4.835ms without children)
+		ImportManagerImport: 0.000ms (0.000ms without children)
+			ImportInProcess: 0.000ms
+			ImportOutOfProcess: 0.000ms
+			UpdateCategorizedAssets: 0.000ms
+			RemoteAssetCacheGetArtifact: 0.000ms (0.000ms without children)
+				RemoteAssetCacheResolve: 0.000ms
+				RemoteAssetCacheDownloadFile: 0.000ms
+		CompileScripts: 0.000ms
+		PostProcessAllAssets: 0.001ms
+		ReloadImportedAssets: 0.000ms
+	InvokeProjectHasChanged: 0.000ms
+	UpdateImportedAssetsSnapshot: -0.001ms
+	ReloadSourceAssets: 1.225ms
+	UnloadImportedAssets: 0.196ms
+	Hotreload: 0.022ms
+	FixTempGuids: 0.005ms
+	Untracked: 8.572ms
+WARNING: Shader Unsupported: 'Hidden/ProBuilder/PointBillboard' - Pass 'VertexPass' has no vertex shader
+WARNING: Shader Unsupported: 'Hidden/ProBuilder/PointBillboard' - Setting to default shader.
+WARNING: Shader Unsupported: 'Polybrush/Standard Vertex Color' - Pass 'FORWARD' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Vertex Color' - Pass 'FORWARD_DELTA' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Vertex Color' - Pass 'Meta' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Vertex Color' - All passes removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader Unsupported: 'Polybrush/Standard Texture Blend Bump' - Pass 'FORWARD' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Texture Blend Bump' - Pass 'FORWARD_DELTA' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Texture Blend Bump' - Pass 'Meta' has no vertex shader
+WARNING: Shader Unsupported: 'Polybrush/Standard Texture Blend Bump' - All passes removed
+WARNING: Shader Did you use #pragma only_renderers and omit this platform?
+WARNING: Shader Unsupported: 'Hidden/ProBuilder/LineBillboard' - Pass 'EdgePass' has no vertex shader
+WARNING: Shader Unsupported: 'Hidden/ProBuilder/LineBillboard' - Setting to default shader.
+Launching external process: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/Tools/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.07 seconds
+Initializing Unity extensions:
+ '/Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/UnityExtensions/Unity/UnityVR/Editor/UnityEditor.VR.dll'  GUID: 4ba2329b63d54f0187bcaa12486b1b0f
+Unloading 69 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 310.1 MB.
+System memory in use after: 307.5 MB.
+
+Unloading 355 unused Assets to reduce memory usage. Loaded Objects now: 2143.
+Total: 26.379110 ms (FindLiveObjects: 0.752398 ms CreateObjectMapping: 0.207383 ms MarkObjects: 19.390135 ms  DeleteObjects: 6.027343 ms)
+
+Refreshing native plugins compatible for Editor in 11.75 ms, found 1 plugins.
+WARNING: Shader Unsupported: 'Hidden/VideoDecodeOSX' - Pass 'Flip_RGBARect_To_RGBA' has no vertex shader
+WARNING: Shader Unsupported: 'Hidden/VideoDecodeOSX' - Setting to default shader.
+WARNING: Shader Unsupported: 'Hidden/VideoDecodeAndroid' - Pass 'RGBAExternal_To_RGBA' has no vertex shader
+WARNING: Shader Unsupported: 'Hidden/VideoDecodeAndroid' - Setting to default shader.
+WARNING: Shader Unsupported: 'Hidden/VideoDecodeML' - Pass 'RGBAExternal_To_RGBA' has no vertex shader
+WARNING: Shader Unsupported: 'Hidden/VideoDecodeML' - Setting to default shader.
+Error building player because build target was unsupported
+Unloading 15 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 311.2 MB.
+System memory in use after: 311.3 MB.
+
+Unloading 12 unused Assets to reduce memory usage. Loaded Objects now: 2165.
+Total: 9.272493 ms (FindLiveObjects: 0.555812 ms CreateObjectMapping: 0.115068 ms MarkObjects: 8.572982 ms  DeleteObjects: 0.027253 ms)
+
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Temp/__Backupscenes/0.backup'
+	Deserialize:            1.076 ms
+	Integration:            103.507 ms
+	Integration of assets:  0.025 ms
+	Thread Wait Time:       19.565 ms
+	Total Operation Time:   124.172 ms
+System memory in use before: 310.9 MB.
+System memory in use after: 311.1 MB.
+
+Unloading 0 unused Assets to reduce memory usage. Loaded Objects now: 2165.
+Total: 5.251507 ms (FindLiveObjects: 0.550898 ms CreateObjectMapping: 0.108589 ms MarkObjects: 4.579781 ms  DeleteObjects: 0.011111 ms)
+
+Build failed
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+UnityEngine.Logger:Log(LogType, Object)
+UnityEngine.Debug:Log(Object)
+Build.ServerBuild:Build() (at Assets/Scripts/Build/ServerBuild.cs:32)
+ 
+(Filename: Assets/Scripts/Build/ServerBuild.cs Line: 32)
+
+Batchmode quit successfully invoked - shutting down!
+[Performance] Application.InitializeProject                               :        1 samples, Peak.  33.4 s (1.0x), Avg.  33.4 s, Total. 33.40 s (87.4%)
+[Performance] Application.PackageManager.StartServer                      :        1 samples, Peak.  17.9 ms (1.0x), Avg.  17.9 ms, Total. 17.90 ms (0.0%)
+[Performance] Application.IsBrowserCacheEmpty                             :        1 samples, Peak.  1.51 ms (1.0x), Avg.  1.51 ms, Total. 1.508 ms (0.0%)
+[Performance] Application.AcquireProjectLock                              :        1 samples, Peak.  5.09 ms (1.0x), Avg.  5.09 ms, Total. 5.094 ms (0.0%)
+[Performance] Application.InitializeEngineNoGraphics                      :        1 samples, Peak.  63.2 ms (1.0x), Avg.  63.2 ms, Total. 63.19 ms (0.2%)
+[Performance] Application.PackageManager.Initialize                       :        1 samples, Peak.  1.28 s (1.0x), Avg.  1.28 s, Total. 1.276 s (3.3%)
+[Performance] CurlRequestCheck                                            :       25 samples, Peak.   237 us (7.6x), Avg.  31.2 us, Total. 780.0 us (0.0%)
+[Performance] PackageManager::RunRequestSynchronously                     :       13 samples, Peak.   103 us (4.7x), Avg.  22.1 us, Total. 286.7 us (0.0%)
+[Performance] Application.EngineGraphics.Initialize                       :        1 samples, Peak.   319 ms (1.0x), Avg.   319 ms, Total. 319.5 ms (0.8%)
+[Performance] Application.GI.Initialize                                   :        1 samples, Peak.   959 ms (1.0x), Avg.   959 ms, Total. 958.8 ms (2.5%)
+[Performance] Application.LoadAllDefaultResourcesFromEditor               :        1 samples, Peak.  4.96 ms (1.0x), Avg.  4.96 ms, Total. 4.958 ms (0.0%)
+[Performance] Application.LoadMonoAssemblies                              :        1 samples, Peak.  2.78 s (1.0x), Avg.  2.78 s, Total. 2.777 s (7.3%)
+[Performance] ProcessService.EditorAfterLoadAllAssemblies                 :        4 samples, Peak.  56.5 ms (1.2x), Avg.  45.3 ms, Total. 181.1 ms (0.5%)
+[Performance] Application.ReadLicenseInfo                                 :        1 samples, Peak.  2.13 ms (1.0x), Avg.  2.13 ms, Total. 2.127 ms (0.0%)
+[Performance] Application.InitialScriptRefresh                            :        1 samples, Peak.  19.4 s (1.0x), Avg.  19.4 s, Total. 19.42 s (50.8%)
+[Performance] BuildCatalog                                                :        2 samples, Peak.   190 ms (1.1x), Avg.   169 ms, Total. 337.6 ms (0.9%)
+[Performance] Application.AssetDatabase.Refresh                           :        1 samples, Peak.  4.85 s (1.0x), Avg.  4.85 s, Total. 4.847 s (12.7%)
+[Performance] Application.ImportAssetsWithMismatchingAssetImporterVersion :        1 samples, Peak.   576 ms (1.0x), Avg.   576 ms, Total. 576.3 ms (1.5%)
+[Performance] Application.SyncCurrentColorSpace                           :        1 samples, Peak.   441 ms (1.0x), Avg.   441 ms, Total. 441.4 ms (1.2%)
+[Performance] Application.OnUsbDevicesChanged                             :        1 samples, Peak.   438 us (1.0x), Avg.   438 us, Total. 437.7 us (0.0%)
+[Performance] Application.AssetInstanceCacheUpdate                        :        1 samples, Peak.   643 ns (1.0x), Avg.   643 ns, Total. 643.0 ns (0.0%)
+[Performance] Application.UnityExtensions.Initialize                      :        1 samples, Peak.  4.16 ms (1.0x), Avg.  4.16 ms, Total. 4.161 ms (0.0%)
+[Performance] Application.InitializeManagedCompilationPipeline            :        1 samples, Peak.   483 ms (1.0x), Avg.   483 ms, Total. 483.4 ms (1.3%)
+[Performance] Application.ExecuteStartups                                 :        1 samples, Peak.  57.3 ms (1.0x), Avg.  57.3 ms, Total. 57.26 ms (0.1%)
+[Performance] Application.RebuildOSMenu                                   :        1 samples, Peak.   146 ms (1.0x), Avg.   146 ms, Total. 145.9 ms (0.4%)
+[Performance] Application.editorInitializingProject                       :        1 samples, Peak.  2.08 ms (1.0x), Avg.  2.08 ms, Total. 2.078 ms (0.0%)
+[Performance] GUIView.RepaintAll.PlayerLoopController                     :        2 samples, Peak.   669 ns (1.7x), Avg.   398 ns, Total. 796.0 ns (0.0%)
+[Performance] Application.InvokeFinishedLoadingProject                    :        1 samples, Peak.  60.5 ms (1.0x), Avg.  60.5 ms, Total. 60.50 ms (0.2%)
+[Performance] ProcessService.OnProjectLoaded                              :        1 samples, Peak.  55.3 ms (1.0x), Avg.  55.3 ms, Total. 55.34 ms (0.1%)
+Refresh completed in 0.085878 seconds.
+RefreshInfo: RefreshV2(NoUpdateAssetOptions)
+RefreshProfiler: Total: 85.864ms
+	InvokeBeforeRefreshCallbacks: 0.215ms
+	ApplyChangesToAssetFolders: 0.077ms
+	WriteModifiedImportersToTextMetaFiles: 0.000ms
+	CleanLegacyArtifacts: 0.000ms
+	Scan: 42.618ms
+	UnregisterDeletedAssets: 0.000ms
+	InitializeImportedAssetsSnapshot: 5.254ms
+	GetAllGuidsForCategorization: 0.200ms
+	CategorizeAssets: 19.696ms
+	ImportAndPostprocessOutOfDateAssets: 6.826ms (6.825ms without children)
+		ImportManagerImport: 0.000ms (0.000ms without children)
+			ImportInProcess: 0.000ms
+			ImportOutOfProcess: 0.000ms
+			UpdateCategorizedAssets: 0.000ms
+			RemoteAssetCacheGetArtifact: 0.000ms (0.000ms without children)
+				RemoteAssetCacheResolve: 0.000ms
+				RemoteAssetCacheDownloadFile: 0.000ms
+		CompileScripts: 0.000ms
+		PostProcessAllAssets: 0.002ms
+		ReloadImportedAssets: 0.000ms
+	InvokeProjectHasChanged: 0.000ms
+	UpdateImportedAssetsSnapshot: -0.001ms
+	ReloadSourceAssets: 1.058ms
+	UnloadImportedAssets: 0.195ms
+	Hotreload: 0.023ms
+	FixTempGuids: 0.010ms
+	Untracked: 9.692ms
+Refresh completed in 0.083837 seconds.
+RefreshInfo: RefreshV2(NoUpdateAssetOptions)
+RefreshProfiler: Total: 83.823ms
+	InvokeBeforeRefreshCallbacks: 0.197ms
+	ApplyChangesToAssetFolders: 0.078ms
+	WriteModifiedImportersToTextMetaFiles: 0.000ms
+	CleanLegacyArtifacts: 0.000ms
+	Scan: 45.009ms
+	UnregisterDeletedAssets: 0.000ms
+	InitializeImportedAssetsSnapshot: 3.931ms
+	GetAllGuidsForCategorization: 0.438ms
+	CategorizeAssets: 18.656ms
+	ImportAndPostprocessOutOfDateAssets: 4.648ms (4.647ms without children)
+		ImportManagerImport: 0.000ms (0.000ms without children)
+			ImportInProcess: 0.000ms
+			ImportOutOfProcess: 0.000ms
+			UpdateCategorizedAssets: 0.000ms
+			RemoteAssetCacheGetArtifact: 0.000ms (0.000ms without children)
+				RemoteAssetCacheResolve: 0.000ms
+				RemoteAssetCacheDownloadFile: 0.000ms
+		CompileScripts: 0.000ms
+		PostProcessAllAssets: 0.001ms
+		ReloadImportedAssets: 0.000ms
+	InvokeProjectHasChanged: 0.000ms
+	UpdateImportedAssetsSnapshot: -0.001ms
+	ReloadSourceAssets: 1.044ms
+	UnloadImportedAssets: 0.193ms
+	Hotreload: 0.026ms
+	FixTempGuids: 0.007ms
+	Untracked: 9.598ms
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 700001fc4000 -> priority: 1 
+  Thread -> id: 7000032d6000 -> priority: 1 
+Cleanup mono
+debugger-agent: Unable to listen on 41
+Exiting batchmode successfully now!
+[Package Manager] Server::Kill -- Server was shutdown
+Build complete
