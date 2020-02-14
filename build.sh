@@ -23,7 +23,7 @@ if [ -z "$unity" ]; then
     echo "  - Windows: ¯\\_(ツ)_/¯"
 else
     echo "¯\\_(ツ)_/¯"
-    $unity -batchmode -projectPath "$project_path" -executeMethod Build.ServerBuild.Build -buildFolder "$server_build_path" -quit -logFile $log_file
+    $unity -nographics -batchmode -projectPath "$project_path" -executeMethod Build.ServerBuild.Build -buildFolder "$server_build_path" -quit -logFile $log_file
     echo "Build complete" >> $log_file
 fi
 
