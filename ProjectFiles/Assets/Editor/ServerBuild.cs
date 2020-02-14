@@ -1,5 +1,5 @@
 using UnityEditor;
-//using UnityEditor.Build.Reporting;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 
 
@@ -11,39 +11,56 @@ public class ServerBuild
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = new[] { "Assets/Scenes/ModelShowcase.unity" };
+        
 
-        var buildFolder = GetArg("-buildFolder");
+        const string buildFolder = "../builds/server/server";
+        
+        buildPlayerOptions.locationPathName = buildFolder;
 
+        buildPlayerOptions.target = BuildTarget.StandaloneLinux64;
+        buildPlayerOptions.options = BuildOptions.EnableHeadlessMode;
+        
+        BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+        BuildSummary summary = report.summary;
+
+        if (summary.result == BuildResult.Succeeded)
+        {
+            Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
+        }
+
+        if (summary.result == BuildResult.Failed)
+        {
+            Debug.Log("Build failed");
+        }
+    }
+    
+    [MenuItem("Build/Build Client")]
+    public static void BuildClient()
+    {
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.scenes = new[] { "Assets/Scenes/ModelShowcase.unity" };
+        
+
+        const string buildFolder = "../builds/client/client";
+        
         buildPlayerOptions.locationPathName = buildFolder;
 
         buildPlayerOptions.target = BuildTarget.StandaloneLinux64;
         buildPlayerOptions.options = BuildOptions.None;
 
-        BuildPipeline.BuildPlayer(buildPlayerOptions);
-        //BuildReport report = 
-        //BuildSummary summary = report.summary;
+        
+        BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+        BuildSummary summary = report.summary;
 
-        //if (summary.result == BuildResult.Succeeded)
-        //{
-        //    Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
-        //}
-
-        //if (summary.result == BuildResult.Failed)
-        //{
-        //    Debug.Log("Build failed");
-        //}
-    }
-
-    private static string GetArg(string name)
-    {
-        var args = System.Environment.GetCommandLineArgs();
-        for (int i = 0; i < args.Length; i++)
+        if (summary.result == BuildResult.Succeeded)
         {
-            if (args[i] == name && args.Length > i + 1)
-            {
-                return args[i + 1];
-            }
+            Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
         }
-        return null;
+
+        if (summary.result == BuildResult.Failed)
+        {
+            Debug.Log("Build failed");
+        }
     }
+    
 }
