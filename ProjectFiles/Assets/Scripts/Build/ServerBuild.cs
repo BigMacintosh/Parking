@@ -2,12 +2,10 @@ using UnityEditor;
 using UnityEngine;
 using UnityEditor.Build.Reporting;
 
-namespace Build
-{
     public class ServerBuild : MonoBehaviour
     {
         [MenuItem("Build/Build Server")]
-        public static void Build()
+        public static void BuildServer()
         {
             BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
             buildPlayerOptions.scenes = new[] { "Assets/Scene/ModelShowcase.unity" };
@@ -21,6 +19,8 @@ namespace Build
 
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             BuildSummary summary = report.summary;
+
+            
 
             if (summary.result == BuildResult.Succeeded)
             {
@@ -46,4 +46,3 @@ namespace Build
             return null;
         }
     }
-}
