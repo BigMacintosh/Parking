@@ -48,29 +48,30 @@ namespace Game
 
         private void Awake()
         {
-            var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
-            IsHeadless = commandLineArgs.Contains("-batchmode");
-
+#if UNITY_EDITOR
             if (gameLoop == ServerClientSetting.Standalone)
             {
                 RequestGameLoop(typeof(ClientGameLoop), new[] {"standalone"});
+            } else if (gameLoop == ServerClientSetting.Server)
+            {
+                RequestGameLoop(typeof(ServerGameLoop), new string[0]);
             }
-
+            else if (gameLoop == ServerClientSetting.Client)
+            {
+                RequestGameLoop(typeof(ClientGameLoop), new string[0]);
+            }
+#elif UNITY_STANDALONE
+            var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
+            IsHeadless = commandLineArgs.Contains("-batchmode");
             if (IsHeadless)
             {
                 RequestGameLoop(typeof(ServerGameLoop), new string[0]);
             }
             else
             {
-                if (gameLoop == ServerClientSetting.Server)
-                {
-                    RequestGameLoop(typeof(ServerGameLoop), new string[0]);
-                }
-                else if (gameLoop == ServerClientSetting.Client)
-                {
-                    RequestGameLoop(typeof(ClientGameLoop), new string[0]);
-                }
+                RequestGameLoop(typeof(ClientGameLoop), new string[0]);
             }
+#endif
             
             // Update spawn locations
             SpawnLocations.Locations = spawnLocations;
