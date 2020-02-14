@@ -1,5 +1,6 @@
 using Network;
 using UnityEngine;
+using Gameplay;
 
 namespace Game
 {
@@ -43,7 +44,14 @@ namespace Game
 #else
             var success = client.Start("35.177.253.83");
 #endif
-
+            
+            var parkingSpaces = Object.FindObjectsOfType<ParkingSpace>();
+            foreach (var p in parkingSpaces)
+            {
+                Debug.Log($"Added a new parking space {p.SpaceID}");
+                p.SpaceEnterEvent += client.OnSpaceEnter;
+                p.SpaceExitEvent += client.OnSpaceExit;
+            }
             // Create HUD class
             
             // Subscribe HUD to client events.

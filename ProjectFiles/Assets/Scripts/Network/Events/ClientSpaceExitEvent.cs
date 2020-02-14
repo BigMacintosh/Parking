@@ -2,18 +2,18 @@
 
 namespace Network.Events
 {
-    public class ClientSpaceEvent : Event
+    public class ClientSpaceExitEvent : Event
     {
         public ushort RoundNumber { get; private set; }
         public ushort SpaceID { get; private set; }
 
-        public ClientSpaceEvent()
+        public ClientSpaceExitEvent()
         {
-            ID = EventType.ClientSpaceEvent;
+            ID = EventType.ClientSpaceExitEvent;    
             Length = sizeof(byte) + sizeof(ushort) * 2;
         }
 
-        public ClientSpaceEvent(byte roundNumber, byte spaceId)
+        public ClientSpaceExitEvent(byte roundNumber, byte spaceId)
         {
             RoundNumber = roundNumber;
             SpaceID = spaceId;

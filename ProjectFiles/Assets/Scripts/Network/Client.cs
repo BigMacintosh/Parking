@@ -27,6 +27,8 @@ namespace Network
         event RoundEndDelegate RoundEndEvent;
         event EliminatePlayersDelegate EliminatePlayersEvent;
         event GameEndDelegate GameEndEvent;
+        void OnSpaceEnter(ushort spaceID);
+        void OnSpaceExit(ushort spaceID);
     }
 
     public class Client : IClient
@@ -195,47 +197,7 @@ namespace Network
         {
             return new DummyClient(world);
         }
-        
-        private class DummyClient : IClient
-        {
-            private World world;
-            private int playerID;
-            
-            
-            public DummyClient(World world)
-            {
-                this.world = world;
-            }
-            public bool Start(string ip, ushort port)
-            {
-                world.ClientID = 0;
-                world.SpawnPlayer(world.ClientID);
-                world.SetPlayerControllable(world.ClientID);
-                return true;
-            }
 
-            public void Shutdown()
-            {
-                
-            }
-
-            public void SendLocationUpdate()
-            {
-                
-            }
-
-            public void HandleNetworkEvents()
-            {
-                
-            }
-            public event GameStartDelegate GameStartEvent;
-            public event PreRoundStartDelegate PreRoundStartEvent;
-            public event RoundStartDelegate RoundStartEvent;
-            public event RoundEndDelegate RoundEndEvent;
-            public event EliminatePlayersDelegate EliminatePlayersEvent;
-            public event GameEndDelegate GameEndEvent;
-        }
-        
         public void Handle(Event ev, NetworkConnection conn) {
             throw new ArgumentException("Client received an event that it cannot handle");
         }
@@ -307,5 +269,16 @@ namespace Network
         public event RoundEndDelegate RoundEndEvent;
         public event EliminatePlayersDelegate EliminatePlayersEvent;
         public event GameEndDelegate GameEndEvent;
+
+        public void OnSpaceEnter(ushort spaceID)
+        {
+            Debug.Log($"Someone entered the space #{spaceID}");   
+        }
+
+        public void OnSpaceExit(ushort spaceID)
+        {
+            Debug.Log($"Someone exited the space #{spaceID}");
+        }
+        
     }
 }
