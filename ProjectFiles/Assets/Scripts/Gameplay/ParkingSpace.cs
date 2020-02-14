@@ -12,7 +12,6 @@ namespace Gameplay
     public class ParkingSpace : MonoBehaviour
     {
         public ushort SpaceID;
-        public 
         private Material mat;
 
         public event SpaceEnterDelegate SpaceEnterEvent;
