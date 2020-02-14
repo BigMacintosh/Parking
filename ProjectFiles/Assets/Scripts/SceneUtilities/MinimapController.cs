@@ -16,6 +16,7 @@ namespace SceneUtilities
         public void FixedUpdate()
         {
             transform.position = ObjectToFollow.position + offset;
+            transform.rotation = Quaternion.Euler(90, ObjectToFollow.eulerAngles.y, 0);
         }
     }
 }

@@ -11452,6 +11452,11 @@ PrefabInstance:
       propertyPath: spawnLocations.Array.data[9].z
       value: -36
       objectReference: {fileID: 0}
+    - target: {fileID: 3657530969704683872, guid: c055a795f5369db49b6d50b5af6fad9e,
+        type: 3}
+      propertyPath: gameLoop
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3657530969704683873, guid: c055a795f5369db49b6d50b5af6fad9e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -13530,10 +13535,10 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 1200
   field of view: 60
   orthographic: 1
-  orthographic size: 40
+  orthographic size: 100
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -13575,7 +13580,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e1d57af5c5e4ed980b575074ac7ab54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 50, z: 0}
+  offset: {x: 0, y: 1000, z: 0}
 --- !u!1001 &1290318836
 PrefabInstance:
   m_ObjectHideFlags: 0
