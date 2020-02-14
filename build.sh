@@ -19,11 +19,11 @@ mkdir -p $client_build_path
 if [ -z "$unity" ]; then
     echo "You need to set your UNITY_PATH it might be:"
     echo "  - MacOS: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MacOS/Unity"
-    echo "  - Linux: $HOME/Unity/Hub/Editor/2019.3.0f3/Editor"
+    echo "  - Linux: $HOME/Unity/Hub/Editor/2019.3.0f3/Editor/Unity"
     echo "  - Windows: ¯\\_(ツ)_/¯"
 else
     echo "¯\\_(ツ)_/¯"
-    $unity -nographics -batchmode -projectPath "$project_path" -executeMethod Build.ServerBuild.Build -buildFolder "$server_build_path" -quit -logFile $log_file
+    $unity -nographics -batchmode -projectPath "$project_path" -executeMethod ServerBuild.BuildServer -buildFolder "$server_build_path" -quit -logFile $log_file
     echo "Build complete" >> $log_file
 fi
 

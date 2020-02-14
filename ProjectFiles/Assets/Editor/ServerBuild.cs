@@ -3,13 +3,14 @@ using UnityEditor;
 using UnityEngine;
 
 
-public class ServerBuild : MonoBehaviour
+public class ServerBuild
 {
+    
     [MenuItem("Build/Build Server")]
     public static void BuildServer()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.scenes = new[] { "Assets/Scene/ModelShowcase.unity" };
+        buildPlayerOptions.scenes = new[] { "Assets/Scenes/ModelShowcase.unity" };
 
         var buildFolder = GetArg("-buildFolder");
 
