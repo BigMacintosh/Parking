@@ -60,22 +60,11 @@ namespace Game
             {
                 RequestGameLoop(typeof(ClientGameLoop), new string[0]);
             }
-#elif UNITY_STANDALONE && UNITY_SERVER
+#elif UNITY_STANDALONE_LINUX && UNITY_SERVER
             RequestGameLoop(typeof(ServerGameLoop), new string[0]);
-#elif UNITY_STANDALONE_LINUX && !UNITY_SERVER
+#elif UNITY_STANDALONE && !UNITY_SERVER
             RequestGameLoop(typeof(ClientGameLoop), new string[0]);
 #endif
-            
-            /*var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
-            IsHeadless = commandLineArgs.Contains("-batchmode");
-            if (IsHeadless)
-            {
-                
-            }
-            else
-            {
-                
-            }*/
             
             // Update spawn locations
             SpawnLocations.Locations = spawnLocations;
