@@ -24,6 +24,7 @@ namespace Game
             world = new World();
 
             // Create HUD
+            // TODO: look at merging the HUD into one big canvas or something?
             Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);
             Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             
