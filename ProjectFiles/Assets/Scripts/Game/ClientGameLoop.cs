@@ -25,7 +25,7 @@ namespace Game
 
             // Create HUD
             Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);
-
+            Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             
             // Start client connection
             if (isStandalone)
