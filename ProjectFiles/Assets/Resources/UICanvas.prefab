@@ -1894,6 +1894,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocityText: {fileID: 1452564415913183248}
+  debugText: {fileID: 1452564416012163695}
 --- !u!1 &1452564415725295029
 GameObject:
   m_ObjectHideFlags: 0
@@ -2312,6 +2313,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   escmenu: {fileID: 1452564416149399802}
   settingsmenu: {fileID: 1452564415162834372}
+  hud: {fileID: 8783561577070765823}
+  test: 0
 --- !u!1 &1452564416012163689
 GameObject:
   m_ObjectHideFlags: 0
@@ -2324,7 +2327,7 @@ GameObject:
   - component: {fileID: 1452564416012163692}
   - component: {fileID: 1452564416012163695}
   m_Layer: 5
-  m_Name: Debughud
+  m_Name: debugtext
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

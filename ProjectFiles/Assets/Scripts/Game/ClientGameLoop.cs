@@ -1,3 +1,4 @@
+﻿using System.Collections.Generic;
 using Network;
 using UnityEngine;
 using Gameplay;
@@ -32,6 +33,10 @@ namespace Game
             world = new World();
             parkingSpaceManager = new ClientParkingSpaceManager();
 
+
+            // Create HUD
+           // hud = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<HUD>();
+            Debug.Log(hud is null);
             // Create UI Menu class that includes hud
             Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
@@ -65,6 +70,11 @@ namespace Game
 #else
             var success = client.Start("35.177.253.83");
 #endif
+
+            uiController.test = 50;
+            uiController.getHUD().NetworkIP = "Loading";
+            uiController.getHUD().playernum = world.Players.Count;
+            uiController.getHUD().NetworkIP = client.getServerIP();
             
             return success;
         }
