@@ -21,6 +21,7 @@ namespace Network
         void Shutdown();
         void SendLocationUpdate();
         void HandleNetworkEvents();
+        String getServerIP();
         event GameStartDelegate GameStartEvent;
         event PreRoundStartDelegate PreRoundStartEvent;
         event RoundStartDelegate RoundStartEvent;
@@ -207,6 +208,54 @@ namespace Network
             ev.Handle(this, connection);
         }
         
+        public String getServerIP()
+        {
+            return serverIP;
+        }
+
+        private class DummyClient : IClient
+        {
+            private World world;
+            private int playerID;
+            private String serverIP = "127.0.0.1";
+            
+            
+            public DummyClient(World world)
+            {
+                this.world = world;
+            }
+            public bool Start(string ip, ushort port)
+            {
+                world.ClientID = 0;
+                world.SpawnPlayer(world.ClientID);
+                world.SetPlayerControllable(world.ClientID);
+                return true;
+            }
+
+            public void Shutdown()
+            {
+                
+            }
+
+            public void SendLocationUpdate()
+            {
+                
+            }
+
+            public void HandleNetworkEvents()
+            {
+                
+            }
+            public String getServerIP()
+            {
+                return serverIP;
+            }
+            public event GameStartDelegate GameStartEvent;
+            public event PreRoundStartDelegate PreRoundStartEvent;
+            public event RoundStartDelegate RoundStartEvent;
+            public event RoundEndDelegate RoundEndEvent;
+            public event EliminatePlayersDelegate EliminatePlayersEvent;
+        }
         
         // Handle Event methods
         public void Handle(Event ev, NetworkConnection conn) {
