@@ -11,18 +11,12 @@ namespace UI
         //  [SerializeField] private GameObject car;
         [SerializeField] private GameObject escmenu;
         [SerializeField] private GameObject settingsmenu;
-        [SerializeField] private HUD hud;
+        private HUD hud;
 
         private int timer;
         private Rigidbody rb;
         private float v;
         private bool active;
-        public int test;
-        
-        public UIController()
-        {
-
-        }
 
         private void Start()
         {

@@ -12,7 +12,6 @@ namespace Game
         private IClient client;
         private World world;
         private UIController uiController;
-        private HUD hud;
         private bool isStandalone;
         private ClientParkingSpaceManager parkingSpaceManager;
         
@@ -34,10 +33,7 @@ namespace Game
             parkingSpaceManager = new ClientParkingSpaceManager();
 
 
-            // Create HUD
-           // hud = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<HUD>();
-            Debug.Log(hud is null);
-            // Create UI Menu class that includes hud
+            // Create UI Controller
             Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
             
@@ -72,10 +68,9 @@ namespace Game
 #endif
 
             uiController.test = 50;
-            uiController.getHUD().NetworkIP = "Loading";
             uiController.getHUD().playernum = world.Players.Count;
             uiController.getHUD().NetworkIP = client.getServerIP();
-            
+            uiController.getHUD().exitbutton.onClick.AddListener(Shutdown);
             return success;
         }
 
