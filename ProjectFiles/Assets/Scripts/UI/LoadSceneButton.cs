@@ -9,7 +9,6 @@ namespace UI
     {
         public void LoadScene(string sceneName)
         {
-            //sceneName = "TestScene";
             SceneManager.LoadScene(sceneName);
         }
     }

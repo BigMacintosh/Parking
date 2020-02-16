@@ -8,7 +8,8 @@ namespace UI
     public class HUD : MonoBehaviour
     {
         [SerializeField] private Text velocityText;
-        [SerializeField] public Text debugText;
+        [SerializeField] private Text debugText;
+        [SerializeField] public Button exitbutton;
         private float v;
         private String ip;
         private bool isSet;
@@ -16,12 +17,6 @@ namespace UI
         public Rigidbody Car { private get; set; }
         public String NetworkIP { private get; set; }
         public int playernum { private get; set; }
-
-        public HUD()
-        {
-          
-        }
-
 
         // Update is called once per frame
         private void Update()

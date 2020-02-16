@@ -11,7 +11,6 @@ namespace Game
         private IClient client;
         private World world;
         private UIController uiController;
-        private HUD hud;
         private bool isStandalone;
         
         public bool Init(string[] args)
@@ -29,10 +28,7 @@ namespace Game
             world = new World();
 
 
-            // Create HUD
-           // hud = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<HUD>();
-            Debug.Log(hud is null);
-            // Create UI Menu class that includes hud
+            // Create UI Controller
             Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
             
@@ -52,20 +48,17 @@ namespace Game
             var success = client.Start("35.177.253.83");
 #endif
 
-
-
             // Subscribe HUD to client events.
             client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
                 Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
             client.RoundStartEvent += number => Debug.Log($"Round start event received rN:{number}");
             client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
 
-            uiController.test = 50;
-            uiController.getHUD().NetworkIP = "Loading";
+            //Add relevant infomation to HUD
             uiController.getHUD().playernum = world.Players.Count;
             uiController.getHUD().NetworkIP = client.getServerIP();
-            
-            
+            uiController.getHUD().exitbutton.onClick.AddListener(Shutdown);
+
             return success;
         }
 
