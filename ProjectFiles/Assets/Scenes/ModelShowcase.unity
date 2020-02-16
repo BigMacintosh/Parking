@@ -11215,7 +11215,7 @@ PrefabInstance:
     - target: {fileID: 3657530969704683872, guid: c055a795f5369db49b6d50b5af6fad9e,
         type: 3}
       propertyPath: gameLoop
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3657530969704683873, guid: c055a795f5369db49b6d50b5af6fad9e,
         type: 3}
