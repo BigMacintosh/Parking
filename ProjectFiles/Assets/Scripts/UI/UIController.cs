@@ -19,12 +19,14 @@ namespace UI
         private bool active;
         public int test;
         
+        public UIController()
+        {
+
+        }
+
         private void Start()
         {
             Cursor.visible = false;
-            //   rb = car.GetComponent<Rigidbody>();
-            //escmenu = Resources.Load<GameObject>("EscapeMenu");
-            //   rb = Resources.Load<Rigidbody>("Car");
             escmenu.SetActive(false);
             settingsmenu.SetActive(false);
             active = false;
@@ -36,15 +38,21 @@ namespace UI
         private void Update()
         {
             timer++;
-            //  v = (float)Math.Round(rb.velocity.magnitude * 3.6f, 0);
-            //  debugtext.text = "Connected to: " + "serverip" + "\nPlayers connected: " + "playernumber";
-            //  velocityText.text = "Speed: "+ v + " km/h";
+
+            if (active)
+            {
+                Cursor.visible = true;
+            }
+            else
+            {
+                Cursor.visible = false;
+            }
+
             if (Input.GetKey(KeyCode.Escape))
             {
                 if (!active && timer > 30)
                 {
                     escmenu.SetActive(true);
-                    Cursor.visible = true;
                     active = true;
                     timer = 0;
                 }
@@ -60,6 +68,10 @@ namespace UI
         }
         public HUD getHUD()
         {
+            if (hud is null)
+            {
+                hud = FindObjectOfType<HUD>();
+            }
             return hud;
         }
     }

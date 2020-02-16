@@ -1,3 +1,4 @@
+﻿using System.Collections.Generic;
 using Network;
 using UnityEngine;
 using UI;
@@ -27,6 +28,10 @@ namespace Game
             // Create world
             world = new World();
 
+
+            // Create HUD
+           // hud = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<HUD>();
+            Debug.Log(hud is null);
             // Create UI Menu class that includes hud
             Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
@@ -56,7 +61,8 @@ namespace Game
             client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
 
             uiController.test = 50;
-            hud.NetworkIP = "Loading";
+            uiController.getHUD().NetworkIP = "Loading";
+            uiController.getHUD().playernum = world.Players.Count;
             uiController.getHUD().NetworkIP = client.getServerIP();
             
             
