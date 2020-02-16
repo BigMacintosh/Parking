@@ -24,6 +24,7 @@ namespace Network
         void Shutdown();
         void SendLocationUpdate();
         void HandleNetworkEvents();
+        String getServerIP();
         event GameStartDelegate GameStartEvent;
         event PreRoundStartDelegate PreRoundStartEvent;
         event RoundStartDelegate RoundStartEvent;
@@ -186,10 +187,16 @@ namespace Network
             return new DummyClient(world);
         }
         
+        public String getServerIP()
+        {
+            return serverIP;
+        }
+
         private class DummyClient : IClient
         {
             private World world;
             private int playerID;
+            private String serverIP = "127.0.0.1";
             
             
             public DummyClient(World world)
@@ -217,6 +224,10 @@ namespace Network
             public void HandleNetworkEvents()
             {
                 
+            }
+            public String getServerIP()
+            {
+                return serverIP;
             }
             public event GameStartDelegate GameStartEvent;
             public event PreRoundStartDelegate PreRoundStartEvent;

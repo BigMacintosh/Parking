@@ -11,11 +11,13 @@ namespace UI
         //  [SerializeField] private GameObject car;
         [SerializeField] private GameObject escmenu;
         [SerializeField] private GameObject settingsmenu;
+        [SerializeField] private HUD hud;
 
         private int timer;
         private Rigidbody rb;
         private float v;
         private bool active;
+        public int test;
         
         private void Start()
         {
@@ -27,6 +29,7 @@ namespace UI
             settingsmenu.SetActive(false);
             active = false;
             timer = 0;
+            hud = FindObjectOfType<HUD>();
         }
 
         // Update is called once per frame
@@ -54,6 +57,10 @@ namespace UI
                 }
             }
 
+        }
+        public HUD getHUD()
+        {
+            return hud;
         }
     }
 }

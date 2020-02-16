@@ -1,6 +1,7 @@
 using Network;
 using UnityEngine;
 using UI;
+using Object = UnityEngine.Object;
 
 namespace Game
 {
@@ -9,6 +10,7 @@ namespace Game
         private IClient client;
         private World world;
         private UIController uiController;
+        private HUD hud;
         private bool isStandalone;
         
         public bool Init(string[] args)
@@ -25,7 +27,7 @@ namespace Game
             // Create world
             world = new World();
 
-            // Create HUD
+            // Create UI Menu class that includes hud
             Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
             
@@ -45,13 +47,18 @@ namespace Game
             var success = client.Start("35.177.253.83");
 #endif
 
-            // Create HUD class
-            
+
+
             // Subscribe HUD to client events.
             client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
                 Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
             client.RoundStartEvent += number => Debug.Log($"Round start event received rN:{number}");
             client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
+
+            uiController.test = 50;
+            hud.NetworkIP = "Loading";
+            uiController.getHUD().NetworkIP = client.getServerIP();
+            
             
             return success;
         }
