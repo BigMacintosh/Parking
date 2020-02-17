@@ -201,7 +201,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2754571377349320158}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.9378376, y: 1.5, z: -0.9640167}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2047754842502443063}
@@ -242,7 +242,6 @@ MonoBehaviour:
     <SpeedRating>k__BackingField: 0
     <SteeringRating>k__BackingField: 0
     <WeightRating>k__BackingField: 0
-  centreOfMass: {x: 0, y: 0, z: 0}
   driveWheels:
   - {fileID: 2403165006666639099}
   - {fileID: 9212954234082358087}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SceneUtilities;
 using UnityEngine;
 
 namespace Vehicle
@@ -26,9 +27,12 @@ namespace Vehicle
             // Set camera to follow car
             var camera = FindObjectOfType<CameraFollowController>();
             camera.ObjectToFollow = transform;
+
+            var minimap = FindObjectOfType<MinimapController>();
+            minimap.ObjectToFollow = transform;
             
             // Set car object in HUD.
-            HUD hud = FindObjectOfType<HUD>();
+            var hud = FindObjectOfType<HUD>();
             hud.Car = GetComponent<Rigidbody>();
         }
     }
