@@ -16,5 +16,6 @@ namespace Network
         ServerRoundStartEvent       = 0x05,
         ServerRoundEndEvent         = 0x06,
         ServerEliminatePlayersEvent = 0x07,
+        ServerDisconnectEvent       = 0x08,
     }
 }
