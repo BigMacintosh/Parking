@@ -71,3 +71,5 @@ crashlytics-build.properties
 
 .DS_Store
 Assembly-CSharp.csproj.DotSettings
+
+ProjectSettings/Packages/com.unity.probuilder/Settings.json
