@@ -43,6 +43,14 @@ namespace Network
         
         private bool done;
         private bool inGame;
+        
+        public event GameStartDelegate GameStartEvent;
+        public event PreRoundStartDelegate PreRoundStartEvent;
+        public event RoundStartDelegate RoundStartEvent;
+        public event RoundEndDelegate RoundEndEvent;
+        public event EliminatePlayersDelegate EliminatePlayersEvent;
+        public event GameEndDelegate GameEndEvent;
+        
 
         public Client(World world)
         {
@@ -50,6 +58,11 @@ namespace Network
             pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
             done = false;
             this.world = world;
+        }
+        
+        public static IClient getDummyClient(World world)
+        {
+            return new DummyClient(world);
         }
 
         public bool Start(string ip = "127.0.0.1", ushort port = 25565)
@@ -72,15 +85,20 @@ namespace Network
             driver.Dispose();
         }
 
+        private void sendEventToServer(Event ev)
+        {
+            using (var writer = new DataStreamWriter(locationUpdate.Length, Allocator.Temp))
+            {
+                ev.Serialise(writer);
+                driver.Send(pipeline, connection, writer);
+            }
+        }
+        
         public void SendLocationUpdate()
         {
             if (!inGame) return;
             var locationUpdate = new ClientLocationUpdateEvent(world);
-            using (var writer = new DataStreamWriter(locationUpdate.Length, Allocator.Temp))
-            {
-                locationUpdate.Serialise(writer);
-                driver.Send(pipeline, connection, writer);
-            }
+            sendEventToServer(locationUpdate);
         }
 
         public void HandleNetworkEvents()
@@ -107,11 +125,7 @@ namespace Network
                     {
                         Debug.Log($"Client: Successfully connected to {serverIP}:{serverPort}.");
                         var handshake = new ClientHandshakeEvent();
-                        using (var writer = new DataStreamWriter(handshake.Length, Allocator.Temp))
-                        {
-                            handshake.Serialise(writer);
-                            driver.Send(pipeline, connection, writer);
-                        }
+                        sendEventToServer(handshake);
                         break;
                     }
                     case NetworkEvent.Type.Data:
@@ -192,12 +206,9 @@ namespace Network
             
             ev.Handle(this, connection);
         }
-
-        public static IClient getDummyClient(World world)
-        {
-            return new DummyClient(world);
-        }
-
+        
+        
+        // Handle Event methods
         public void Handle(Event ev, NetworkConnection conn) {
             throw new ArgumentException("Client received an event that it cannot handle");
         }
@@ -262,21 +273,18 @@ namespace Network
         {
             // Don't really need to do anything... Maybe a packet is needed to be sent back.
         }
-
-        public event GameStartDelegate GameStartEvent;
-        public event PreRoundStartDelegate PreRoundStartEvent;
-        public event RoundStartDelegate RoundStartEvent;
-        public event RoundEndDelegate RoundEndEvent;
-        public event EliminatePlayersDelegate EliminatePlayersEvent;
-        public event GameEndDelegate GameEndEvent;
-
+        
         public void OnSpaceEnter(ushort spaceID)
         {
+            ClientSpaceEnterEvent ev = new ClientSpaceEnterEvent(spaceID);
+            sendEventToServer(ev);
             Debug.Log($"Someone entered the space #{spaceID}");   
         }
 
         public void OnSpaceExit(ushort spaceID)
         {
+            ClientSpaceExitEvent ev = new ClientSpaceExitEvent(spaceID);
+            sendEventToServer(ev);
             Debug.Log($"Someone exited the space #{spaceID}");
         }
         

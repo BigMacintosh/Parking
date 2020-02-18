@@ -6,6 +6,7 @@ using Network.Events;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using Event = Network.Events.Event;
 using NetworkConnection = Unity.Networking.Transport.NetworkConnection; 
@@ -65,6 +66,14 @@ namespace Network
             connections.Dispose();
         }
 
+        // Send Messages.
+        public void SendLocationUpdates()
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var locationUpdate = new ServerLocationUpdateEvent(world);
+            sendToAll(locationUpdate);
+        }
+        
         public void HandleNetworkEvents()
         {
             // Players are in a waiting state so no packets being sent, therefore keep updating the keepAliveTimer.
@@ -158,6 +167,16 @@ namespace Network
                     ev = new ClientLocationUpdateEvent();
                     break;
                 }
+                case EventType.ClientSpaceEnterEvent:
+                {
+                    ev = new ClientSpaceEnterEvent();
+                    break;
+                }
+                case EventType.ClientSpaceExitEvent:
+                {
+                    ev = new ClientSpaceExitEvent();
+                    break;
+                }
                 default:
                 {
                     Debug.Log($"Server: Received unexpected event { eventType }.");
@@ -168,6 +187,8 @@ namespace Network
             ev.Handle(this, connection);
         }
         
+        
+        // Handle Event methods
         public void Handle(Event ev, NetworkConnection srcConnection) {
             throw new ArgumentException("Server received an event that it cannot handle");
         }
@@ -190,8 +211,17 @@ namespace Network
             ev.UpdateLocation(world);
         }
 
+        public void Handle(ClientSpaceEnterEvent ev, NetworkConnection srcConnection)
+        {
+            Debug.Log($"Someone entered the space #{ev.SpaceID}");
+        }
+
+        public void Handle(ClientSpaceExitEvent ev, NetworkConnection srcConnection)
+        {
+            Debug.Log($"Someone exited the space #{ev.SpaceID}");
+        }
         // Used to send a packet to all clients.
-        private void SendToAll(Event ev)
+        private void sendToAll(Event ev)
         {
             using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp))
             {
@@ -202,6 +232,15 @@ namespace Network
                 }
             }
         }
+
+        private void sendToClient(NetworkConnection connection, Event ev)
+        {
+            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp))
+            {
+                ev.Serialise(writer);
+                driver.Send(pipeline, connection, writer);
+            }
+        }
         
         // Send Messages.
         public void SendLocationUpdates()
@@ -210,6 +249,8 @@ namespace Network
             var locationUpdate = new ServerLocationUpdateEvent(world);
             SendToAll(locationUpdate);
         }
+ 
+        
 
         public void OnStartGame(ushort freeRoamLength, ushort nPlayers)
         {
@@ -284,28 +325,28 @@ namespace Network
         {
             if (world.GetNumPlayers() == 0) return;
             var preRoundStart = new ServerPreRoundStartEvent(roundNumber, preRoundLength, roundLength, nPlayers, spacesActive);
-            SendToAll(preRoundStart);
+            sendToAll(preRoundStart);
         }
 
         public void OnRoundStart(ushort roundNumber)
         {
             if (world.GetNumPlayers() == 0) return;
             var roundStart = new ServerRoundStartEvent(roundNumber);
-            SendToAll(roundStart);
+            sendToAll(roundStart);
         }
 
         public void OnRoundEnd(ushort roundNumber)
         {
             if (world.GetNumPlayers() == 0) return;
             var roundEnd = new ServerRoundEndEvent(roundNumber);
-            SendToAll(roundEnd);
+            sendToAll(roundEnd);
         }
 
         public void OnEliminatePlayers(ushort roundNumber, List<ushort> players)
         {
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
-            SendToAll(eliminatePlayers);
+            sendToAll(eliminatePlayers);
         }
 
         public void OnGameEnd()
