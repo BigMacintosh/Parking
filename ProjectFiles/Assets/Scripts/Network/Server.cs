@@ -139,7 +139,7 @@ namespace Network
                     
                             // Notify users of disconnect
                             var disconnectEvent = new ServerDisconnectEvent((ushort) playerID);
-                            SendToAll(disconnectEvent);
+                            sendToAll(disconnectEvent);
                     
                             // Destroy the actual network connection
                             Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
@@ -241,15 +241,6 @@ namespace Network
                 driver.Send(pipeline, connection, writer);
             }
         }
-        
-        // Send Messages.
-        public void SendLocationUpdates()
-        {
-            if (world.GetNumPlayers() == 0) return;
-            var locationUpdate = new ServerLocationUpdateEvent(world);
-            SendToAll(locationUpdate);
-        }
- 
         
 
         public void OnStartGame(ushort freeRoamLength, ushort nPlayers)
