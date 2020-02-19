@@ -27,8 +27,8 @@ namespace Network
         event RoundEndDelegate RoundEndEvent;
         event EliminatePlayersDelegate EliminatePlayersEvent;
         event GameEndDelegate GameEndEvent;
-        void OnSpaceEnter(ushort spaceID);
-        void OnSpaceExit(ushort spaceID);
+        void OnSpaceEnter(int playerID, ushort spaceID);
+        void OnSpaceExit(int playerID, ushort spaceID);
     }
 
     public class Client : IClient
@@ -87,7 +87,7 @@ namespace Network
 
         private void sendEventToServer(Event ev)
         {
-            using (var writer = new DataStreamWriter(locationUpdate.Length, Allocator.Temp))
+            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp))
             {
                 ev.Serialise(writer);
                 driver.Send(pipeline, connection, writer);
@@ -263,7 +263,7 @@ namespace Network
         {
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
         }
-
+        
         public void Handle(ServerGameEndEvent ev, NetworkConnection conn)
         {
             GameEndEvent?.Invoke();
@@ -274,14 +274,15 @@ namespace Network
             // Don't really need to do anything... Maybe a packet is needed to be sent back.
         }
         
-        public void OnSpaceEnter(ushort spaceID)
+        // Delegate event handlers
+        public void OnSpaceEnter(int playerID, ushort spaceID)
         {
             ClientSpaceEnterEvent ev = new ClientSpaceEnterEvent(spaceID);
             sendEventToServer(ev);
             Debug.Log($"Someone entered the space #{spaceID}");   
         }
 
-        public void OnSpaceExit(ushort spaceID)
+        public void OnSpaceExit(int playerID, ushort spaceID)
         {
             ClientSpaceExitEvent ev = new ClientSpaceExitEvent(spaceID);
             sendEventToServer(ev);

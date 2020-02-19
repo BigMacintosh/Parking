@@ -116,8 +116,6 @@ namespace Game
         {
             return cars.ContainsKey(playerID);
         }
-
-        
     }
 
     public static class SpawnLocations

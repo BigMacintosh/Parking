@@ -40,12 +40,14 @@ namespace Network
         public event RoundStartDelegate RoundStartEvent;
         public event RoundEndDelegate RoundEndEvent;
         public event EliminatePlayersDelegate EliminatePlayersEvent;
-        public void OnSpaceEnter(ushort spaceID)
+        public event GameEndDelegate GameEndEvent;
+
+        public void OnSpaceEnter(int playerID, ushort spaceID)
         {
             Debug.Log($"Someone entered the space #{spaceID}");   
         }
 
-        public void OnSpaceExit(ushort spaceID)
+        public void OnSpaceExit(int playerID, ushort spaceID)
         {
             Debug.Log($"Someone exited the space #{spaceID}");
         }

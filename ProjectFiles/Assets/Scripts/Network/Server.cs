@@ -16,6 +16,9 @@ namespace Network
 {
     public class Server
     {
+        public event SpaceEnterDelegate SpaceEnterEvent;
+        public event SpaceExitDelegate SpaceExitEvent;
+        
         private bool acceptingNewPlayers;
         private List<int> playersToSpawn;
         
@@ -213,12 +216,12 @@ namespace Network
 
         public void Handle(ClientSpaceEnterEvent ev, NetworkConnection srcConnection)
         {
-            Debug.Log($"Someone entered the space #{ev.SpaceID}");
+            SpaceEnterEvent?.Invoke(srcConnection.InternalId, ev.SpaceID);
         }
 
         public void Handle(ClientSpaceExitEvent ev, NetworkConnection srcConnection)
         {
-            Debug.Log($"Someone exited the space #{ev.SpaceID}");
+            SpaceExitEvent?.Invoke(srcConnection.InternalId, ev.SpaceID);
         }
         // Used to send a packet to all clients.
         private void sendToAll(Event ev)
@@ -255,7 +258,7 @@ namespace Network
             world.SpawnPlayers(playersToSpawn);
             
             var spawnPlayersEvent = new ServerGameStart(world, freeRoamLength);
-            SendToAll(spawnPlayersEvent);
+            sendToAll(spawnPlayersEvent);
 
             // foreach (var playerID in playersToSpawn)
             // {
@@ -309,7 +312,7 @@ namespace Network
         {
             if (world.GetNumPlayers() == 0) return;
             var keepAlive = new ServerKeepAlive();
-            SendToAll(keepAlive);
+            sendToAll(keepAlive);
         }
 
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
@@ -333,7 +336,7 @@ namespace Network
             sendToAll(roundEnd);
         }
 
-        public void OnEliminatePlayers(ushort roundNumber, List<ushort> players)
+        public void OnEliminatePlayers(ushort roundNumber, List<int> players)
         {
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
@@ -344,7 +347,7 @@ namespace Network
         {
             if (world.GetNumPlayers() == 0) return;
             var gameEnd = new ServerGameEndEvent();
-            SendToAll(gameEnd);
+            sendToAll(gameEnd);
         }
     }
 }
