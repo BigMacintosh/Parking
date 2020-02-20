@@ -16,4 +16,5 @@ namespace Network
     public delegate void SpaceEnterDelegate(int playerID, ushort spaceID);
     public delegate void SpaceExitDelegate(int playerID, ushort spaceID);
     public delegate void GameEndDelegate();
+    public delegate void SpaceClaimedDelegate(int playerID, ushort spaceID);
 }

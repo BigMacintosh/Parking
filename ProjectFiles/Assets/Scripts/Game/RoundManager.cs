@@ -15,7 +15,7 @@ namespace Game
         public const ushort MaxRounds = 5;
     }
 
-    public delegate void TimerOverDelegate();
+    
     
     public class RoundManager
     {

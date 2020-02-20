@@ -349,5 +349,12 @@ namespace Network
             var gameEnd = new ServerGameEndEvent();
             sendToAll(gameEnd);
         }
+
+        public void OnSpaceClaimed(int playerID, ushort spaceID)
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var claimSpace = new ServerSpaceClaimedEvent(playerID, spaceID);
+            sendToAll(claimSpace);
+        }
     }
 }

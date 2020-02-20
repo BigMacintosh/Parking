@@ -3,6 +3,8 @@ using UnityEngine;
 
 namespace Utils
 {
+    public delegate void TimerOverDelegate();
+    
     public class Timer
     {
         public event TimerOverDelegate Elapsed;

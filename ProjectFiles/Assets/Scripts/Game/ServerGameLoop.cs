@@ -36,7 +36,9 @@ namespace Game
             roundManager.RoundEndEvent += server.OnRoundEnd;
             roundManager.EliminatePlayersEvent += server.OnEliminatePlayers;
             roundManager.GameEndEvent += server.OnGameEnd;
-            
+
+            parkingSpaceManager.SpaceClaimedEvent += server.OnSpaceClaimed;
+
             // Start server
             var success = server.Start();
 
