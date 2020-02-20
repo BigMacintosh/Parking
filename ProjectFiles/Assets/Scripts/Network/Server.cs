@@ -59,6 +59,7 @@ namespace Network
         {
             driver.Dispose();
             connections.Dispose();
+            playersToSpawn.Dispose();
         }
 
         public void HandleNetworkEvents()
