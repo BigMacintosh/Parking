@@ -17,7 +17,7 @@ namespace Network
 
     public interface IClient
     {
-        bool Start(string ip = "127.0.0.1", ushort port = 25565);
+        bool Start(ushort port = 25565);
         void Shutdown();
         void SendLocationUpdate();
         void HandleNetworkEvents();
@@ -27,6 +27,7 @@ namespace Network
         event RoundStartDelegate RoundStartEvent;
         event RoundEndDelegate RoundEndEvent;
         event EliminatePlayersDelegate EliminatePlayersEvent;
+        event PlayerCountChangeDelegate PlayerCountChangeEvent;
         event GameEndDelegate GameEndEvent;
         void OnSpaceEnter(int playerID, ushort spaceID);
         void OnSpaceExit(int playerID, ushort spaceID);
@@ -66,9 +67,9 @@ namespace Network
             return new DummyClient(world);
         }
 
-        public bool Start(string ip = "127.0.0.1", ushort port = 25565)
+        public bool Start(ushort port = 25565)
         {
-            serverIP = ip;
+            serverIP = ClientConfig.ServerIP;
             serverPort = port;
             
             Debug.Log($"Client: Connecting to {serverIP}:{serverPort}...");
@@ -224,7 +225,7 @@ namespace Network
             {
                 this.world = world;
             }
-            public bool Start(string ip, ushort port)
+            public bool Start(ushort port)
             {
                 world.ClientID = 0;
                 world.SpawnPlayer(world.ClientID);
@@ -255,6 +256,7 @@ namespace Network
             public event RoundStartDelegate RoundStartEvent;
             public event RoundEndDelegate RoundEndEvent;
             public event EliminatePlayersDelegate EliminatePlayersEvent;
+            public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         }
         
         // Handle Event methods
@@ -267,6 +269,8 @@ namespace Network
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
             var playerID = ev.PlayerID;
             world.ClientID = playerID;
+            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
+
             Debug.Log($"Client: My playerID is {playerID}");
         }
         
@@ -290,6 +294,7 @@ namespace Network
         public void Handle(ServerDisconnectEvent ev, NetworkConnection conn)
         {
             if (inGame) world.DestroyPlayer(ev.PlayerID);
+            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
             Debug.Log($"Client: Destroyed player { ev.PlayerID } due to disconnect.");
         }
 

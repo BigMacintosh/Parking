@@ -47,6 +47,8 @@ namespace Game
             {
                 client = new Client(world);
             }
+
+            var success = client.Start();
             
             
             // Subscribe to network events.
@@ -67,10 +69,14 @@ namespace Game
             var success = client.Start("35.177.253.83");
 #endif
 
-            uiController.test = 50;
             uiController.getHUD().playernum = world.Players.Count;
             uiController.getHUD().NetworkIP = client.getServerIP();
             uiController.getHUD().exitbutton.onClick.AddListener(Shutdown);
+            client.PreRoundStartEvent += uiController.OnPreRoundStart;
+            client.RoundStartEvent += uiController.OnRoundStart;
+            client.RoundEndEvent += uiController.OnRoundEnd;
+            client.PlayerCountChangeEvent += uiController.OnPlayerCountChange;
+
             return success;
         }
 
