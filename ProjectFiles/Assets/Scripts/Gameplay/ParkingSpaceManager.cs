@@ -44,6 +44,7 @@ namespace Gameplay
     {
         public void OnSpaceEnter(int playerID, ushort spaceID)
         {
+            Debug.Log($"Player: {playerID} has entered space {spaceID}");
             // Start a timer for a space if space does not belong to the player
             var parkingSpace = parkingSpaces[spaceID];
             if (parkingSpace.OccupiedBy == playerID)
@@ -58,7 +59,7 @@ namespace Gameplay
                 }
                 else
                 {
-                    parkingSpace.Timer = new Timer(3);
+                    parkingSpace.Timer = new Timer(1);
                     parkingSpace.Timer.Elapsed += SpaceTimerOnElapsed;
                     parkingSpace.Timer.Start();
                 }
@@ -71,7 +72,7 @@ namespace Gameplay
                 }
                 else
                 {
-                    parkingSpace.Timer = new Timer(1);
+                    parkingSpace.Timer = new Timer(3);
                     parkingSpace.Timer.Elapsed += SpaceTimerOnElapsed;
                     parkingSpace.Timer.Start();
                 }
@@ -86,11 +87,13 @@ namespace Gameplay
             if (parkingSpace.Timer.Set)
             {
                 parkingSpace.Timer.Reset();
+                Debug.Log($"Player: {playerID} has left space before it is claimed, cancelling timer.");
             }
         }
         
         private void SpaceTimerOnElapsed()
         {
+            Debug.Log("Timer has elapsed");
             // Space timer has elapsed.
             // TODO: Maybe find a way to set the delegate type of a timer??
             

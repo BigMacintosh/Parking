@@ -87,7 +87,6 @@ namespace Network
 
         private void sendEventToServer(Event ev)
         {
-            Debug.Log($"Send Event to Server: Packet Length {ev.Length}");
             using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp))
             {
                 ev.Serialise(writer);
