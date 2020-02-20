@@ -12,7 +12,7 @@ namespace Network.Events
             Length = sizeof(byte) + sizeof(ushort) * 2;
         }
 
-        public ClientSpaceExitEvent(ushort spaceId)
+        public ClientSpaceExitEvent(ushort spaceId) : this()
         {
             SpaceID = spaceId;
         }

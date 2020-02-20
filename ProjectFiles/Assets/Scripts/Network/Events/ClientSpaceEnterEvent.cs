@@ -12,9 +12,8 @@ namespace Network.Events
             Length = sizeof(byte) + sizeof(ushort);
         }
 
-        public ClientSpaceEnterEvent(ushort spaceId)
+        public ClientSpaceEnterEvent(ushort spaceId) : this()
         {
-
             SpaceID = spaceId;
         }
 

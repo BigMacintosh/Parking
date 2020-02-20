@@ -40,7 +40,6 @@ namespace Gameplay
             if (other.TryGetComponent(out VehicleDriver driver))
             {
                 mat.color = new Color(0,1,0,0.3f);
-                Debug.Log("HERE");
                 SpaceEnterEvent?.Invoke(0, SpaceID);
             }
             else if (other.TryGetComponent(out Vehicle.Vehicle v))

@@ -11,9 +11,11 @@ namespace Gameplay
 
         public ParkingSpaceManager()
         {
+            parkingSpaces = new Dictionary<ushort, ParkingSpace>();
             var parkingSpaceList = Object.FindObjectsOfType<ParkingSpace>();
             foreach (var parkingSpace in parkingSpaceList)
             {
+                Debug.Log($"Space Added, SpaceID: {parkingSpace.SpaceID}");
                 parkingSpaces.Add(parkingSpace.SpaceID, parkingSpace);
             }
         }
@@ -40,7 +42,6 @@ namespace Gameplay
 
     public class ServerParkingSpaceManager : ParkingSpaceManager
     {
-
         public void OnSpaceEnter(int playerID, ushort spaceID)
         {
             // Start a timer for a space if space does not belong to the player
