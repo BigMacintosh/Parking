@@ -32,7 +32,7 @@ namespace Game
         // Spawn all the players that have connected. Allow free-roam for the players. Disallow new connections.
         public event GameStartDelegate GameStartEvent;
 
-        // Start a countdown until the beginning of a new round.
+        // Start a countdown until the beginning of a new round. Provides all the initial info for a round.
         public event PreRoundStartDelegate PreRoundStartEvent;
 
         // Immediately start a round.
@@ -40,6 +40,7 @@ namespace Game
 
         // Immediately end a around.
         public event RoundEndDelegate RoundEndEvent;
+        
         public event EliminatePlayersDelegate EliminatePlayersEvent;
 
         public RoundManager(World world)
@@ -57,11 +58,11 @@ namespace Game
 
         public void StartGame()
         {
-            NotifyGameStart();
             preRoundLength = DefaultRoundProperties.PreRoundLength;
             roundLength = DefaultRoundProperties.RoundLength;
             freeroamLength = DefaultRoundProperties.FreeroamLength;
             maxRounds = DefaultRoundProperties.MaxRounds;
+            NotifyGameStart(freeroamLength);
             StartFreeroam();
             GameInProgress = true;
         }
@@ -112,9 +113,9 @@ namespace Game
             }
         }
 
-        private void NotifyGameStart()
+        private void NotifyGameStart(ushort freeRoamLength)
         {
-            GameStartEvent?.Invoke(world.GetNumPlayers());
+            GameStartEvent?.Invoke(freeRoamLength, world.GetNumPlayers());
         }
 
         private void NotifyPreRoundStart(List<ushort> spacesActive)

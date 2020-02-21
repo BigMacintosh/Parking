@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Network
 {
-    public delegate void GameStartDelegate(ushort nPlayers);
+    public delegate void GameStartDelegate(ushort freeRoamLength, ushort nPlayers);
     
     public delegate void PreRoundStartDelegate(
         ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive);

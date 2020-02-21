@@ -42,6 +42,15 @@ namespace Network.Events
             Velocity = reader.ReadVector3(ref context);
             AngularVelocity = reader.ReadVector3(ref context);
         }
+
+        public void UpdateLocation(World world)
+        {
+            world.SetPlayerPosition(world.ClientID, Position);
+            world.SetPlayerRotation(world.ClientID, Rotation);
+            world.SetPlayerVelocity(world.ClientID, Velocity);
+            world.SetPlayerAngularVelocity(world.ClientID, AngularVelocity);
+        }
+        
         
         public override void Handle(Server server, NetworkConnection connection)
         {

@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using Network;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = System.Random;
 
 namespace Game
@@ -9,9 +11,8 @@ namespace Game
     {
         private readonly GameObject carPrefab;
         private readonly Dictionary<int, GameObject> cars;
-        private List<NetworkChange> networkChanges;
-        private int nextPlayerID = 0;
         public Dictionary<int, GameObject> Players => cars;
+        public int ClientID { get; set; }
 
         public World()
         {
@@ -20,9 +21,7 @@ namespace Game
             ClientID = -1;
         }
 
-        public int ClientID { get; set; }
-
-        public IEnumerable<int> PlayerIDs => cars.Keys;
+        
 
         public void Update()
         {
@@ -31,21 +30,45 @@ namespace Game
             // Interpolate players to new location.
         }
 
+        public void SpawnPlayers(List<int> playersToSpawn)
+        {
+            foreach (var player in playersToSpawn)
+            {
+                SpawnPlayer(player);
+            }
+        }
+
         // Server one
         public void SpawnPlayer(int playerID)
         {
             var position = SpawnLocations.GetSpawn();
-            SpawnPlayer(playerID, position, false);
+            SpawnPlayer(playerID, position, Quaternion.identity);
         }
 
         // Client one
-        public void SpawnPlayer(int playerID, Vector3 position, bool isControllable)
+        public void SpawnPlayer(int playerID, Vector3 position, Quaternion rotation)
         {
-            var newCar = Object.Instantiate(carPrefab, position, Quaternion.identity);
+            var newCar = Object.Instantiate(carPrefab, position, rotation);
             cars.Add(playerID, newCar);
-            if (isControllable) SetPlayerControllable(playerID);
         }
-
+        
+        public void SetPlayerControllable(int playerID)
+        {
+            cars[playerID].GetComponent<Vehicle.Vehicle>().SetControllable();
+        }
+        
+        public void DestroyPlayer(int playerID)
+        {
+            Object.Destroy(cars[playerID]);
+            cars.Remove(playerID);
+        }
+        
+        public ushort GetNumPlayers()
+        {
+            return (ushort) cars.Count;
+        }
+        
+        // TODO: Do we really want all this stuff below...?
         public Transform GetPlayerTransform(int playerID)
         {
             return cars[playerID].transform;
@@ -60,12 +83,7 @@ namespace Game
         {
             return cars[playerID].GetComponent<Rigidbody>().angularVelocity;
         }
-
-        public void SetPlayerControllable(int playerID)
-        {
-            cars[playerID].GetComponent<Vehicle.Vehicle>().SetControllable();
-        }
-
+        
         public void SetPlayerPosition(int playerID, Vector3 position)
         {
             if (!cars.ContainsKey(playerID)) return;
@@ -94,27 +112,12 @@ namespace Game
             cars[playerID].GetComponent<Rigidbody>().angularVelocity = angularVelocity;
         }
 
-        public void DestroyPlayer(int playerID)
-        {
-            Object.Destroy(cars[playerID]);
-            cars.Remove(playerID);
-        }
-
         public bool PlayerExists(int playerID)
         {
             return cars.ContainsKey(playerID);
         }
 
-        public ushort GetNumPlayers()
-        {
-            return (ushort) cars.Count;
-        }
-
-        public List<ushort> GetPlayersNotInSpace()
-        {
-            // TODO: Implement me ;)
-            throw new System.NotImplementedException();
-        }
+        
     }
 
     public static class SpawnLocations

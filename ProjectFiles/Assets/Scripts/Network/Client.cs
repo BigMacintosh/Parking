@@ -14,9 +14,6 @@ using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.
 
 namespace Network
 {
-    
-    
-
 
     public interface IClient
     {
@@ -142,11 +139,11 @@ namespace Network
                     ev = new ServerLocationUpdateEvent();
                     break;
                 }
-                case EventType.ServerSpawnPlayerEvent:
-                {
-                    ev = new ServerSpawnPlayerEvent();
-                    break;
-                }
+                // case EventType.ServerSpawnPlayerEvent:
+                // {
+                //     ev = new ServerSpawnPlayerEvent();
+                //     break;
+                // }
                 case EventType.ServerPreRoundStartEvent:
                 {
                     ev = new ServerPreRoundStartEvent();
@@ -172,7 +169,7 @@ namespace Network
                     ev = new ServerDisconnectEvent();
                     break;
                 }
-                case EventType.ServerKeepAlive:
+                case EventType.ServerKeepAliveEvent:
                 {
                     ev = new ServerKeepAlive();
                     break;
@@ -238,38 +235,24 @@ namespace Network
         {                    
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
             var playerID = ev.PlayerID;
-            var position = ev.Position;
-            
-            world.SpawnPlayer(playerID, position, true);
             world.ClientID = playerID;
-
-            Debug.Log($"Client: Spawned myself (ID {playerID}) {position.x}, {position.y}, {position.z}.");
+            Debug.Log($"Client: My playerID is {playerID}");
         }
+        
+        public void Handle(ServerGameStart ev, NetworkConnection conn)
+        {                    
+            Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
 
-        public void Handle(ServerSpawnPlayerEvent ev, NetworkConnection conn)
-        {
-            var playerID = ev.PlayerID;
-            var position = ev.Position;
-            var rotation = ev.Rotation;
+            ev.SpawnPlayers(world);
             
-            if (playerID != world.ClientID)
-            {
-                world.SpawnPlayer(playerID, position, false);
-                world.SetPlayerRotation(playerID, rotation);
-                Debug.Log($"Spawned player with ID {playerID}");
-            }
+            world.SetPlayerControllable(world.ClientID);
+
+            GameStartEvent?.Invoke(ev.FreeRoamLength, (ushort) ev.Length);
         }
 
         public void Handle(ServerLocationUpdateEvent ev, NetworkConnection conn)
         {
-            if (world.ClientID == -1) return;
-            foreach (var playerID in ev.Positions.Keys.Where(k => k != world.ClientID))
-            {
-                world.SetPlayerRotation(playerID, ev.Rotations[playerID]);
-                world.SetPlayerPosition(playerID, ev.Positions[playerID]);
-                world.SetPlayerVelocity(playerID, ev.Velocities[playerID]);
-                world.SetPlayerAngularVelocity(playerID, ev.AngularVelocities[playerID]);
-            }
+            ev.UpdateLocations(world);
         }
 
         public void Handle(ServerDisconnectEvent ev, NetworkConnection conn)
@@ -300,7 +283,7 @@ namespace Network
 
         public void Handle(ServerKeepAlive ev, NetworkConnection conn)
         {
-            // Dont really need to do anything... Maybe a packet is needed to be sent back.
+            // Don't really need to do anything... Maybe a packet is needed to be sent back.
         }
 
         public event GameStartDelegate GameStartEvent;

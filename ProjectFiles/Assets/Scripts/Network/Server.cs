@@ -16,7 +16,7 @@ namespace Network
     public class Server
     {
         private bool acceptingNewPlayers;
-        private NativeList<int> playersToSpawn;
+        private List<int> playersToSpawn;
         
         private UdpCNetworkDriver driver;
         private NativeList<NetworkConnection> connections;
@@ -33,7 +33,7 @@ namespace Network
             this.world = world;
             Config = config;
             connections = new NativeList<NetworkConnection>(Config.MaxPlayers, Allocator.Persistent);
-            playersToSpawn = new NativeList<int>(Allocator.Persistent);
+            playersToSpawn = new List<int>();
             acceptingNewPlayers = true;
             
             // TODO: can simulate bad network conditions here by changing pipeline params
@@ -63,7 +63,6 @@ namespace Network
         {
             driver.Dispose();
             connections.Dispose();
-            playersToSpawn.Dispose();
         }
 
         public void HandleNetworkEvents()
@@ -178,18 +177,20 @@ namespace Network
             var playerID = srcConnection.InternalId;
             Debug.Log($"Server: Received handshake from { playerID }.");
             playersToSpawn.Add(playerID);
+            var handshakeResponse = new ServerHandshakeEvent(playerID);
+            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp))
+            {
+                handshakeResponse.Serialise(writer);
+                driver.Send(pipeline, srcConnection, writer);
+            }
         }
 
         public void Handle(ClientLocationUpdateEvent ev, NetworkConnection srcConnection)
         {
-            var playerID = srcConnection.InternalId;
-            
-            world.SetPlayerPosition(playerID, ev.Position);
-            world.SetPlayerRotation(playerID, ev.Rotation);
-            world.SetPlayerVelocity(playerID, ev.Velocity);
-            world.SetPlayerAngularVelocity(playerID, ev.AngularVelocity);
+            ev.UpdateLocation(world);
         }
 
+        // Used to send a packet to all clients.
         private void SendToAll(Event ev)
         {
             using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp))
@@ -210,53 +211,65 @@ namespace Network
             SendToAll(locationUpdate);
         }
 
-        public void OnStartGame(ushort nPlayers)
+        public void OnStartGame(ushort freeRoamLength, ushort nPlayers)
         {
+            // Now game has started we do not need to keep connections alive.
+            keepAliveTimer.Stop();
+            
+            // Once game is started, do not accept new connections.
             acceptingNewPlayers = false;
-            foreach (var playerID in playersToSpawn)
-            {
-                var srcConnection = connections[playerID];
 
-                // Once this is called, do not accept new connections.
-                // Create ServerStartGameEvent.
-                // throw new NotImplementedException();
-                // Get a player id
-                world.SpawnPlayer(playerID);
+            // Spawn all the players in the server world
+            world.SpawnPlayers(playersToSpawn);
+            
+            var spawnPlayersEvent = new ServerGameStart(world, freeRoamLength);
+            SendToAll(spawnPlayersEvent);
 
-                // Get spawn location
-                var transform = world.GetPlayerTransform(playerID);
-                var handshakeResponse = new ServerHandshakeEvent(transform, playerID);
-                using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
-                {
-                    handshakeResponse.Serialise(writer);
-                    // respond to the handshake
-                    driver.Send(pipeline, srcConnection, writer);
-                }
+            // foreach (var playerID in playersToSpawn)
+            // {
+            //     var srcConnection = connections[playerID];
+            //
+            //     // TODO: This is bad code below... How does it even work?!? Fix it
+            //     // One packet per player with each players spawn location.
+            //     // Handshake should be in response to ClientHandshake.
+            //     // Handshake shouldn't be used to spawn players when the game starts.
+            //     // Need one GameStart packet which contains the players spawn locations.
+            //
+            //     // Get spawn location
+            //     var transform = world.GetPlayerTransform(playerID);
+            //     var handshakeResponse = new ServerHandshakeEvent(transform, playerID, freeRoamLength);
+            //     using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
+            //     {
+            //         handshakeResponse.Serialise(writer);
+            //         // respond to the handshake
+            //         driver.Send(pipeline, srcConnection, writer);
+            //     }
+            //
+            //     // tell other clients this client has spawned
+            //     var spawnNewPlayer = new ServerSpawnPlayerEvent(transform, playerID);
+            //     using (var writer = new DataStreamWriter(spawnNewPlayer.Length, Allocator.Temp))
+            //     {
+            //         spawnNewPlayer.Serialise(writer);
+            //         foreach (var otherClient in connections)
+            //         {
+            //             if (otherClient.InternalId == playerID) continue;
+            //             driver.Send(pipeline, otherClient, writer);
+            //         }
+            //     }
+            //
+            //     // tell new player about the existing players
+            //     foreach (var otherPlayer in world.PlayerIDs.Where(otherPlayer => otherPlayer != playerID))
+            //     {
+            //         var otherTransform = world.GetPlayerTransform(otherPlayer);
+            //         var spawnOtherPlayer = new ServerSpawnPlayerEvent(otherTransform, otherPlayer);
+            //         using (var writer = new DataStreamWriter(spawnOtherPlayer.Length, Allocator.Temp))
+            //         {
+            //             spawnOtherPlayer.Serialise(writer);
+            //             driver.Send(pipeline, srcConnection, writer);
+            //         }
+            //     }
+            // }
 
-                // tell other clients this client has spawned
-                var spawnNewPlayer = new ServerSpawnPlayerEvent(transform, playerID);
-                using (var writer = new DataStreamWriter(spawnNewPlayer.Length, Allocator.Temp))
-                {
-                    spawnNewPlayer.Serialise(writer);
-                    foreach (var otherClient in connections)
-                    {
-                        if (otherClient.InternalId == playerID) continue;
-                        driver.Send(pipeline, otherClient, writer);
-                    }
-                }
-
-                // tell new player about the existing players
-                foreach (var otherPlayer in world.PlayerIDs.Where(otherPlayer => otherPlayer != playerID))
-                {
-                    var otherTransform = world.GetPlayerTransform(otherPlayer);
-                    var spawnOtherPlayer = new ServerSpawnPlayerEvent(otherTransform, otherPlayer);
-                    using (var writer = new DataStreamWriter(spawnOtherPlayer.Length, Allocator.Temp))
-                    {
-                        spawnOtherPlayer.Serialise(writer);
-                        driver.Send(pipeline, srcConnection, writer);
-                    }
-                }
-            }
             playersToSpawn.Clear();
         }
 
@@ -267,11 +280,6 @@ namespace Network
             SendToAll(keepAlive);
         }
 
-        public void OnStartGame(ushort freeRoamLength, ushort nPlayers)
-        {
-            keepAliveTimer.Stop();
-        }
-        
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
         {
             if (world.GetNumPlayers() == 0) return;

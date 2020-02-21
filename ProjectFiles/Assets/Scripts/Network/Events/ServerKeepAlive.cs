@@ -6,7 +6,7 @@ namespace Network.Events
     {
         public ServerKeepAlive()
         {
-            ID = EventType.ClientHandshake;
+            ID = EventType.ServerKeepAliveEvent;
             Length = 1;
         }
 

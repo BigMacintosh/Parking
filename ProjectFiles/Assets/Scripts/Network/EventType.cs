@@ -18,6 +18,7 @@ namespace Network
         ServerEliminatePlayersEvent = 0x07,
         ServerDisconnectEvent       = 0x08,
         ServerGameEndEvent          = 0x09,
-        ServerKeepAlive             = 0x0A,
+        ServerKeepAliveEvent        = 0x0A,
+        ServerGameStartEvent        = 0x0B,
     }
 }
