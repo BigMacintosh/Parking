@@ -211,7 +211,7 @@ namespace Network
 
         public void Handle(ClientLocationUpdateEvent ev, NetworkConnection srcConnection)
         {
-            ev.UpdateLocation(world);
+            ev.UpdateLocation(world, srcConnection.InternalId);
         }
 
         public void Handle(ClientSpaceEnterEvent ev, NetworkConnection srcConnection)
