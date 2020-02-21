@@ -11,13 +11,13 @@ namespace Vehicle
 
         //Car Properties
 
-        public float maxSpeed, accel, maxSteer, steer, driftFactor;
+        public float maxSpeed, accel, maxSteer, driftFactor;
 
-        private float turn;
+        private float turn, maxTurn;
 
         public List<DriveWheel> driveWheels;
 
-    // Start is called before the first frame update
+        // Start is called before the first frame update
         void Start()
         {
             body = gameObject.GetComponent<Rigidbody>();
@@ -28,7 +28,7 @@ namespace Vehicle
         {
             bool grounded = false;
             turn = maxSteer * Input.GetAxis("Horizontal");
-
+            
             foreach (DriveWheel wheel in driveWheels)
             {
                 grounded = wheel.CheckGround() ? true : grounded;
@@ -42,10 +42,10 @@ namespace Vehicle
             }
 
             //Turning Forces
-/*            if (Input.GetAxis("Horizontal") != 0)
+            if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < (maxSteer/30f) && Mathf.Abs(GetForward()) > 0.5f)
             {
-                body.AddTorque(Input.GetAxis("Horizontal") * maxSteer * body.mass * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
-            }*/
+                body.AddTorque(turn * body.mass * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
+            }
 
             if (Input.GetAxis("Jump") != 0 && grounded)
             {
