@@ -16,7 +16,6 @@ namespace Network.Events
         public ServerGameStart()
         {
             ID = EventType.ServerGameStartEvent;
-            Length = ((3 + 4) * sizeof(float)) + sizeof(ushort) + sizeof(byte);
         }
 
         public ServerGameStart(World world, ushort freeRoamLength) : this()
@@ -31,7 +30,7 @@ namespace Network.Events
                 Positions[id] = transform.position;
                 Rotations[id] = transform.rotation;
             }
-            Length = sizeof(byte) + sizeof(ushort) +  world.GetNumPlayers() * (sizeof(ushort) + (3 + 4) * sizeof(float));
+            Length = sizeof(byte) + sizeof(ushort) + sizeof(ushort) + world.GetNumPlayers() * (sizeof(ushort) + (3 + 4) * sizeof(float));
         }
 
         public override void Serialise(DataStreamWriter writer)

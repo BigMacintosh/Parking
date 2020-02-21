@@ -178,7 +178,7 @@ namespace Network
             Debug.Log($"Server: Received handshake from { playerID }.");
             playersToSpawn.Add(playerID);
             var handshakeResponse = new ServerHandshakeEvent(playerID);
-            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp))
+            using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
             {
                 handshakeResponse.Serialise(writer);
                 driver.Send(pipeline, srcConnection, writer);

@@ -37,8 +37,9 @@ namespace Network
 
         private string serverIP;
         private ushort serverPort;
-
+        
         private bool done;
+        private bool inGame;
 
         public Client(World world)
         {
@@ -70,6 +71,7 @@ namespace Network
 
         public void SendLocationUpdate()
         {
+            if (!inGame) return;
             var locationUpdate = new ClientLocationUpdateEvent(world);
             using (var writer = new DataStreamWriter(locationUpdate.Length, Allocator.Temp))
             {
@@ -174,6 +176,11 @@ namespace Network
                     ev = new ServerKeepAlive();
                     break;
                 }
+                case EventType.ServerGameStartEvent:
+                {
+                    ev = new ServerGameStart();
+                    break;
+                }
                 default:
                     Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
                     return;
@@ -247,6 +254,7 @@ namespace Network
             
             world.SetPlayerControllable(world.ClientID);
 
+            inGame = true;
             GameStartEvent?.Invoke(ev.FreeRoamLength, (ushort) ev.Length);
         }
 
@@ -257,7 +265,7 @@ namespace Network
 
         public void Handle(ServerDisconnectEvent ev, NetworkConnection conn)
         {
-            world.DestroyPlayer(ev.PlayerID);
+            if (inGame) world.DestroyPlayer(ev.PlayerID);
             Debug.Log($"Client: Destroyed player { ev.PlayerID } due to disconnect.");
         }
 
