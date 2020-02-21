@@ -125,8 +125,8 @@ namespace Network
                         }
                         case NetworkEvent.Type.Disconnect:
                             var playerID = connections[i].InternalId;
-                            // Remove from world and player id mapping
-                            world.DestroyPlayer(playerID);
+                            // Remove this player from the world if they are spawned.
+                            if (!acceptingNewPlayers) world.DestroyPlayer(playerID);
                     
                             // Notify users of disconnect
                             var disconnectEvent = new ServerDisconnectEvent((ushort) playerID);
