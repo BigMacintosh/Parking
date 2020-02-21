@@ -44,7 +44,7 @@ namespace Vehicle
             //Turning Forces
             if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < (maxSteer/30f) && Mathf.Abs(GetForward()) > 0.5f)
             {
-                body.AddTorque(turn * body.mass * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
+                body.AddTorque(turn * body.mass * 2f * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
             }
 
             if (Input.GetAxis("Jump") != 0 && grounded)
@@ -55,8 +55,13 @@ namespace Vehicle
             //Drifting
             if (grounded)
             {
-                if (Mathf.Abs(GetForward()) < maxSpeed * driftFactor)
+                if (Input.GetAxis("Drift") != 0)
                 {
+                    maxTurn = maxSteer * driftFactor / 30f;
+                }
+                else
+                {
+                    maxTurn = maxSteer / 30f;
                     body.velocity -= GetSide() * 0.25f * transform.right;
                 }
             }

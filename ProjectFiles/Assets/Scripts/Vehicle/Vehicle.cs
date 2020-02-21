@@ -22,7 +22,7 @@ namespace Vehicle
             driver.maxSpeed = 50;
             driver.driveWheels = driveWheels;
             driver.maxSteer = 30;
-            driver.driftFactor = 0.75f;
+            driver.driftFactor = 3f;
 
             // Set camera to follow car
             var camera = FindObjectOfType<CameraFollowController>();
