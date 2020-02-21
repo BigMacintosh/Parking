@@ -13,6 +13,8 @@ namespace Vehicle
 
         public float maxSpeed, accel, maxSteer, steer, driftFactor;
 
+        private float turn;
+
         public List<DriveWheel> driveWheels;
 
     // Start is called before the first frame update
@@ -25,10 +27,12 @@ namespace Vehicle
         void FixedUpdate()
         {
             bool grounded = false;
-            
+            turn = maxSteer * Input.GetAxis("Horizontal");
+
             foreach (DriveWheel wheel in driveWheels)
             {
                 grounded = wheel.CheckGround() ? true : grounded;
+                wheel.gameObject.transform.localRotation = Quaternion.Euler(0, turn, 0);
             }
             
             //Driving Forces
@@ -38,10 +42,10 @@ namespace Vehicle
             }
 
             //Turning Forces
-            if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < 1f && Mathf.Abs(GetForward()) > 1)
+/*            if (Input.GetAxis("Horizontal") != 0)
             {
-                body.AddTorque(Input.GetAxis("Horizontal") * steer * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
-            }
+                body.AddTorque(Input.GetAxis("Horizontal") * maxSteer * body.mass * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
+            }*/
 
             if (Input.GetAxis("Jump") != 0 && grounded)
             {
@@ -57,6 +61,7 @@ namespace Vehicle
                 }
             }
 
+            //Self-Righting
             if ((Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315) || (Mathf.Abs(body.rotation.eulerAngles.x) > 60 && Mathf.Abs(body.rotation.eulerAngles.x)< 300))
             {
                 var targetRotation = Quaternion.LookRotation(

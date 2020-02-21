@@ -21,7 +21,7 @@ namespace Vehicle
             driver.accel = 20;
             driver.maxSpeed = 50;
             driver.driveWheels = driveWheels;
-            driver.steer = 4000;
+            driver.maxSteer = 30;
             driver.driftFactor = 0.75f;
 
             // Set camera to follow car
