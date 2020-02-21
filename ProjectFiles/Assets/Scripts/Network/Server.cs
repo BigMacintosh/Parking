@@ -307,5 +307,12 @@ namespace Network
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             SendToAll(eliminatePlayers);
         }
+
+        public void OnGameEnd()
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var gameEnd = new ServerGameEndEvent();
+            SendToAll(gameEnd);
+        }
     }
 }

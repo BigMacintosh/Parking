@@ -12,4 +12,6 @@ namespace Network
     public delegate void RoundEndDelegate(ushort roundNumber);
     
     public delegate void EliminatePlayersDelegate(ushort roundNumber, List<ushort> eliminatedPlayers);
+
+    public delegate void GameEndDelegate();
 }

@@ -42,6 +42,8 @@ namespace Game
         public event RoundEndDelegate RoundEndEvent;
         
         public event EliminatePlayersDelegate EliminatePlayersEvent;
+        
+        public event GameEndDelegate GameEndEvent;
 
         public RoundManager(World world)
         {
@@ -110,6 +112,10 @@ namespace Game
             if (roundNumber < maxRounds)
             {
                 StartPreRound();
+            }
+            else
+            {
+                GameEndEvent?.Invoke();
             }
         }
 

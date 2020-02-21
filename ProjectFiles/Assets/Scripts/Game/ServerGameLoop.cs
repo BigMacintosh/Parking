@@ -30,6 +30,7 @@ namespace Game
             roundManager.PreRoundStartEvent += server.OnPreRoundStart;
             roundManager.RoundEndEvent += server.OnRoundEnd;
             roundManager.EliminatePlayersEvent += server.OnEliminatePlayers;
+            roundManager.GameEndEvent += server.OnGameEnd;
 
             return success;
         }

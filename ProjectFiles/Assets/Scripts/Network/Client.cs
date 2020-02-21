@@ -26,6 +26,7 @@ namespace Network
         event RoundStartDelegate RoundStartEvent;
         event RoundEndDelegate RoundEndEvent;
         event EliminatePlayersDelegate EliminatePlayersEvent;
+        event GameEndDelegate GameEndEvent;
     }
 
     public class Client : IClient
@@ -232,6 +233,7 @@ namespace Network
             public event RoundStartDelegate RoundStartEvent;
             public event RoundEndDelegate RoundEndEvent;
             public event EliminatePlayersDelegate EliminatePlayersEvent;
+            public event GameEndDelegate GameEndEvent;
         }
         
         public void Handle(Event ev, NetworkConnection conn) {
@@ -289,6 +291,11 @@ namespace Network
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
         }
 
+        public void Handle(ServerGameEndEvent ev, NetworkConnection conn)
+        {
+            GameEndEvent?.Invoke();
+        }
+        
         public void Handle(ServerKeepAlive ev, NetworkConnection conn)
         {
             // Don't really need to do anything... Maybe a packet is needed to be sent back.
@@ -299,5 +306,6 @@ namespace Network
         public event RoundStartDelegate RoundStartEvent;
         public event RoundEndDelegate RoundEndEvent;
         public event EliminatePlayersDelegate EliminatePlayersEvent;
+        public event GameEndDelegate GameEndEvent;
     }
 }
