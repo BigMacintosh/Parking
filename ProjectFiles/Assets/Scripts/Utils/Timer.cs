@@ -8,11 +8,17 @@ namespace Utils
         public event TimerOverDelegate Elapsed;
         private float timeLeft;
         private bool started;
+        private bool repeat;
 
         public Timer(float length)
         {
             timeLeft = length;
         }
+        public Timer(float length, bool repeat) : this(length)
+        {
+            this.repeat = repeat;
+        }
+
 
         public void Update()
         {
@@ -27,6 +33,11 @@ namespace Utils
         public void Start()
         {
             started = true;
+        }
+
+        public void Stop()
+        {
+            started = false;
         }
     }
 }

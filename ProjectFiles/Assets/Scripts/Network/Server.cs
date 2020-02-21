@@ -22,6 +22,7 @@ namespace Network
         private NativeList<NetworkConnection> connections;
         private NetworkPipeline pipeline;
         private World world;
+        private Utils.Timer keepAliveTimer;
         
         public ServerConfig Config { get; private set; }
         private string IP => Config.IpAddress;
@@ -39,6 +40,8 @@ namespace Network
             // ReliableSequenced might not be the best choice 
             driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
+            keepAliveTimer = new Utils.Timer(10, true);
+            keepAliveTimer.Elapsed += OnKeepAlive;
         }
 
         public bool Start()
@@ -51,7 +54,8 @@ namespace Network
             }
             driver.Listen();
             Debug.Log($"Server: Listening at port {IP}:{Port}...");
-            
+
+            keepAliveTimer.Start();
             return true;
         }
         
@@ -64,6 +68,9 @@ namespace Network
 
         public void HandleNetworkEvents()
         {
+            // Players are in a waiting state so no packets being sent, therefore keep updating the keepAliveTimer.
+            if (acceptingNewPlayers) keepAliveTimer.Update();
+            
             driver.ScheduleUpdate().Complete();
             // Clean up connections
             for (var i = 0; i < connections.Length; i++)
@@ -251,6 +258,18 @@ namespace Network
                 }
             }
             playersToSpawn.Clear();
+        }
+
+        public void OnKeepAlive()
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var keepAlive = new ServerKeepAlive();
+            SendToAll(keepAlive);
+        }
+
+        public void OnStartGame(ushort freeRoamLength, ushort nPlayers)
+        {
+            keepAliveTimer.Stop();
         }
         
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)

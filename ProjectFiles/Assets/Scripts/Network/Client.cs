@@ -172,6 +172,11 @@ namespace Network
                     ev = new ServerDisconnectEvent();
                     break;
                 }
+                case EventType.ServerKeepAlive:
+                {
+                    ev = new ServerKeepAlive();
+                    break;
+                }
                 default:
                     Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
                     return;
@@ -291,6 +296,11 @@ namespace Network
         public void Handle(ServerEliminatePlayersEvent ev, NetworkConnection conn)
         {
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
+        }
+
+        public void Handle(ServerKeepAlive ev, NetworkConnection conn)
+        {
+            // Dont really need to do anything... Maybe a packet is needed to be sent back.
         }
 
         public event GameStartDelegate GameStartEvent;
