@@ -14,8 +14,8 @@ namespace Gameplay
     {
         public event SpaceEnterDelegate SpaceEnterEvent;
         public event SpaceExitDelegate SpaceExitEvent;
-        
-        public ushort SpaceID;
+
+        public ushort SpaceID { get; set; }
         private Material mat;
         public Timer Timer { get; set; }
         public int OccupiedBy { get; set; }

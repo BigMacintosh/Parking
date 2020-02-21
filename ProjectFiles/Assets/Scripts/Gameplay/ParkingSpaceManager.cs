@@ -15,8 +15,22 @@ namespace Gameplay
             var parkingSpaceList = Object.FindObjectsOfType<ParkingSpace>();
             foreach (var parkingSpace in parkingSpaceList)
             {
-                Debug.Log($"Space Added, SpaceID: {parkingSpace.SpaceID}");
+                var name = parkingSpace.name;
+                var split = name.Split(' ');
+
+                if (split.Length == 1)
+                {
+                    parkingSpace.SpaceID = 0;
+                }
+                else
+                {
+                    var numStr = split[1].Trim(new char[] {'(', ')'});
+                    var id = ushort.Parse(numStr);
+
+                    parkingSpace.SpaceID = id;
+                }
                 parkingSpaces.Add(parkingSpace.SpaceID, parkingSpace);
+                Debug.Log($"Space Added, SpaceID: {parkingSpace.SpaceID}.");
             }
         }
     }
