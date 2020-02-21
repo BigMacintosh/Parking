@@ -15,10 +15,14 @@ namespace Network
 {
     public class Server
     {
+        private bool acceptingNewPlayers;
+        private List<int> playersToSpawn;
+        
         private UdpCNetworkDriver driver;
         private NativeList<NetworkConnection> connections;
         private NetworkPipeline pipeline;
         private World world;
+        private Utils.Timer keepAliveTimer;
         
         public ServerConfig Config { get; private set; }
         private string IP => Config.IpAddress;
@@ -29,11 +33,15 @@ namespace Network
             this.world = world;
             Config = config;
             connections = new NativeList<NetworkConnection>(Config.MaxPlayers, Allocator.Persistent);
+            playersToSpawn = new List<int>();
+            acceptingNewPlayers = true;
             
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
             driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
+            keepAliveTimer = new Utils.Timer(10, true);
+            keepAliveTimer.Elapsed += OnKeepAlive;
         }
 
         public bool Start()
@@ -46,7 +54,8 @@ namespace Network
             }
             driver.Listen();
             Debug.Log($"Server: Listening at port {IP}:{Port}...");
-            
+
+            keepAliveTimer.Start();
             return true;
         }
         
@@ -58,6 +67,9 @@ namespace Network
 
         public void HandleNetworkEvents()
         {
+            // Players are in a waiting state so no packets being sent, therefore keep updating the keepAliveTimer.
+            if (acceptingNewPlayers) keepAliveTimer.Update();
+            
             driver.ScheduleUpdate().Complete();
             // Clean up connections
             for (var i = 0; i < connections.Length; i++)
@@ -71,13 +83,23 @@ namespace Network
 
             // Process new connections
             NetworkConnection c;
-            while ((c = driver.Accept()) != default(NetworkConnection))
+            if (acceptingNewPlayers)
             {
-                connections.Add(c);
-                var endpoint = driver.RemoteEndPoint(c);
-                Debug.Log($"Server: Accepted a connection from {endpoint.IpAddress()}:{endpoint.Port}.");
+                while ((c = driver.Accept()) != default(NetworkConnection))
+                {
+                    connections.Add(c);
+                    var endpoint = driver.RemoteEndPoint(c);
+                    Debug.Log($"Server: Accepted a connection from {endpoint.IpAddress()}:{endpoint.Port}.");
+                }
             }
-        
+            else
+            {
+                while ((c = driver.Accept()) != default(NetworkConnection))
+                {
+                    c.Disconnect(driver);
+                }
+            }
+
             // Process events since the last update
             for (var i = 0; i < connections.Length; i++)
             {
@@ -103,8 +125,8 @@ namespace Network
                         }
                         case NetworkEvent.Type.Disconnect:
                             var playerID = connections[i].InternalId;
-                            // Remove from world and player id mapping
-                            world.DestroyPlayer(playerID);
+                            // Remove this player from the world if they are spawned.
+                            if (!acceptingNewPlayers) world.DestroyPlayer(playerID);
                     
                             // Notify users of disconnect
                             var disconnectEvent = new ServerDisconnectEvent((ushort) playerID);
@@ -154,55 +176,21 @@ namespace Network
         {
             var playerID = srcConnection.InternalId;
             Debug.Log($"Server: Received handshake from { playerID }.");
-            
-            // Get a player id
-            world.SpawnPlayer(playerID);
-
-            // Get spawn location
-            var transform = world.GetPlayerTransform(playerID);
-            var handshakeResponse = new ServerHandshakeEvent(transform, playerID);
+            playersToSpawn.Add(playerID);
+            var handshakeResponse = new ServerHandshakeEvent(playerID);
             using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
             {
                 handshakeResponse.Serialise(writer);
-                // respond to the handshake
                 driver.Send(pipeline, srcConnection, writer);
-            }
-
-            // tell other clients this client has spawned
-            var spawnNewPlayer = new ServerSpawnPlayerEvent(transform, playerID);
-            using (var writer = new DataStreamWriter(spawnNewPlayer.Length, Allocator.Temp))
-            {
-                spawnNewPlayer.Serialise(writer);
-                foreach (var otherClient in connections)
-                {
-                    if (otherClient.InternalId == playerID) continue;
-                    driver.Send(pipeline, otherClient, writer);
-                }
-            }
-
-            // tell new player about the existing players
-            foreach (var otherPlayer in world.PlayerIDs.Where(otherPlayer => otherPlayer != playerID))
-            {
-                var otherTransform = world.GetPlayerTransform(otherPlayer);
-                var spawnOtherPlayer = new ServerSpawnPlayerEvent(otherTransform, otherPlayer);
-                using (var writer = new DataStreamWriter(spawnOtherPlayer.Length, Allocator.Temp))
-                {
-                    spawnOtherPlayer.Serialise(writer);
-                    driver.Send(pipeline, srcConnection, writer);
-                }
             }
         }
 
         public void Handle(ClientLocationUpdateEvent ev, NetworkConnection srcConnection)
         {
-            var playerID = srcConnection.InternalId;
-            
-            world.SetPlayerPosition(playerID, ev.Position);
-            world.SetPlayerRotation(playerID, ev.Rotation);
-            world.SetPlayerVelocity(playerID, ev.Velocity);
-            world.SetPlayerAngularVelocity(playerID, ev.AngularVelocity);
+            ev.UpdateLocation(world);
         }
 
+        // Used to send a packet to all clients.
         private void SendToAll(Event ev)
         {
             using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp))
@@ -223,13 +211,75 @@ namespace Network
             SendToAll(locationUpdate);
         }
 
-        public void OnStartGame(ushort nPlayers)
+        public void OnStartGame(ushort freeRoamLength, ushort nPlayers)
         {
-            // Once this is called, do not accept new connections.
-            // Create ServerStartGameEvent.
-            // throw new NotImplementedException();
+            // Now game has started we do not need to keep connections alive.
+            keepAliveTimer.Stop();
+            
+            // Once game is started, do not accept new connections.
+            acceptingNewPlayers = false;
+
+            // Spawn all the players in the server world
+            world.SpawnPlayers(playersToSpawn);
+            
+            var spawnPlayersEvent = new ServerGameStart(world, freeRoamLength);
+            SendToAll(spawnPlayersEvent);
+
+            // foreach (var playerID in playersToSpawn)
+            // {
+            //     var srcConnection = connections[playerID];
+            //
+            //     // TODO: This is bad code below... How does it even work?!? Fix it
+            //     // One packet per player with each players spawn location.
+            //     // Handshake should be in response to ClientHandshake.
+            //     // Handshake shouldn't be used to spawn players when the game starts.
+            //     // Need one GameStart packet which contains the players spawn locations.
+            //
+            //     // Get spawn location
+            //     var transform = world.GetPlayerTransform(playerID);
+            //     var handshakeResponse = new ServerHandshakeEvent(transform, playerID, freeRoamLength);
+            //     using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
+            //     {
+            //         handshakeResponse.Serialise(writer);
+            //         // respond to the handshake
+            //         driver.Send(pipeline, srcConnection, writer);
+            //     }
+            //
+            //     // tell other clients this client has spawned
+            //     var spawnNewPlayer = new ServerSpawnPlayerEvent(transform, playerID);
+            //     using (var writer = new DataStreamWriter(spawnNewPlayer.Length, Allocator.Temp))
+            //     {
+            //         spawnNewPlayer.Serialise(writer);
+            //         foreach (var otherClient in connections)
+            //         {
+            //             if (otherClient.InternalId == playerID) continue;
+            //             driver.Send(pipeline, otherClient, writer);
+            //         }
+            //     }
+            //
+            //     // tell new player about the existing players
+            //     foreach (var otherPlayer in world.PlayerIDs.Where(otherPlayer => otherPlayer != playerID))
+            //     {
+            //         var otherTransform = world.GetPlayerTransform(otherPlayer);
+            //         var spawnOtherPlayer = new ServerSpawnPlayerEvent(otherTransform, otherPlayer);
+            //         using (var writer = new DataStreamWriter(spawnOtherPlayer.Length, Allocator.Temp))
+            //         {
+            //             spawnOtherPlayer.Serialise(writer);
+            //             driver.Send(pipeline, srcConnection, writer);
+            //         }
+            //     }
+            // }
+
+            playersToSpawn.Clear();
         }
-        
+
+        public void OnKeepAlive()
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var keepAlive = new ServerKeepAlive();
+            SendToAll(keepAlive);
+        }
+
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
         {
             if (world.GetNumPlayers() == 0) return;
@@ -256,6 +306,13 @@ namespace Network
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             SendToAll(eliminatePlayers);
+        }
+
+        public void OnGameEnd()
+        {
+            if (world.GetNumPlayers() == 0) return;
+            var gameEnd = new ServerGameEndEvent();
+            SendToAll(gameEnd);
         }
     }
 }
