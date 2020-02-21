@@ -2,33 +2,29 @@
 
 namespace Network.Events
 {
-    public class ClientSpaceEvent : Event
+    public class ClientSpaceExitEvent : Event
     {
-        public ushort RoundNumber { get; private set; }
         public ushort SpaceID { get; private set; }
 
-        public ClientSpaceEvent()
+        public ClientSpaceExitEvent()
         {
-            ID = EventType.ClientSpaceEvent;
+            ID = EventType.ClientSpaceExitEvent;    
             Length = sizeof(byte) + sizeof(ushort) * 2;
         }
 
-        public ClientSpaceEvent(byte roundNumber, byte spaceId)
+        public ClientSpaceExitEvent(ushort spaceId) : this()
         {
-            RoundNumber = roundNumber;
             SpaceID = spaceId;
         }
 
         public override void Serialise(DataStreamWriter writer)
         {
             base.Serialise(writer);
-            writer.Write(RoundNumber);
             writer.Write(SpaceID);
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
-            RoundNumber = reader.ReadUShort(ref context);
             SpaceID = reader.ReadUShort(ref context);
         }
 

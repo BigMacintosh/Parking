@@ -6,7 +6,7 @@ namespace Network.Events
     public class ServerEliminatePlayersEvent : Event
     {
         public ushort RoundNumber { get; private set; }
-        public List<ushort> Players { get; private set; }
+        public List<int> Players { get; private set; }
 
         public ServerEliminatePlayersEvent()
         {
@@ -14,7 +14,7 @@ namespace Network.Events
             Length = 1;
         }
 
-        public ServerEliminatePlayersEvent(ushort roundNumber, List<ushort> players)
+        public ServerEliminatePlayersEvent(ushort roundNumber, List<int> players)
         {
             RoundNumber = roundNumber;
             Players = players;
@@ -37,7 +37,7 @@ namespace Network.Events
             RoundNumber = reader.ReadByte(ref context);
 
             var playerCount = reader.ReadByte(ref context);
-            Players = new List<ushort>();
+            Players = new List<int>();
             for (int i = 0; i < playerCount; i++)
             {
                 Players.Add(reader.ReadByte(ref context));

@@ -3,6 +3,7 @@ using Network;
 using UnityEngine;
 using Utils;
 
+
 namespace Game
 {
     static class DefaultRoundProperties
@@ -14,8 +15,8 @@ namespace Game
         public const ushort MaxRounds = 5;
     }
 
-    public delegate void TimerOverDelegate();
-
+    
+    
     public class RoundManager
     {
         public bool GameInProgress { get; private set; }
@@ -139,7 +140,7 @@ namespace Game
             RoundEndEvent?.Invoke(roundNumber);
         }
 
-        private void NotifyEliminatePlayers(List<ushort> eliminatedPlayers)
+        private void NotifyEliminatePlayers(List<int> eliminatedPlayers)
         {
             EliminatePlayersEvent?.Invoke(roundNumber, eliminatedPlayers);
         }

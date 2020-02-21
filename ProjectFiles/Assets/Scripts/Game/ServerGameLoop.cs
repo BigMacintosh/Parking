@@ -1,4 +1,5 @@
-﻿using Network;
+﻿using Gameplay;
+using Network;
 using UnityEngine;
 
 namespace Game
@@ -8,29 +9,38 @@ namespace Game
         private Server server;
         private World world;
         private RoundManager roundManager;
+        private ServerParkingSpaceManager parkingSpaceManager;
 
         public bool Init(string[] args)
         {
-            // TODO: make the config path an argument so we can swap configs later?
+            // Load default server config
             var config = ServerConfig.LoadConfigOrDefault("server-config.json");
-            
-            // Create world
-            world = new World();
 
-            // Start server
-            server = new Server(world, config);
-            var success = server.Start();
-            
+            // Initialise Gameplay components
+            world = new World();
             roundManager = new RoundManager(world);
+            parkingSpaceManager = new ServerParkingSpaceManager();
+
+            // Initialise network
+            server = new Server(world, config);
+
+            // Subscribe to network events.
+            // Client -> Server
+            server.SpaceEnterEvent += parkingSpaceManager.OnSpaceEnter;
+            server.SpaceExitEvent += parkingSpaceManager.OnSpaceExit;
             
-            
-            // Subscribe to events.
+            // Server -> Client
             roundManager.GameStartEvent += server.OnStartGame;
             roundManager.RoundStartEvent += server.OnRoundStart;
             roundManager.PreRoundStartEvent += server.OnPreRoundStart;
             roundManager.RoundEndEvent += server.OnRoundEnd;
             roundManager.EliminatePlayersEvent += server.OnEliminatePlayers;
             roundManager.GameEndEvent += server.OnGameEnd;
+
+            parkingSpaceManager.SpaceClaimedEvent += server.OnSpaceClaimed;
+
+            // Start server
+            var success = server.Start();
 
             return success;
         }

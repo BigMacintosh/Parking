@@ -1,5 +1,6 @@
 using Network;
 using UnityEngine;
+using Gameplay;
 
 namespace Game
 {
@@ -8,9 +9,12 @@ namespace Game
         private IClient client;
         private World world;
         private bool isStandalone;
+        private ClientParkingSpaceManager parkingSpaceManager;
         
         public bool Init(string[] args)
         {
+            
+            // Determine if in standalone mode
             if (args.Length > 0)
             {
                 isStandalone = args[0].Equals("standalone");
@@ -20,15 +24,16 @@ namespace Game
                 isStandalone = false;
             }
 
-            // Create world
+            // Create gameplay components
             world = new World();
+            parkingSpaceManager = new ClientParkingSpaceManager();
 
             // Create HUD
-            // TODO: look at merging the HUD into one big canvas or something?
             Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);
             Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             
-            // Start client connection
+            
+            // Initialise the client
             if (isStandalone)
             {
                 client = Client.getDummyClient(world);
@@ -38,19 +43,24 @@ namespace Game
                 client = new Client(world);
             }
             
+            
+            // Subscribe to network events.
+            // Client -> Server
+            parkingSpaceManager.SubscribeSpaceEnter(client.OnSpaceEnter);
+            parkingSpaceManager.SubscribeSpaceExit(client.OnSpaceExit);
+            
+            // Server -> Client
+            client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
+                Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
+            client.RoundStartEvent += number => Debug.Log($"Round start event received rN:{number}");
+            client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
+            
+            // Start the client connection
 #if UNITY_EDITOR
             var success = client.Start();
 #else
             var success = client.Start("35.177.253.83");
 #endif
-
-            // Create HUD class
-            
-            // Subscribe HUD to client events.
-            client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
-                Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
-            client.RoundStartEvent += number => Debug.Log($"Round start event received rN:{number}");
-            client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
             
             return success;
         }

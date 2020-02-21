@@ -11,7 +11,10 @@ namespace Network
     
     public delegate void RoundEndDelegate(ushort roundNumber);
     
-    public delegate void EliminatePlayersDelegate(ushort roundNumber, List<ushort> eliminatedPlayers);
-
+    public delegate void EliminatePlayersDelegate(ushort roundNumber, List<int> eliminatedPlayers);
+    // Parking Space Delegates
+    public delegate void SpaceEnterDelegate(int playerID, ushort spaceID);
+    public delegate void SpaceExitDelegate(int playerID, ushort spaceID);
     public delegate void GameEndDelegate();
+    public delegate void SpaceClaimedDelegate(int playerID, ushort spaceID);
 }

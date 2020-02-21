@@ -3,12 +3,16 @@ using UnityEngine;
 
 namespace Utils
 {
+    public delegate void TimerOverDelegate();
+    
     public class Timer
     {
         public event TimerOverDelegate Elapsed;
         private float timeLeft;
-        private bool started;
+        private float length;
         private bool repeat;
+        
+        public bool Set { get; private set; }
 
         public Timer(float length)
         {
@@ -23,21 +27,31 @@ namespace Utils
         public void Update()
         {
             timeLeft -= Time.deltaTime;
-            if (timeLeft < 0 & started)
+            if (timeLeft < 0 & Set)
             {
-                started = false;
+                Set = false;
                 Elapsed?.Invoke();
             }
         }
 
         public void Start()
         {
-            started = true;
+            Set = true;
         }
 
         public void Stop()
         {
-            started = false;
+            Set = false;
+        }
+        public void Reset()
+        {
+            Set = false;
+            timeLeft = length;
+        }
+        
+        public void SetTime(float length)
+        {
+            this.length = length;
         }
     }
 }
