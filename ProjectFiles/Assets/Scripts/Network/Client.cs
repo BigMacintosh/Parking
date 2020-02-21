@@ -15,16 +15,7 @@ using UdpCNetworkDriver = Unity.Networking.Transport.GenericNetworkDriver<Unity.
 namespace Network
 {
     
-    public delegate void GameStartDelegate(ushort nPlayers);
     
-    public delegate void PreRoundStartDelegate(
-        ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive);
-    
-    public delegate void RoundStartDelegate(ushort roundNumber);
-    
-    public delegate void RoundEndDelegate(ushort roundNumber);
-    
-    public delegate void EliminatePlayersDelegate(ushort roundNumber, List<ushort> eliminatedPlayers);
 
 
     public interface IClient
@@ -135,9 +126,7 @@ namespace Network
                 }
             }
         }
-
         
-
         private void HandleEvent(EventType eventType, DataStreamReader reader, DataStreamReader.Context readerContext)
         {
             Event ev;
@@ -176,6 +165,11 @@ namespace Network
                 case EventType.ServerEliminatePlayersEvent:
                 {
                     ev = new ServerEliminatePlayersEvent();
+                    break;
+                }
+                case EventType.ServerDisconnectEvent:
+                {
+                    ev = new ServerDisconnectEvent();
                     break;
                 }
                 default:
@@ -271,6 +265,12 @@ namespace Network
                 world.SetPlayerVelocity(playerID, ev.Velocities[playerID]);
                 world.SetPlayerAngularVelocity(playerID, ev.AngularVelocities[playerID]);
             }
+        }
+
+        public void Handle(ServerDisconnectEvent ev, NetworkConnection conn)
+        {
+            world.DestroyPlayer(ev.PlayerID);
+            Debug.Log($"Client: Destroyed player { ev.PlayerID } due to disconnect.");
         }
 
         public void Handle(ServerPreRoundStartEvent ev, NetworkConnection conn)

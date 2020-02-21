@@ -64,17 +64,6 @@ namespace Network
             {
                 if (!connections[i].IsCreated)
                 {
-                    var playerID = connections[i].InternalId;
-                    
-                    // Remove from world and player id mapping
-                    world.DestroyPlayer(playerID);
-
-                    // Destroy the actual network connection
-                    // TODO: Is this needed???
-                    connections[i] = default(NetworkConnection);
-                            
-                    Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
-                    
                     connections.RemoveAtSwapBack(i);
                     i--;
                 }
@@ -113,11 +102,17 @@ namespace Network
                             break;
                         }
                         case NetworkEvent.Type.Disconnect:
-                            Debug.Log($"Server: {endpoint.IpAddress()}:{endpoint.Port} disconnected.");
-                            //TODO Duplicate with the loop above!
                             var playerID = connections[i].InternalId;
+                            // Remove from world and player id mapping
                             world.DestroyPlayer(playerID);
-                            connections.RemoveAtSwapBack(i);
+                    
+                            // Notify users of disconnect
+                            var disconnectEvent = new ServerDisconnectEvent((ushort) playerID);
+                            SendToAll(disconnectEvent);
+                    
+                            // Destroy the actual network connection
+                            Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
+                            connections[i] = default(NetworkConnection);
                             break;
                     }
                 }
@@ -219,7 +214,7 @@ namespace Network
                 }
             }
         }
-
+        
         // Send Messages.
         public void SendLocationUpdates()
         {
