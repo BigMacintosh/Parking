@@ -13,13 +13,6 @@ namespace Network
         {
             this.world = world;
         }
-        public bool Start(string ip, ushort port)
-        {
-            world.ClientID = 0;
-            world.SpawnPlayer(world.ClientID);
-            world.SetPlayerControllable(world.ClientID);
-            return true;
-        }
 
         public bool Start(ushort port = 25565)
         {
@@ -65,6 +58,11 @@ namespace Network
         public void OnSpaceExit(int playerID, ushort spaceID)
         {
             Debug.Log($"Someone exited the space #{spaceID}");
+        }
+
+        public void OnTriggerGameStart()
+        {
+            
         }
     }
 }

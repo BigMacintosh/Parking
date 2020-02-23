@@ -31,6 +31,7 @@ namespace Network
         event GameEndDelegate GameEndEvent;
         void OnSpaceEnter(int playerID, ushort spaceID);
         void OnSpaceExit(int playerID, ushort spaceID);
+        void OnTriggerGameStart();
     }
 
     public class Client : IClient
@@ -99,7 +100,10 @@ namespace Network
         
         public void SendLocationUpdate()
         {
+            // Don't send location if not in game
             if (!inGame) return;
+            // Don't send location if you are admin client
+            if (ClientConfig.GameMode == GameMode.AdminMode) return;
             var locationUpdate = new ClientLocationUpdateEvent(world);
             sendEventToServer(locationUpdate);
         }
@@ -127,7 +131,7 @@ namespace Network
                     case NetworkEvent.Type.Connect:
                     {
                         Debug.Log($"Client: Successfully connected to {serverIP}:{serverPort}.");
-                        var handshake = new ClientHandshakeEvent();
+                        var handshake = new ClientHandshakeEvent(ClientConfig.GameMode);
                         sendEventToServer(handshake);
                         break;
                     }
@@ -235,8 +239,11 @@ namespace Network
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
 
             ev.SpawnPlayers(world);
-            
-            world.SetPlayerControllable(world.ClientID);
+
+            if (ClientConfig.GameMode == GameMode.PlayerMode)
+            {
+                world.SetPlayerControllable(world.ClientID);
+            }
 
             inGame = true;
             GameStartEvent?.Invoke(ev.FreeRoamLength, (ushort) ev.Length);
@@ -297,6 +304,12 @@ namespace Network
             ClientSpaceExitEvent ev = new ClientSpaceExitEvent(spaceID);
             sendEventToServer(ev);
             Debug.Log($"Someone exited the space #{spaceID}");
+        }
+
+        public void OnTriggerGameStart()
+        {
+            AdminClientStartGameEvent ev = new AdminClientStartGameEvent();
+            sendEventToServer(ev);
         }
         
     }
