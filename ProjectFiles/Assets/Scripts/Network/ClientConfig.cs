@@ -2,8 +2,15 @@ using UnityEngine;
 
 namespace Network
 {
-    public enum VehicleType{
+    public enum VehicleType
+    {
         Hatchback
+    }
+
+    public enum GameMode
+    {
+        PlayerMode = 0x01,
+        AdminMode  = 0x02,
     }
     
     public static class ClientConfig
@@ -15,6 +22,7 @@ namespace Network
         public static string ServerIP = "35.177.253.83";
 #endif
         public static VehicleType VehicleType = VehicleType.Hatchback;
-        public static Color VehicleColour;
+        public static Color VehicleColour = Color.red;
+        public static GameMode GameMode = GameMode.PlayerMode;
     }
 }

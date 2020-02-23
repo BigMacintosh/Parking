@@ -30,14 +30,19 @@ namespace Game
 
             // Create gameplay components
             world = new World();
-            parkingSpaceManager = new ClientParkingSpaceManager();
-
+            if (ClientConfig.GameMode == GameMode.PlayerMode)
+            {
+                parkingSpaceManager = new ClientParkingSpaceManager();
+            }
 
             // Create UI Controller
-            Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
+            if (ClientConfig.GameMode == GameMode.PlayerMode)
+            {
+                Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
+            }
             uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
             
-            
+
             // Initialise the client
             if (isStandalone)
             {
@@ -51,9 +56,12 @@ namespace Game
 
             // Subscribe to network events.
             // Client -> Server
-            parkingSpaceManager.SubscribeSpaceEnter(client.OnSpaceEnter);
-            parkingSpaceManager.SubscribeSpaceExit(client.OnSpaceExit);
-            
+            if (ClientConfig.GameMode == GameMode.PlayerMode)
+            {
+                parkingSpaceManager.SubscribeSpaceEnter(client.OnSpaceEnter);
+                parkingSpaceManager.SubscribeSpaceExit(client.OnSpaceExit);
+            }
+
             // Server -> Client
             client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
                 Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
@@ -61,19 +69,21 @@ namespace Game
             client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
             
             // Start the client connection
-#if UNITY_EDITOR
             var success = client.Start();
-#else
-            var success = client.Start("35.177.253.83");
-#endif
 
             uiController.getHUD().playernum = world.Players.Count;
             uiController.getHUD().NetworkIP = client.getServerIP();
             uiController.getHUD().exitbutton.onClick.AddListener(Shutdown);
+            client.GameStartEvent += uiController.OnGameStart;
             client.PreRoundStartEvent += uiController.OnPreRoundStart;
             client.RoundStartEvent += uiController.OnRoundStart;
             client.RoundEndEvent += uiController.OnRoundEnd;
             client.PlayerCountChangeEvent += uiController.OnPlayerCountChange;
+
+            if (ClientConfig.GameMode == GameMode.AdminMode)
+            {
+                uiController.SubscribeTriggerGameStartEvent(client.OnTriggerGameStart);
+            }
 
             return success;
         }

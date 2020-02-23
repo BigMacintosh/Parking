@@ -2,6 +2,8 @@ using System.Collections.Generic;
 
 namespace Network
 {
+    public delegate void TriggerGameStartDelegate();
+    
     public delegate void GameStartDelegate(ushort freeRoamLength, ushort nPlayers);
     
     public delegate void PreRoundStartDelegate(

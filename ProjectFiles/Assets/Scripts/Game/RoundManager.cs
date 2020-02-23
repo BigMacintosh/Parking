@@ -61,6 +61,7 @@ namespace Game
 
         public void StartGame()
         {
+            if (GameInProgress) return;
             preRoundLength = DefaultRoundProperties.PreRoundLength;
             roundLength = DefaultRoundProperties.RoundLength;
             freeroamLength = DefaultRoundProperties.FreeroamLength;
