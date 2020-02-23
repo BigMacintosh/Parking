@@ -17,6 +17,11 @@ namespace UI
         private float v;
         private bool active;
         public bool IsServerMode { get; set; }
+        private double countdown;
+        private int roundnum;
+        private bool preroundflag = false;
+        private bool inroundflag = false;
+        private bool endroundflag = false;
 
         private void Start()
         {
@@ -60,6 +65,22 @@ namespace UI
                     timer = 0;
                 }
             }
+            if (preroundflag)
+            {
+                if (countdown > 0)
+                {
+                    countdown -= Time.deltaTime;
+                    hud.eventtext.text = "Round " + roundnum + " starting in " + countdown + " seconds";
+                }
+                preroundflag = false;
+            }
+            /*
+            if (endroundflag)
+            {
+                hud.eventtext.text = "Round " + roundnum + " has ended!";
+                endroundflag = false;
+            }
+            */
         }
 
         public void SubscribeTriggerGameStartEvent(TriggerGameStartDelegate handler)
@@ -79,22 +100,31 @@ namespace UI
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
         {
             // Display countdown on the hud that is preRoundLength seconds long
+            countdown = preRoundLength;
+            roundnum = roundNumber;
+            preroundflag = true;
         }
 
         public void OnRoundStart(ushort roundNumber)
         {
             // Display message on HUD to say that round is in progress
-            
+            hud.eventtext.text = "Round " + roundnum + "started!";
+            Invoke(hud.eventtext.text = "", 2);
+            hud.roundtext.text = "Round " + roundNumber;
         }
 
         public void OnRoundEnd(ushort roundNumber)
         {
             // Display message on HUD to say that round has ended
+            //roundnum = roundNumber;
+            hud.eventtext.text = "Round " + roundnum + " has ended!";
+            //endroundflag = true;
         }
 
         public void OnPlayerCountChange(ushort nPlayers)
         {
             // Update the player count on the hud
+            hud.playernum = nPlayers;
         }
         
         public HUD getHUD()

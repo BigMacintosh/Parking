@@ -10,6 +10,8 @@ namespace UI
         [SerializeField] private Text velocityText;
         [SerializeField] private Text debugText;
         [SerializeField] public Button exitbutton;
+        [SerializeField] public Text eventtext;
+        [SerializeField] public Text roundtext;
         private float v;
         private String ip;
         private bool isSet;
