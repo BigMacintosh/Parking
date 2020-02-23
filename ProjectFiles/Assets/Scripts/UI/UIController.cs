@@ -1,8 +1,6 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.UI;
-using Unity.Mathematics;
-using Object = UnityEngine.Object;
+﻿using UnityEngine;
+using System.Collections.Generic;
+
 
 namespace UI
 {
@@ -60,6 +58,28 @@ namespace UI
             }
 
         }
+
+        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
+        {
+            // Display countdown on the hud that is preRoundLength seconds long
+        }
+
+        public void OnRoundStart(ushort roundNumber)
+        {
+            // Display message on HUD to say that round is in progress
+            
+        }
+
+        public void OnRoundEnd(ushort roundNumber)
+        {
+            // Display message on HUD to say that round has ended
+        }
+
+        public void OnPlayerCountChange(ushort nPlayers)
+        {
+            // Update the player count on the hud
+        }
+        
         public HUD getHUD()
         {
             if (hud is null)

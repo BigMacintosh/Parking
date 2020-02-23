@@ -2107,6 +2107,7 @@ GameObject:
   - component: {fileID: 678111993}
   - component: {fileID: 678111992}
   - component: {fileID: 678111991}
+  - component: {fileID: 678111994}
   m_Layer: 5
   m_Name: Name
   m_TagString: Untagged
@@ -2187,7 +2188,18 @@ MonoBehaviour:
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 678111994}
+        m_MethodName: UpdateName
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2234,6 +2246,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 678111989}
   m_CullTransparentMesh: 0
+--- !u!114 &678111994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 678111989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 522aa61bccd6144f68fb2be291a2f392, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &703283596
 GameObject:
   m_ObjectHideFlags: 0
@@ -4239,6 +4263,7 @@ GameObject:
   - component: {fileID: 1306550426}
   - component: {fileID: 1306550425}
   - component: {fileID: 1306550424}
+  - component: {fileID: 1306550427}
   m_Layer: 5
   m_Name: ServerIP
   m_TagString: Untagged
@@ -4319,7 +4344,18 @@ MonoBehaviour:
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1306550427}
+        m_MethodName: UpdateIP
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4366,6 +4402,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1306550422}
   m_CullTransparentMesh: 0
+--- !u!114 &1306550427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1306550422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f08bd932d0ee4880a0a391c0fa76c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1334879112
 GameObject:
   m_ObjectHideFlags: 0
@@ -5643,7 +5691,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: TestScene
+          m_StringArgument: ModelShowcase
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1957735797
