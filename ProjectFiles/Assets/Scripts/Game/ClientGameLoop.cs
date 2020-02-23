@@ -48,9 +48,7 @@ namespace Game
                 client = new Client(world);
             }
 
-            var success = client.Start();
-            
-            
+
             // Subscribe to network events.
             // Client -> Server
             parkingSpaceManager.SubscribeSpaceEnter(client.OnSpaceEnter);

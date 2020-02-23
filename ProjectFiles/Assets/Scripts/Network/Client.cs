@@ -51,6 +51,7 @@ namespace Network
         public event RoundStartDelegate RoundStartEvent;
         public event RoundEndDelegate RoundEndEvent;
         public event EliminatePlayersDelegate EliminatePlayersEvent;
+        public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         public event GameEndDelegate GameEndEvent;
         
 
@@ -214,51 +215,6 @@ namespace Network
             return serverIP;
         }
 
-        private class DummyClient : IClient
-        {
-            private World world;
-            private int playerID;
-            private String serverIP = "127.0.0.1";
-            
-            
-            public DummyClient(World world)
-            {
-                this.world = world;
-            }
-            public bool Start(ushort port)
-            {
-                world.ClientID = 0;
-                world.SpawnPlayer(world.ClientID);
-                world.SetPlayerControllable(world.ClientID);
-                return true;
-            }
-
-            public void Shutdown()
-            {
-                
-            }
-
-            public void SendLocationUpdate()
-            {
-                
-            }
-
-            public void HandleNetworkEvents()
-            {
-                
-            }
-            public String getServerIP()
-            {
-                return serverIP;
-            }
-            public event GameStartDelegate GameStartEvent;
-            public event PreRoundStartDelegate PreRoundStartEvent;
-            public event RoundStartDelegate RoundStartEvent;
-            public event RoundEndDelegate RoundEndEvent;
-            public event EliminatePlayersDelegate EliminatePlayersEvent;
-            public event PlayerCountChangeDelegate PlayerCountChangeEvent;
-        }
-        
         // Handle Event methods
         public void Handle(Event ev, NetworkConnection conn) {
             throw new ArgumentException("Client received an event that it cannot handle");

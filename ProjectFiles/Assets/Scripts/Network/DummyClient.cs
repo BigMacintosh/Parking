@@ -21,6 +21,14 @@ namespace Network
             return true;
         }
 
+        public bool Start(ushort port = 25565)
+        {
+            world.ClientID = 0;
+            world.SpawnPlayer(world.ClientID);
+            world.SetPlayerControllable(world.ClientID);
+            return true;
+        }
+
         public void Shutdown()
         {
                 
@@ -35,11 +43,18 @@ namespace Network
         {
                 
         }
+
+        public string getServerIP()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public event GameStartDelegate GameStartEvent;
         public event PreRoundStartDelegate PreRoundStartEvent;
         public event RoundStartDelegate RoundStartEvent;
         public event RoundEndDelegate RoundEndEvent;
         public event EliminatePlayersDelegate EliminatePlayersEvent;
+        public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         public event GameEndDelegate GameEndEvent;
 
         public void OnSpaceEnter(int playerID, ushort spaceID)
