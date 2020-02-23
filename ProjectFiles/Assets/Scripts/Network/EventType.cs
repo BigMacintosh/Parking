@@ -1,7 +1,6 @@
 using System;
 
-namespace Network
-{
+namespace Network {
     [Flags]
     public enum EventType
     {
