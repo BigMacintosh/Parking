@@ -69,11 +69,9 @@ namespace UI
 
         public void OnGameStart(ushort freeRoamLength, ushort nPlayers)
         {
-            Debug.Log("testing2");
             if (ClientConfig.GameMode == GameMode.AdminMode || IsServerMode)
             {
                 adminMenu.OnGameStart();
-                Debug.Log("testing");
             }
 
         }
