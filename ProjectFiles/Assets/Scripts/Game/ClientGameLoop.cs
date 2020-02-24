@@ -29,11 +29,12 @@ namespace Game
             }
 
             // Create gameplay components
-            world = new World(parkingSpaceManager);
+            
             if (ClientConfig.GameMode == GameMode.PlayerMode)
             {
                 parkingSpaceManager = new ClientParkingSpaceManager();
             }
+            world = new World(parkingSpaceManager);
 
             // Create UI Controller
             if (ClientConfig.GameMode == GameMode.PlayerMode)
