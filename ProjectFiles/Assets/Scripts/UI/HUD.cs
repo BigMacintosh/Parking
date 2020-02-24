@@ -12,6 +12,7 @@ namespace UI
         [SerializeField] public Button exitbutton;
         [SerializeField] public Text eventtext;
         [SerializeField] public Text roundtext;
+        [SerializeField] public Text playercounttext;
         private float v;
         private String ip;
         private bool isSet;

@@ -23,6 +23,8 @@ namespace UI
         private bool inroundflag = false;
         private bool endroundflag = false;
 
+        public int preroundtimer;
+
         private void Start()
         {
             Cursor.visible = false;
@@ -65,7 +67,7 @@ namespace UI
                     timer = 0;
                 }
             }
-            if (preroundflag)
+            /*if (preroundflag)
             {
                 if (countdown > 0)
                 {
@@ -74,6 +76,7 @@ namespace UI
                 }
                 preroundflag = false;
             }
+            */
             /*
             if (endroundflag)
             {
@@ -100,16 +103,27 @@ namespace UI
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
         {
             // Display countdown on the hud that is preRoundLength seconds long
-            countdown = preRoundLength;
+            //countdown = preRoundLength;
             roundnum = roundNumber;
-            preroundflag = true;
+            //preroundflag = true;
+            /*for (int i=preRoundLength; i>0; i--)
+            {
+                Invoke(hud.eventtext.text = "Round " + roundNumber + " starting in " + i + " seconds", (preRoundLength - i));
+            }*/
+            hud.eventtext.text = "Round " + roundNumber + " starting in " + 10 + " seconds";
+            preroundtimer = preRoundLength;
+            for (int i=preRoundLength; i>0; i--)
+            {
+                Invoke("countDownEventText", preRoundLength-i);
+                
+            }
         }
 
         public void OnRoundStart(ushort roundNumber)
         {
             // Display message on HUD to say that round is in progress
-            hud.eventtext.text = "Round " + roundnum + "started!";
-            Invoke(hud.eventtext.text = "", 2);
+            hud.eventtext.text = "Round " + roundnum + " has begun!";
+            Invoke("clearEventText", 2);
             hud.roundtext.text = "Round " + roundNumber;
         }
 
@@ -125,6 +139,18 @@ namespace UI
         {
             // Update the player count on the hud
             hud.playernum = nPlayers;
+            hud.playercounttext.text = nPlayers + " players remaining";
+        }
+
+        public void countDownEventText()
+        {
+            hud.eventtext.text = "Round " + roundnum + " starting in " + preroundtimer + " seconds";
+            preroundtimer -= 1;
+        }
+
+        public void clearEventText()
+        {
+            hud.eventtext.text = "";
         }
         
         public HUD getHUD()
