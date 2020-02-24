@@ -19,7 +19,7 @@ namespace Game
 
         public World(ParkingSpaceManager parkingSpaceManager)
         {
-            carPrefab = Resources.Load<GameObject>("Police");
+            carPrefab = Resources.Load<GameObject>("Car");
             cars = new Dictionary<int, GameObject>();
             ClientID = -1;
             this.parkingSpaceManager = parkingSpaceManager;
