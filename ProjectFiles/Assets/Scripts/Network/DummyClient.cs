@@ -46,6 +46,7 @@ namespace Network
         public event PreRoundStartDelegate PreRoundStartEvent;
         public event RoundStartDelegate RoundStartEvent;
         public event RoundEndDelegate RoundEndEvent;
+        public event SpaceClaimedDelegate SpaceClaimedEvent;
         public event EliminatePlayersDelegate EliminatePlayersEvent;
         public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         public event GameEndDelegate GameEndEvent;

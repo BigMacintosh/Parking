@@ -33,6 +33,16 @@ namespace Gameplay
                 Debug.Log($"Space Added, SpaceID: {parkingSpace.SpaceID}.");
             }
         }
+
+        public List<Transform> GetSpaceTransforms()
+        {
+            List<Transform> transforms = new List<Transform>();
+            foreach (var space in parkingSpaces)
+            {
+                transforms.Add(space.Value.transform);
+            }
+            return transforms;
+        }
     }
 
     public class ClientParkingSpaceManager : ParkingSpaceManager
@@ -44,7 +54,7 @@ namespace Gameplay
                 p.Value.SpaceEnterEvent += f;
             }
         }
-        
+
         public void SubscribeSpaceExit(SpaceExitDelegate f)
         {
             foreach (var p in parkingSpaces)
@@ -52,24 +62,41 @@ namespace Gameplay
                 p.Value.SpaceExitEvent += f;
             }
         }
+
+        public void OnSpaceClaimed(int playerID, ushort spaceID)
+        {
+            var parkingSpace = parkingSpaces[spaceID];
+            if (parkingSpace.Occupied())
+            {
+                Debug.Log(playerID + " Stole a space from " + parkingSpace.OccupiedBy);
+            }
+            else
+            {
+                Debug.Log(playerID + " CLAIMED AN EMPTY SPACE" + spaceID);
+            }
+
+            parkingSpace.SetOccupied(playerID);
+        }
     }
 
     public class ServerParkingSpaceManager : ParkingSpaceManager
     {
         public event SpaceClaimedDelegate SpaceClaimedEvent;
-        
+
         public void OnSpaceEnter(int playerID, ushort spaceID)
         {
             Debug.Log($"Player: {playerID} has entered space {spaceID}"); 
             // TODO: Check the server also believes the player is in the space...
             // Should we inform the client we agree with their entry into the space?
-            
+
+            Debug.Log($"Player: {playerID} has entered space {spaceID}");
+
             // Start a timer for a space if space does not belong to the player
             var parkingSpace = parkingSpaces[spaceID];
             if (parkingSpace.OccupiedBy == playerID)
             {
                 // Do nothing.
-            } 
+            }
             else if (parkingSpace.OccupiedBy == -1)
             {
                 if (parkingSpace.Timer.Set)
@@ -103,7 +130,7 @@ namespace Gameplay
         public void OnSpaceExit(int playerID, ushort spaceID)
         {
             var parkingSpace = parkingSpaces[spaceID];
-            
+
             // Cancel a timer for a space
             if (parkingSpace.Timer.Set)
             {
@@ -118,12 +145,12 @@ namespace Gameplay
         {
             return () => SpaceTimerOnElapsed(playerID, spaceID);
         }
-        
+
         private void SpaceTimerOnElapsed(int playerID, ushort spaceID)
         {
             Debug.Log("Timer has elapsed");
             // Space timer has elapsed.
-            // TODO: Set the space to claimed on the server.
+            parkingSpaces[spaceID].OccupiedBy = playerID;
             SpaceClaimedEvent?.Invoke(playerID, spaceID);
         }
     }

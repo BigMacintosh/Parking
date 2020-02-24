@@ -21,9 +21,10 @@ namespace Network
         ServerRoundStartEvent       = 0x05,
         ServerRoundEndEvent         = 0x06,
         ServerEliminatePlayersEvent = 0x07,
-        ServerDisconnectEvent       = 0x08,
-        ServerGameEndEvent          = 0x09,
-        ServerKeepAliveEvent        = 0x0A,
-        ServerGameStartEvent        = 0x0B,
+        ServerDisconnectEvent = 0x08,
+        ServerGameEndEvent = 0x09,
+        ServerGameStartEvent = 0x0B,
+        ServerKeepAliveEvent = 0x0A,
+        ServerSpaceClaimedEvent = 0x0C,
     }
 }

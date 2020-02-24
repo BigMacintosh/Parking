@@ -26,6 +26,7 @@ namespace Network
         event PreRoundStartDelegate PreRoundStartEvent;
         event RoundStartDelegate RoundStartEvent;
         event RoundEndDelegate RoundEndEvent;
+        event SpaceClaimedDelegate SpaceClaimedEvent;
         event EliminatePlayersDelegate EliminatePlayersEvent;
         event PlayerCountChangeDelegate PlayerCountChangeEvent;
         event GameEndDelegate GameEndEvent;
@@ -54,6 +55,7 @@ namespace Network
         public event EliminatePlayersDelegate EliminatePlayersEvent;
         public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         public event GameEndDelegate GameEndEvent;
+        public event SpaceClaimedDelegate SpaceClaimedEvent;
         
 
         public Client(World world)
@@ -205,6 +207,11 @@ namespace Network
                     ev = new ServerGameStart();
                     break;
                 }
+                case EventType.ServerSpaceClaimedEvent:
+                {
+                    ev = new ServerSpaceClaimedEvent();
+                    break;
+                }
                 default:
                     Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
                     return;
@@ -290,6 +297,13 @@ namespace Network
         {
             // Don't really need to do anything... Maybe a packet is needed to be sent back.
         }
+        
+
+        public void Handle(ServerSpaceClaimedEvent ev, NetworkConnection conn)
+        {
+            SpaceClaimedEvent?.Invoke(ev.PlayerID, ev.SpaceID);
+        }
+        
         
         // Delegate event handlers
         public void OnSpaceEnter(int playerID, ushort spaceID)

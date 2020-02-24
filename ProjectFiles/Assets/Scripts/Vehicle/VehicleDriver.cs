@@ -11,7 +11,9 @@ namespace Vehicle
 
         //Car Properties
 
-        public float maxSpeed, accel, maxSteer, steer, driftFactor;
+        public float maxSpeed, accel, maxSteer, driftFactor;
+
+        private float turn, maxTurn;
 
         public List<DriveWheel> driveWheels;
 
@@ -27,10 +29,12 @@ namespace Vehicle
         void FixedUpdate()
         {
             bool grounded = false;
+            turn = maxSteer * Input.GetAxis("Horizontal");
             
             foreach (DriveWheel wheel in driveWheels)
             {
                 grounded = wheel.CheckGround() ? true : grounded;
+                wheel.gameObject.transform.localRotation = Quaternion.Euler(0, turn, 0);
             }
             
             //Driving Forces
@@ -40,9 +44,9 @@ namespace Vehicle
             }
 
             //Turning Forces
-            if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < 1f && Mathf.Abs(GetForward()) > 1)
+            if (Input.GetAxis("Horizontal") != 0 && grounded && body.angularVelocity.magnitude < (maxSteer/30f) && Mathf.Abs(GetForward()) > 0.5f)
             {
-                body.AddTorque(Input.GetAxis("Horizontal") * steer * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
+                body.AddTorque(turn * body.mass * 2f * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
             }
 
             if (acceptinput && Input.GetAxis("Jump") != 0 && grounded)
@@ -53,12 +57,18 @@ namespace Vehicle
             //Drifting
             if (grounded)
             {
-                if (Mathf.Abs(GetForward()) < maxSpeed * driftFactor)
+                if (Input.GetAxis("Drift") != 0)
                 {
+                    maxTurn = maxSteer * driftFactor / 30f;
+                }
+                else
+                {
+                    maxTurn = maxSteer / 30f;
                     body.velocity -= GetSide() * 0.25f * transform.right;
                 }
             }
 
+            //Self-Righting
             if ((Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315) || (Mathf.Abs(body.rotation.eulerAngles.x) > 60 && Mathf.Abs(body.rotation.eulerAngles.x)< 300))
             {
                 var targetRotation = Quaternion.LookRotation(
