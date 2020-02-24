@@ -28,7 +28,7 @@ namespace Vehicle
             var camera = FindObjectOfType<CameraFollowController>();
             camera.ObjectToFollow = transform;
 
-            var minimap = FindObjectOfType<MinimapController>();
+            var minimap = FindObjectOfType<MinimapScroller>();
             minimap.ObjectToFollow = transform;
             
             // Set car object in HUD.
