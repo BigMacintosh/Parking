@@ -351,6 +351,13 @@ namespace Network
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             sendToAll(eliminatePlayers);
+            
+            // Drop connection to all players who are eliminated
+            foreach (var playerID in players)
+            {
+                dropConnection(playerID);
+            }
+            
         }
 
         public void OnGameEnd()
