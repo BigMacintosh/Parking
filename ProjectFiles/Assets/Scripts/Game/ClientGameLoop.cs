@@ -1,6 +1,9 @@
+﻿using System.Collections.Generic;
 using Network;
 using UnityEngine;
 using Gameplay;
+using UI;
+using Object = UnityEngine.Object;
 
 namespace Game
 {
@@ -8,6 +11,7 @@ namespace Game
     {
         private IClient client;
         private World world;
+        private UIController uiController;
         private bool isStandalone;
         private ClientParkingSpaceManager parkingSpaceManager;
         
@@ -25,15 +29,20 @@ namespace Game
             }
 
             // Create gameplay components
-            parkingSpaceManager = new ClientParkingSpaceManager();
             world = new World(parkingSpaceManager);
+            if (ClientConfig.GameMode == GameMode.PlayerMode)
+            {
+                parkingSpaceManager = new ClientParkingSpaceManager();
+            }
+
+            // Create UI Controller
+            if (ClientConfig.GameMode == GameMode.PlayerMode)
+            {
+                Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
+            }
+            uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
             
 
-            // Create HUD
-            Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);
-            Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
-            
-            
             // Initialise the client
             if (isStandalone)
             {
@@ -43,15 +52,16 @@ namespace Game
             {
                 client = new Client(world);
             }
-            
-            
+
+
             // Subscribe to network events.
             // Client -> Server
-            parkingSpaceManager.SubscribeSpaceEnter(client.OnSpaceEnter);
-            parkingSpaceManager.SubscribeSpaceExit(client.OnSpaceExit);
-            
-            // TODO: Actually do something with the rounds
-            
+            if (ClientConfig.GameMode == GameMode.PlayerMode)
+            {
+                parkingSpaceManager.SubscribeSpaceEnter(client.OnSpaceEnter);
+                parkingSpaceManager.SubscribeSpaceExit(client.OnSpaceExit);
+            }
+
             // Server -> Client
             client.PreRoundStartEvent += (number, length, roundLength, players) =>
                 Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
@@ -72,12 +82,22 @@ namespace Game
             client.SpaceClaimedEvent += parkingSpaceManager.OnSpaceClaimed;
             
             // Start the client connection
-#if UNITY_EDITOR
             var success = client.Start();
-#else
-            var success = client.Start("35.177.253.83");
-#endif
-            
+
+            uiController.getHUD().playernum = world.Players.Count;
+            uiController.getHUD().NetworkIP = client.getServerIP();
+            uiController.getHUD().exitbutton.onClick.AddListener(Shutdown);
+            client.GameStartEvent += uiController.OnGameStart;
+            client.PreRoundStartEvent += uiController.OnPreRoundStart;
+            client.RoundStartEvent += uiController.OnRoundStart;
+            client.RoundEndEvent += uiController.OnRoundEnd;
+            client.PlayerCountChangeEvent += uiController.OnPlayerCountChange;
+
+            if (ClientConfig.GameMode == GameMode.AdminMode)
+            {
+                uiController.SubscribeTriggerGameStartEvent(client.OnTriggerGameStart);
+            }
+
             return success;
         }
 
