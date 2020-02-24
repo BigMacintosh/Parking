@@ -96,6 +96,12 @@ namespace Gameplay
             mat.color = new Color(0, 1, 0, 0.3f);
         }
 
+        public void SetEmpty()
+        {
+            OccupiedBy = -1;
+            mat.color = new Color(0, 0, 1, 0.3f);
+        }
+
         public bool Occupied()
         {
             return OccupiedBy != -1;
@@ -104,14 +110,13 @@ namespace Gameplay
         public void Enable()
         {
             Enabled = true;
-            OccupiedBy = -1;
-            mat.color = new Color(0, 0, 1, 0.3f);
+            SetEmpty();
         }
 
         public void Disable()
         {
             Enabled = false;
-            OccupiedBy = -1;
+            SetEmpty();
             mat.color = new Color(1, 1, 1, 0);
         }
     }

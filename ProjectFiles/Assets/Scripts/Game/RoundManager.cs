@@ -12,8 +12,8 @@ namespace Game
     {
         // All times in seconds
         public const ushort FreeroamLength = 10;
-        public const ushort PreRoundLength = 10;
-        public const ushort RoundLength = 5;
+        public const ushort PreRoundLength = 5;
+        public const ushort RoundLength = 120;
         public const ushort MaxRounds = 5;
     }
 
