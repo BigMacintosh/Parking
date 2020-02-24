@@ -15,7 +15,7 @@ namespace Game
 
         public World()
         {
-            carPrefab = Resources.Load<GameObject>("Car");
+            carPrefab = Resources.Load<GameObject>("Police");
             cars = new Dictionary<int, GameObject>();
             ClientID = -1;
         }

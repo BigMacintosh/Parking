@@ -6,12 +6,14 @@ using UnityEngine;
 
 namespace Vehicle
 {
+    
     public class DriveWheel : MonoBehaviour
     {
 
         private float groundDist;
         private RaycastHit hit;
-
+        [SerializeField] private LayerMask mask;
+        
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
             throw new NotImplementedException();
@@ -27,7 +29,7 @@ namespace Vehicle
         public bool CheckGround()
         {
             Debug.DrawRay(transform.position, -Vector3.up * groundDist, Color.blue, 1f, false);
-            return Physics.Raycast(new Ray(transform.position, -Vector3.up), out hit, groundDist);
+            return Physics.Raycast(new Ray(transform.position, -Vector3.up), out hit, groundDist, mask);
 
         }
     }

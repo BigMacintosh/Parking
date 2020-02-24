@@ -151,6 +151,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0851c5703546d4a008d7e540718265a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mask:
+    serializedVersion: 2
+    m_Bits: 311
 --- !u!1 &2754571377349320158
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,6 +361,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0851c5703546d4a008d7e540718265a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mask:
+    serializedVersion: 2
+    m_Bits: 311
 --- !u!1001 &553317385339556824
 PrefabInstance:
   m_ObjectHideFlags: 0
