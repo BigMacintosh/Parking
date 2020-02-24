@@ -20,6 +20,23 @@ namespace Gameplay
                 Debug.Log($"Space Added, SpaceID: {parkingSpace.SpaceID}.");
             }
         }
+        
+        private void DisableAllSpaces()
+        {
+            foreach (var space in parkingSpaces.Values)
+            {
+                space.Disable();
+            }
+        }
+        // OnPreRoundStart: Disable all spaces and only enable the new spaces.
+        public void EnableSpaces(List<ushort> spaces)
+        {
+            DisableAllSpaces();
+            foreach (var space in spaces) 
+            {
+                parkingSpaces[space].Enable();
+            }
+        }
 
         public List<Transform> GetSpaceTransforms()
         {
@@ -73,13 +90,17 @@ namespace Gameplay
         public void OnSpaceEnter(int playerID, ushort spaceID)
         {
             Debug.Log($"Player: {playerID} has entered space {spaceID}"); 
-            // TODO: Check the server also believes the player is in the space...
-            // Should we inform the client we agree with their entry into the space?
+            // TODO: Should we inform the client we agree with their entry into the space?
 
-            Debug.Log($"Player: {playerID} has entered space {spaceID}");
 
             // Start a timer for a space if space does not belong to the player
             var parkingSpace = parkingSpaces[spaceID];
+            
+            if (!parkingSpace.Enabled)
+            {
+                return;
+            }
+            
             if (parkingSpace.OccupiedBy == playerID)
             {
                 // Do nothing.
