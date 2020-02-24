@@ -9,7 +9,7 @@ namespace Gameplay
     public class ParkingSpaceManager
     {
         protected Dictionary<ushort, ParkingSpace> parkingSpacesBySpaceID;
-        protected Dictionary<int, ParkingSpace> parkingSpacesByPlayerID;
+        public Dictionary<int, ParkingSpace> parkingSpacesByPlayerID { get; protected set; }
         public ParkingSpaceManager()
         {
             parkingSpacesBySpaceID = new Dictionary<ushort, ParkingSpace>();

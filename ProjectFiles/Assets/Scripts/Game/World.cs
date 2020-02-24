@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gameplay;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -71,6 +72,11 @@ namespace Game
         public ushort GetNumPlayers()
         {
             return (ushort) cars.Count;
+        }
+
+        public List<int> GetPlayers()
+        {
+            return cars.Keys.ToList();
         }
         
         // TODO: Do we really want all this stuff below...?

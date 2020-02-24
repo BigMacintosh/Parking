@@ -16,7 +16,6 @@ namespace Game
         public const ushort RoundLength = 15;
         public const ushort MaxRounds = 5;
     }
-
     
     
     public class RoundManager
@@ -116,17 +115,35 @@ namespace Game
         private void EndRoundEvent()
         {
             NotifyRoundEnd();
-//            List<ushort> eliminatedPlayers = world.GetPlayersNotInSpace();
-//            NotifyEliminatePlayers(eliminatedPlayers);
             roundNumber++;
             if (roundNumber < maxRounds)
             {
+                var eliminatedPlayers = GetPlayersEliminated();
+                NotifyEliminatePlayers(eliminatedPlayers);
                 StartPreRound();
             }
             else
             {
                 GameEndEvent?.Invoke();
             }
+        }
+
+        private List<int> GetPlayersEliminated()
+        {
+            // Get players in the game
+            List<int> playersInGame = world.GetPlayers();
+            Dictionary<int, ParkingSpace> playersInSpace = spaceManager.parkingSpacesByPlayerID;
+
+            List<int> eliminatedPlayers = new List<int>();
+            
+            foreach (var playerID in playersInGame)
+            {
+                if (!playersInSpace.ContainsKey(playerID))
+                {
+                    eliminatedPlayers.Add(playerID);
+                }
+            }
+            return eliminatedPlayers;
         }
 
         private void NotifyGameStart(ushort freeRoamLength)
