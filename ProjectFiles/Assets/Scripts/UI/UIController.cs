@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 using Game;
 using Network;
@@ -13,7 +14,13 @@ namespace UI
         [SerializeField] private GameObject settingsmenu;
         [SerializeField] private AdminMenu adminMenu;
 
-        private HUD hud;
+        private HUD _hud;
+        public HUD Hud
+        {
+            get => _hud;
+            set => _hud = value;
+        }
+
         private int timer;
         private Rigidbody _rb;
         private float v;
@@ -41,17 +48,40 @@ namespace UI
 
         public int preroundtimer;
 
+
+        public UIController()
+        {
+            active = ClientConfig.GameMode == GameMode.AdminMode;
+            timer = 0;
+        }
+
+        private void Awake()
+        {
+            Debug.Log("1-----------" + Hud);
+            Hud = FindObjectOfType<HUD>();
+            Debug.Log("2-----------" + Hud);
+        }
+
         private void Start()
         {
             Cursor.visible = false;
             escmenu.SetActive(false);
             settingsmenu.SetActive(false);
             adminMenu.SetServerMode(IsServerMode);
-            active = ClientConfig.GameMode == GameMode.AdminMode;
-            timer = 0;
-            hud = FindObjectOfType<HUD>();
-            //hud.Car = vehicle.GetComponent<Rigidbody>();
         }
+
+//        private void Start()
+//        {
+//            Cursor.visible = false;
+//            escmenu.SetActive(false);
+//            settingsmenu.SetActive(false);
+//            adminMenu.SetServerMode(IsServerMode);
+//            active = ClientConfig.GameMode == GameMode.AdminMode;
+//            timer = 0;
+//            Debug.Log("1-----------" + Hud);
+//            Hud = FindObjectOfType<HUD>();
+//            Debug.Log("2-----------" + Hud);
+//        }
 
         // Update is called once per frame
         private void Update()
@@ -85,7 +115,7 @@ namespace UI
             
             if (!(_car is null))
             {
-                hud.Velocity = _car.velocity.magnitude * 3.6f;
+                _hud.Velocity = _car.velocity.magnitude * 3.6f;
             }
         }
 
@@ -113,69 +143,59 @@ namespace UI
             {
                 Invoke(hud.eventtext.text = "Round " + roundNumber + " starting in " + i + " seconds", (preRoundLength - i));
             }*/
-            hud.eventText.text = "Round " + roundNumber + " starting in " + 10 + " seconds";
+//            _hud.eventText.text = "Round " + roundNumber + " starting in " + 10 + " seconds";
             preroundtimer = preRoundLength;
             roundduration = roundLength;
             for (int i=preRoundLength; i>0; i--)
             {
-                Invoke("countDownRoundStart", preRoundLength - i);
+                Invoke("CountDownRoundStart", preRoundLength - i);
             }
         }
 
         public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive)
         {
             // Display message on HUD to say that round is in progress
-            hud.eventText.text = "Round " + roundnum + " has begun!";
-            Invoke("clearEventText", 2);
+//            _hud.eventText.text = "Round " + roundnum + " has begun!";
+            Invoke("ClearEventText", 2);
             for (int i = roundduration; i > 0; i--)
             {
                 if(i < 11)
                 {
                     roundduration = i;
-                    Invoke("countDownRoundEnd", 10 - i);
+                    Invoke("CountDownRoundEnd", 10 - i);
                 }
             }
-            hud.roundText.text = "Round " + roundNumber;
+//            _hud.roundText.text = "Round " + roundNumber;
         }
 
         public void OnRoundEnd(ushort roundNumber)
         {
             // Display message on HUD to say that round has ended
             //roundnum = roundNumber;
-            hud.eventText.text = "Round " + roundnum + " has ended!";
+//            _hud.eventText.text = "Round " + roundnum + " has ended!";
             //endroundflag = true;
         }
 
-        public void OnPlayerCountChange(ushort nPlayers)
+        public void OnPlayerCountChange(int nPlayers)
         {
             // Update the player count on the hud
-            hud.NumberOfPlayers = nPlayers;
-            hud.playerCountText.text = nPlayers + " players remaining";
+            Hud.NumberOfPlayers = nPlayers;
         }
 
-        public void countDownRoundStart()
+        public void CountDownRoundStart()
         {
-            hud.eventText.text = "Round " + roundnum + " starting in " + preroundtimer + " seconds";
+//            _hud.eventText.text = "Round " + roundnum + " starting in " + preroundtimer + " seconds";
             preroundtimer -= 1;
         }
 
-        public void countDownRoundEnd()
+        public void CountDownRoundEnd()
         {
-            hud.eventText.text = "Round " + roundnum + " ending in " + roundduration + " seconds";
+//            _hud.eventText.text = "Round " + roundnum + " ending in " + roundduration + " seconds";
         }
 
-        public void clearEventText()
+        public void ClearEventText()
         {
-            hud.eventText.text = "";
-        }
-        
-        public HUD getHUD()
-        {
-            if (hud is null)
-            {
-                hud = FindObjectOfType<HUD>();
-            }
-            return hud;
+            _hud.eventText.text = "";
         }
     }
 }

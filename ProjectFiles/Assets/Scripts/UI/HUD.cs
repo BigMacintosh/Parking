@@ -47,6 +47,7 @@ namespace UI
             {
                 _numberOfPlayers = value;
                 UpdateDebugText();
+                UpdatePlayerCountText();
             }
         }
         
@@ -58,6 +59,11 @@ namespace UI
         private void UpdateDebugText()
         {
             debugText.text = "Connected to " + _networkIP + "\nNumber of players: "  + NumberOfPlayers;
+        }
+        
+        private void UpdatePlayerCountText()
+        {
+            playerCountText.text = "Number of players: "  + NumberOfPlayers;
         }
     }
 }
