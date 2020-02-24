@@ -12,7 +12,6 @@ namespace UI
         [SerializeField] private GameObject settingsmenu;
         [SerializeField] private AdminMenu adminMenu;
 
-        private VehicleDriver vehicledriver;
         private HUD hud;
         private int timer;
         private Rigidbody rb;
@@ -21,6 +20,7 @@ namespace UI
         public bool IsServerMode { get; set; }
         private int roundnum;
 
+        public Vehicle.Vehicle vehicle { get; set; }
 
         private bool preroundflag = false;
         private bool inroundflag = false;
@@ -37,8 +37,7 @@ namespace UI
             active = false;
             timer = 0;
             hud = FindObjectOfType<HUD>();
-            vehicledriver = FindObjectOfType<VehicleDriver>();
-            
+            hud.Car = vehicle.GetComponent<Rigidbody>();
         }
 
         // Update is called once per frame
@@ -49,12 +48,12 @@ namespace UI
             if (active)
             {
                 Cursor.visible = true;
-                hud.Vehicle.getDriver().setAcceptInput(false);
+                vehicle.getDriver().setAcceptInput(false);
             }
             else
             {
                 Cursor.visible = false;
-                hud.Vehicle.getDriver().setAcceptInput(true);
+                vehicle.getDriver().setAcceptInput(true);
             }
 
             if (Input.GetKey(KeyCode.Escape) && ClientConfig.GameMode != GameMode.AdminMode && !IsServerMode)
@@ -62,14 +61,14 @@ namespace UI
                 if (!active && timer > 30)
                 {
                     escmenu.SetActive(true);
-                    hud.Vehicle.getDriver().setAcceptInput(false);
+                    vehicle.getDriver().setAcceptInput(false);
                     active = true;
                     timer = 0;
                 }
                 else if (timer > 30)
                 {
                     escmenu.SetActive(false);
-                    hud.Vehicle.getDriver().setAcceptInput(true);
+                    vehicle.getDriver().setAcceptInput(true);
                     if (ClientConfig.GameMode != GameMode.AdminMode)
                     {
                         Cursor.visible = false;
@@ -78,23 +77,7 @@ namespace UI
                     timer = 0;
                 }
             }
-            /*if (preroundflag)
-            {
-                if (countdown > 0)
-                {
-                    countdown -= Time.deltaTime;
-                    hud.eventtext.text = "Round " + roundnum + " starting in " + countdown + " seconds";
-                }
-                preroundflag = false;
-            }
-            */
-            /*
-            if (endroundflag)
-            {
-                hud.eventtext.text = "Round " + roundnum + " has ended!";
-                endroundflag = false;
-            }
-            */
+            
         }
 
         public void SubscribeTriggerGameStartEvent(TriggerGameStartDelegate handler)

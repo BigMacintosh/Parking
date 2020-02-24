@@ -10,7 +10,7 @@ namespace Vehicle
     {
         public VehicleProperties vehicleProperties;
         private VehicleDriver driver;
-
+        private UIController uicontroller;
         public List<DriveWheel> driveWheels;
 
 
@@ -32,11 +32,10 @@ namespace Vehicle
 
             var minimap = FindObjectOfType<MinimapController>();
             minimap.ObjectToFollow = transform;
-            
-            // Set car object in HUD.
-            var hud = FindObjectOfType<HUD>();
-            hud.Vehicle = this;
-            hud.Car = GetComponent<Rigidbody>();
+
+            //Link with UIController
+            uicontroller = FindObjectOfType<UIController>();
+            uicontroller.vehicle = this;
         }
 
         public VehicleDriver getDriver()
