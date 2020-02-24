@@ -349,11 +349,11 @@ namespace Network
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             sendToAll(eliminatePlayers);
             
-            // Drop connection to all players who are eliminated
-            foreach (var playerID in players)
-            {
-                dropConnection(playerID);
-            }
+            // // Drop connection to all players who are eliminated
+            // foreach (var playerID in players)
+            // {
+            //     dropConnection(playerID);
+            // }
             
         }
 
