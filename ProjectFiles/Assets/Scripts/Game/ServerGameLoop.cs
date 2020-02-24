@@ -17,9 +17,10 @@ namespace Game
             var config = ServerConfig.LoadConfigOrDefault("server-config.json");
 
             // Initialise Gameplay components
-            world = new World();
-            roundManager = new RoundManager(world);
             parkingSpaceManager = new ServerParkingSpaceManager();
+            world = new World(parkingSpaceManager);
+            roundManager = new RoundManager(world);
+            
 
             // Initialise network
             server = new Server(world, config);

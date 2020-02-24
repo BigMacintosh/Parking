@@ -25,8 +25,9 @@ namespace Game
             }
 
             // Create gameplay components
-            world = new World();
             parkingSpaceManager = new ClientParkingSpaceManager();
+            world = new World(parkingSpaceManager);
+            
 
             // Create HUD
             Object.Instantiate(Resources.Load<GameObject>("Canvas"), Vector3.zero, Quaternion.identity);

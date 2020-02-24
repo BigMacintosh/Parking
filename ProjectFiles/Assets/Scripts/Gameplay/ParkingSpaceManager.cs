@@ -33,6 +33,16 @@ namespace Gameplay
                 Debug.Log($"Space Added, SpaceID: {parkingSpace.SpaceID}.");
             }
         }
+
+        public List<Transform> GetSpaceTransforms()
+        {
+            List<Transform> transforms = new List<Transform>();
+            foreach (var space in parkingSpaces)
+            {
+                transforms.Add(space.Value.transform);
+            }
+            return transforms;
+        }
     }
 
     public class ClientParkingSpaceManager : ParkingSpaceManager
