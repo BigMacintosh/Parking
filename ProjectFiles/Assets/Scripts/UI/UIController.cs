@@ -55,7 +55,7 @@ namespace UI
             else
             {
                 Cursor.visible = false;
-                vehicle.getDriver().setAcceptInput(true);
+                // vehicle.getDriver().setAcceptInput(true);
             }
 
             if (Input.GetKey(KeyCode.Escape) && ClientConfig.GameMode != GameMode.AdminMode && !IsServerMode)
@@ -63,14 +63,14 @@ namespace UI
                 if (!active && timer > 30)
                 {
                     escmenu.SetActive(true);
-                    vehicle.getDriver().setAcceptInput(false);
+                    // vehicle.getDriver().setAcceptInput(false);
                     active = true;
                     timer = 0;
                 }
                 else if (timer > 30)
                 {
                     escmenu.SetActive(false);
-                    vehicle.getDriver().setAcceptInput(true);
+                    // vehicle.getDriver().setAcceptInput(true);
                     if (ClientConfig.GameMode != GameMode.AdminMode)
                     {
                         Cursor.visible = false;
