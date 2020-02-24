@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Gameplay;
 using Network;
 using UnityEngine;
 using Utils;
@@ -29,6 +31,8 @@ namespace Game
         private ushort preRoundLength;
         private ushort roundLength;
         private ushort maxRounds;
+        private ServerParkingSpaceManager spaceManager;
+        private System.Random random;
 
         // Spawn all the players that have connected. Allow free-roam for the players. Disallow new connections.
         public event GameStartDelegate GameStartEvent;
@@ -46,9 +50,11 @@ namespace Game
         
         public event GameEndDelegate GameEndEvent;
 
-        public RoundManager(World world)
+        public RoundManager(World world, ServerParkingSpaceManager spaceManager)
         {
             this.world = world;
+            this.spaceManager = spaceManager;
+            this.random = new System.Random();
         }
 
         public void Update()
@@ -83,7 +89,10 @@ namespace Game
 
         public void StartPreRound()
         {
-            List<ushort> activeSpaces = new List<ushort>();
+            // TODO: give an actual dynamic value to num space
+            Vector2 spacesAround = new Vector2(random.Next(-200, 201), random.Next(-200, 201));
+            List<ushort> activeSpaces = spaceManager.GetNearestSpaces(spacesAround, 3);
+            Debug.Log($"Round { roundNumber } spaces from point ({ spacesAround.x }, { spacesAround.y }): { String.Join(", ", activeSpaces) }.");
 
             // Send 5 seconds round warning.
             NotifyPreRoundStart(activeSpaces);

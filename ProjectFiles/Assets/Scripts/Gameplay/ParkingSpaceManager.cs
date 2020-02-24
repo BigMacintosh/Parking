@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Utils;
 using Network;
 using UnityEngine;
@@ -15,20 +16,6 @@ namespace Gameplay
             var parkingSpaceList = Object.FindObjectsOfType<ParkingSpace>();
             foreach (var parkingSpace in parkingSpaceList)
             {
-                var name = parkingSpace.name;
-                var split = name.Split(' ');
-
-                if (split.Length == 1)
-                {
-                    parkingSpace.SpaceID = 0;
-                }
-                else
-                {
-                    var numStr = split[1].Trim(new char[] {'(', ')'});
-                    var id = ushort.Parse(numStr);
-
-                    parkingSpace.SpaceID = id;
-                }
                 parkingSpaces.Add(parkingSpace.SpaceID, parkingSpace);
                 Debug.Log($"Space Added, SpaceID: {parkingSpace.SpaceID}.");
             }
@@ -152,6 +139,20 @@ namespace Gameplay
             // Space timer has elapsed.
             parkingSpaces[spaceID].OccupiedBy = playerID;
             SpaceClaimedEvent?.Invoke(playerID, spaceID);
+        }
+
+        public List<ushort> GetNearestSpaces(Vector2 position, int amount)
+        {
+            List<ushort> spaces = parkingSpaces.Values.OrderBy(space => {
+                    var spacePos = space.transform.position;
+
+                    return new Vector2(spacePos.x - position.x, spacePos.z - position.y).magnitude;
+                })
+                .Take(amount)
+                .Select(space => space.SpaceID)
+                .ToList();
+
+            return spaces;
         }
     }
 }
