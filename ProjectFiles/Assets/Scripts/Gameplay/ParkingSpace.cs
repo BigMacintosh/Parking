@@ -19,15 +19,16 @@ namespace Gameplay
         public Timer Timer { get; set; }
         public int OccupiedBy { get; set; }
 
+        public bool Enabled { get; private set; }
+
 
         // Start is called before the first frame update
         void Start()
         {
             mat = GetComponent<Renderer>().material;
-            mat.color = new Color(1, 1, 1, 0.3f);
             Timer = new Timer(0);
             OccupiedBy = -1;
-            
+            Disable();
             // set ID based upon name (e.g. Space (3) -> 3, Space -> 0)
             var split = name.Split(' ');
 
@@ -51,9 +52,14 @@ namespace Gameplay
 
         void OnTriggerEnter(Collider other)
         {
+            if (!Enabled)
+            {
+                return;
+            }
+
             if (other.TryGetComponent(out VehicleDriver driver))
             {
-                mat.color = new Color(1, 1, 0, 0.3f);
+//                mat.color = new Color(1, 1, 0, 0.3f);
                 SpaceEnterEvent?.Invoke(0, SpaceID);
             }
             else if (other.TryGetComponent(out Vehicle.Vehicle v))
@@ -66,6 +72,11 @@ namespace Gameplay
 
         void OnTriggerExit(Collider other)
         {
+            if (!Enabled)
+            {
+                return;
+            }
+            
             if (other.TryGetComponent(out VehicleDriver driver))
             {
 //                mat.color = new Color(1, 1, 1, 0.3f);
@@ -88,6 +99,20 @@ namespace Gameplay
         public bool Occupied()
         {
             return OccupiedBy != -1;
+        }
+
+        public void Enable()
+        {
+            Enabled = true;
+            OccupiedBy = -1;
+            mat.color = new Color(0, 0, 1, 0.3f);
+        }
+
+        public void Disable()
+        {
+            Enabled = false;
+            OccupiedBy = -1;
+            mat.color = new Color(1, 1, 1, 0);
         }
     }
 }

@@ -50,9 +50,15 @@ namespace Game
             parkingSpaceManager.SubscribeSpaceEnter(client.OnSpaceEnter);
             parkingSpaceManager.SubscribeSpaceExit(client.OnSpaceExit);
             
+            // TODO: Actually do something with the rounds
+            
             // Server -> Client
             client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
                 Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
+
+            client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
+                parkingSpaceManager.EnableSpaces(active);
+            
             client.RoundStartEvent += number => Debug.Log($"Round start event received rN:{number}");
             client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
             client.SpaceClaimedEvent += parkingSpaceManager.OnSpaceClaimed;
