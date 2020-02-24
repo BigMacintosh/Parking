@@ -15,7 +15,7 @@ namespace UI
 
         private HUD hud;
         private int timer;
-        private Rigidbody rb;
+        private Rigidbody _rb;
         private float v;
         private bool active;
         public bool IsServerMode { get; set; }
@@ -36,7 +36,7 @@ namespace UI
             escmenu.SetActive(false);
             settingsmenu.SetActive(false);
             adminMenu.SetServerMode(IsServerMode);
-            active = false;
+            active = ClientConfig.GameMode == GameMode.AdminMode;
             timer = 0;
             hud = FindObjectOfType<HUD>();
             //hud.Car = vehicle.GetComponent<Rigidbody>();
@@ -45,18 +45,7 @@ namespace UI
         // Update is called once per frame
         private void Update()
         {
-            timer++;
-
-            if (active)
-            {
-                Cursor.visible = true;
-                //svehicle.getDriver().setAcceptInput(false);
-            }
-            else
-            {
-                Cursor.visible = false;
-                // vehicle.getDriver().setAcceptInput(true);
-            }
+            Cursor.visible = active;
 
             if (Input.GetKey(KeyCode.Escape) && ClientConfig.GameMode != GameMode.AdminMode && !IsServerMode)
             {
