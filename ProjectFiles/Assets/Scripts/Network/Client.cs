@@ -285,7 +285,13 @@ namespace Network
 
         public void Handle(ServerEliminatePlayersEvent ev, NetworkConnection conn)
         {
+            
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
+
+            if (ev.Players.Contains(world.ClientID))
+            {
+                Shutdown();
+            }
         }
         
         public void Handle(ServerGameEndEvent ev, NetworkConnection conn)
