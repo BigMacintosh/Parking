@@ -9,7 +9,7 @@ namespace Network.Events
 
         public ServerSpaceClaimedEvent()
         {
-            ID = EventType.ClientSpaceExitEvent;    
+            ID = EventType.ServerSpaceClaimedEvent;    
             Length = sizeof(byte) + sizeof(int) + sizeof(ushort);
         }
 

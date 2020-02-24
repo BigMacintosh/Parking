@@ -450,7 +450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameLoop: 2
   spawnLocations:
-  - {x: 0, y: 3, z: 0}
+  - {x: 0, y: 37, z: 0}
 --- !u!4 &716248039
 Transform:
   m_ObjectHideFlags: 0
@@ -561,8 +561,8 @@ MonoBehaviour:
   divisions: 150
   width: 20
   thickness: 2
-  maxGroundDistance: 30
-  raiseAboveGround: 0.15
+  maxGroundDistance: 15
+  raiseAboveGround: 0.1
   signpost: 0
   surface: {fileID: 2100000, guid: f6f4c662571e442caa823f47dec6acbf, type: 2}
 --- !u!1 &1456142758

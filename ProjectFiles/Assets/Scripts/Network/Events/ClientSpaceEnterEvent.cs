@@ -8,8 +8,8 @@ namespace Network.Events
 
         public ClientSpaceEnterEvent()
         {
-            ID = EventType.ClientSpaceEnterEvent;
-            Length = sizeof(byte) + sizeof(ushort);
+            ID = EventType.ClientSpaceEnterEvent;    
+            Length = sizeof(byte) + sizeof(ushort) * 2;
         }
 
         public ClientSpaceEnterEvent(ushort spaceId) : this()
