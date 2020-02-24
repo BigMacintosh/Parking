@@ -19,6 +19,7 @@ namespace UI
         private bool active;
         public bool IsServerMode { get; set; }
         private int roundnum;
+        private int roundduration;
 
         public Vehicle.Vehicle vehicle { get; set; }
 
@@ -106,10 +107,10 @@ namespace UI
             }*/
             hud.eventtext.text = "Round " + roundNumber + " starting in " + 10 + " seconds";
             preroundtimer = preRoundLength;
+            roundduration = roundLength;
             for (int i=preRoundLength; i>0; i--)
             {
-                Invoke("countDownEventText", preRoundLength-i);
-                
+                Invoke("countDownRoundStart", preRoundLength - i);
             }
         }
 
@@ -118,6 +119,14 @@ namespace UI
             // Display message on HUD to say that round is in progress
             hud.eventtext.text = "Round " + roundnum + " has begun!";
             Invoke("clearEventText", 2);
+            for (int i = roundduration; i > 0; i--)
+            {
+                if(i < 11)
+                {
+                    roundduration = i;
+                    Invoke("countDownRoundEnd", 10 - i);
+                }
+            }
             hud.roundtext.text = "Round " + roundNumber;
         }
 
@@ -136,10 +145,15 @@ namespace UI
             hud.playercounttext.text = nPlayers + " players remaining";
         }
 
-        public void countDownEventText()
+        public void countDownRoundStart()
         {
             hud.eventtext.text = "Round " + roundnum + " starting in " + preroundtimer + " seconds";
             preroundtimer -= 1;
+        }
+
+        public void countDownRoundEnd()
+        {
+            hud.eventtext.text = "Round " + roundnum + " ending in " + roundduration + " seconds";
         }
 
         public void clearEventText()
