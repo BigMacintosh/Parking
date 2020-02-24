@@ -29,11 +29,12 @@ namespace Game
             }
 
             // Create gameplay components
-            world = new World(parkingSpaceManager);
-            if (ClientConfig.GameMode == GameMode.PlayerMode)
-            {
+            
+            //if (ClientConfig.GameMode == GameMode.PlayerMode)
+            //{
                 parkingSpaceManager = new ClientParkingSpaceManager();
-            }
+            //}
+            world = new World(parkingSpaceManager);
 
             // Create UI Controller
             if (ClientConfig.GameMode == GameMode.PlayerMode)
@@ -63,10 +64,22 @@ namespace Game
             }
 
             // Server -> Client
-            client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
+            client.PreRoundStartEvent += (number, length, roundLength, players) =>
                 Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
-            client.RoundStartEvent += number => Debug.Log($"Round start event received rN:{number}");
-            client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
+
+            
+            client.RoundStartEvent += (number, active) =>
+            {
+                Debug.Log($"Round start event received rN:{number}");
+                parkingSpaceManager.EnableSpaces(active);
+            };
+            
+            client.RoundEndEvent += number =>
+            {
+                Debug.Log($"Round end event received rN:{number}");
+                parkingSpaceManager.DisableAllSpaces();
+            };
+            
             client.SpaceClaimedEvent += parkingSpaceManager.OnSpaceClaimed;
             
             // Start the client connection

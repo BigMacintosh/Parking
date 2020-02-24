@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Game;
 using Network;
 using Vehicle;
 
@@ -38,7 +39,7 @@ namespace UI
             active = false;
             timer = 0;
             hud = FindObjectOfType<HUD>();
-            hud.Car = vehicle.GetComponent<Rigidbody>();
+            //hud.Car = vehicle.GetComponent<Rigidbody>();
         }
 
         // Update is called once per frame
@@ -49,12 +50,12 @@ namespace UI
             if (active)
             {
                 Cursor.visible = true;
-                vehicle.getDriver().setAcceptInput(false);
+                //svehicle.getDriver().setAcceptInput(false);
             }
             else
             {
                 Cursor.visible = false;
-                vehicle.getDriver().setAcceptInput(true);
+                // vehicle.getDriver().setAcceptInput(true);
             }
 
             if (Input.GetKey(KeyCode.Escape) && ClientConfig.GameMode != GameMode.AdminMode && !IsServerMode)
@@ -62,14 +63,14 @@ namespace UI
                 if (!active && timer > 30)
                 {
                     escmenu.SetActive(true);
-                    vehicle.getDriver().setAcceptInput(false);
+                    // vehicle.getDriver().setAcceptInput(false);
                     active = true;
                     timer = 0;
                 }
                 else if (timer > 30)
                 {
                     escmenu.SetActive(false);
-                    vehicle.getDriver().setAcceptInput(true);
+                    // vehicle.getDriver().setAcceptInput(true);
                     if (ClientConfig.GameMode != GameMode.AdminMode)
                     {
                         Cursor.visible = false;
@@ -95,7 +96,7 @@ namespace UI
 
         }
         
-        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
+        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers)
         {
             // Display countdown on the hud that is preRoundLength seconds long
             //countdown = preRoundLength;
@@ -114,7 +115,7 @@ namespace UI
             }
         }
 
-        public void OnRoundStart(ushort roundNumber)
+        public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive)
         {
             // Display message on HUD to say that round is in progress
             hud.eventtext.text = "Round " + roundnum + " has begun!";

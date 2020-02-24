@@ -270,12 +270,12 @@ namespace Network
 
         public void Handle(ServerPreRoundStartEvent ev, NetworkConnection conn)
         {
-            PreRoundStartEvent?.Invoke(ev.RoundNumber, ev.PreRoundLength, ev.RoundLength, ev.PlayerCount, ev.Spaces);
+            PreRoundStartEvent?.Invoke(ev.RoundNumber, ev.PreRoundLength, ev.RoundLength, ev.PlayerCount);
         }
 
         public void Handle(ServerRoundStartEvent ev, NetworkConnection conn)
         {
-            RoundStartEvent?.Invoke(ev.RoundNumber);
+            RoundStartEvent?.Invoke(ev.RoundNumber, ev.Spaces);
         }
 
         public void Handle(ServerRoundEndEvent ev, NetworkConnection conn)
@@ -285,7 +285,13 @@ namespace Network
 
         public void Handle(ServerEliminatePlayersEvent ev, NetworkConnection conn)
         {
+            
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
+
+            if (ev.Players.Contains(world.ClientID))
+            {
+                Shutdown();
+            }
         }
         
         public void Handle(ServerGameEndEvent ev, NetworkConnection conn)

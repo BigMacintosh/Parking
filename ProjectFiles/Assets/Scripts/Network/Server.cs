@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Game;
 using Network.Events;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using Event = Network.Events.Event;
 using NetworkConnection = Unity.Networking.Transport.NetworkConnection; 
@@ -325,17 +323,17 @@ namespace Network
             sendToAll(keepAlive);
         }
 
-        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
+        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers)
         {
             if (world.GetNumPlayers() == 0) return;
-            var preRoundStart = new ServerPreRoundStartEvent(roundNumber, preRoundLength, roundLength, nPlayers, spacesActive);
+            var preRoundStart = new ServerPreRoundStartEvent(roundNumber, preRoundLength, roundLength, nPlayers);
             sendToAll(preRoundStart);
         }
 
-        public void OnRoundStart(ushort roundNumber)
+        public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive)
         {
             if (world.GetNumPlayers() == 0) return;
-            var roundStart = new ServerRoundStartEvent(roundNumber);
+            var roundStart = new ServerRoundStartEvent(roundNumber, spacesActive);
             sendToAll(roundStart);
         }
 
@@ -351,6 +349,13 @@ namespace Network
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             sendToAll(eliminatePlayers);
+            
+            // // Drop connection to all players who are eliminated
+            // foreach (var playerID in players)
+            // {
+            //     dropConnection(playerID);
+            // }
+            
         }
 
         public void OnGameEnd()

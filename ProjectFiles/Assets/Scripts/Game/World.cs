@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gameplay;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,7 +13,6 @@ namespace Game
     {
         private readonly GameObject carPrefab;
         private readonly Dictionary<int, GameObject> cars;
-        private ParkingSpaceManager parkingSpaceManager;
         private PlayerSpawner spawner;
         public Dictionary<int, GameObject> Players => cars;
         public int ClientID { get; set; }
@@ -22,7 +22,6 @@ namespace Game
             carPrefab = Resources.Load<GameObject>("Car");
             cars = new Dictionary<int, GameObject>();
             ClientID = -1;
-            this.parkingSpaceManager = parkingSpaceManager;
             spawner = new PlayerSpawner(parkingSpaceManager);
         }
         
@@ -71,6 +70,11 @@ namespace Game
         public ushort GetNumPlayers()
         {
             return (ushort) cars.Count;
+        }
+
+        public List<int> GetPlayers()
+        {
+            return cars.Keys.ToList();
         }
         
         // TODO: Do we really want all this stuff below...?
