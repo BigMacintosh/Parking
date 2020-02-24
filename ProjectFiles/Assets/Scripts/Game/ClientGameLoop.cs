@@ -87,7 +87,7 @@ namespace Game
 
             uiController.getHUD().playernum = world.Players.Count;
             uiController.getHUD().NetworkIP = client.getServerIP();
-            uiController.getHUD().exitbutton.onClick.AddListener(Shutdown);
+            uiController.getHUD().exitButton.onClick.AddListener(Shutdown);
             client.GameStartEvent += uiController.OnGameStart;
             client.PreRoundStartEvent += uiController.OnPreRoundStart;
             client.RoundStartEvent += uiController.OnRoundStart;

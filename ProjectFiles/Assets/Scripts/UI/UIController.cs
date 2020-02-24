@@ -95,7 +95,7 @@ namespace UI
             {
                 Invoke(hud.eventtext.text = "Round " + roundNumber + " starting in " + i + " seconds", (preRoundLength - i));
             }*/
-            hud.eventtext.text = "Round " + roundNumber + " starting in " + 10 + " seconds";
+            hud.eventText.text = "Round " + roundNumber + " starting in " + 10 + " seconds";
             preroundtimer = preRoundLength;
             roundduration = roundLength;
             for (int i=preRoundLength; i>0; i--)
@@ -107,7 +107,7 @@ namespace UI
         public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive)
         {
             // Display message on HUD to say that round is in progress
-            hud.eventtext.text = "Round " + roundnum + " has begun!";
+            hud.eventText.text = "Round " + roundnum + " has begun!";
             Invoke("clearEventText", 2);
             for (int i = roundduration; i > 0; i--)
             {
@@ -117,14 +117,14 @@ namespace UI
                     Invoke("countDownRoundEnd", 10 - i);
                 }
             }
-            hud.roundtext.text = "Round " + roundNumber;
+            hud.roundText.text = "Round " + roundNumber;
         }
 
         public void OnRoundEnd(ushort roundNumber)
         {
             // Display message on HUD to say that round has ended
             //roundnum = roundNumber;
-            hud.eventtext.text = "Round " + roundnum + " has ended!";
+            hud.eventText.text = "Round " + roundnum + " has ended!";
             //endroundflag = true;
         }
 
@@ -132,23 +132,23 @@ namespace UI
         {
             // Update the player count on the hud
             hud.playernum = nPlayers;
-            hud.playercounttext.text = nPlayers + " players remaining";
+            hud.playerCountText.text = nPlayers + " players remaining";
         }
 
         public void countDownRoundStart()
         {
-            hud.eventtext.text = "Round " + roundnum + " starting in " + preroundtimer + " seconds";
+            hud.eventText.text = "Round " + roundnum + " starting in " + preroundtimer + " seconds";
             preroundtimer -= 1;
         }
 
         public void countDownRoundEnd()
         {
-            hud.eventtext.text = "Round " + roundnum + " ending in " + roundduration + " seconds";
+            hud.eventText.text = "Round " + roundnum + " ending in " + roundduration + " seconds";
         }
 
         public void clearEventText()
         {
-            hud.eventtext.text = "";
+            hud.eventText.text = "";
         }
         
         public HUD getHUD()

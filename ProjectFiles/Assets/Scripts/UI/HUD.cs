@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 
@@ -9,10 +10,10 @@ namespace UI
     {
         [SerializeField] private Text velocityText;
         [SerializeField] private Text debugText;
-        [SerializeField] public Button exitbutton;
-        [SerializeField] public Text eventtext;
-        [SerializeField] public Text roundtext;
-        [SerializeField] public Text playercounttext;
+        [SerializeField] public Button exitButton;
+        [SerializeField] public Text eventText;
+        [SerializeField] public Text roundText;
+        [SerializeField] public Text playerCountText;
         private float v;
         private String ip;
 
