@@ -10,31 +10,54 @@ namespace UI
     {
         [SerializeField] private Text velocityText;
         [SerializeField] private Text debugText;
-        [SerializeField] public Button exitButton;
-        [SerializeField] public Text eventText;
-        [SerializeField] public Text roundText;
-        [SerializeField] public Text playerCountText;
-        private float v;
-        private String ip;
+        [FormerlySerializedAs("exitbutton")] [SerializeField] public Button exitButton;
+        [FormerlySerializedAs("eventtext")] [SerializeField] public Text eventText;
+        [FormerlySerializedAs("roundtext")] [SerializeField] public Text roundText;
+        [FormerlySerializedAs("playercounttext")] [SerializeField] public Text playerCountText;
 
-        public Rigidbody Car { private get; set; }
-        public String NetworkIP { private get; set; }
-        public int playernum { private get; set; }
 
-        // Update is called once per frame
-        private void Update()
+        private float _velocity;
+        public float Velocity
         {
-            if (!(Car is null))
+            get => _velocity;
+            set
             {
-                v = (float)Math.Round(Car.velocity.magnitude * 3.6f, 0);
-                velocityText.text = "Speed: " + v + " km/h";
-                
+                _velocity = value;
+                UpdateVelocityText();
             }
-            if (!(NetworkIP is null))
+        }
+
+        private String _networkIP;
+        public string NetworkIP
+        {
+            get => _networkIP;
+            set
             {
-                ip = NetworkIP;
-                debugText.text = "Connected to " + ip + "\nNumber of players: "  + playernum;
+                _networkIP = value;
+                UpdateDebugText();
             }
+        }
+
+        private int _numberOfPlayers;
+
+        public int NumberOfPlayers
+        {
+            get => _numberOfPlayers;
+            set
+            {
+                _numberOfPlayers = value;
+                UpdateDebugText();
+            }
+        }
+        
+        private void UpdateVelocityText()
+        {
+            velocityText.text = "Speed: " + _velocity + " km/h";
+        }
+
+        private void UpdateDebugText()
+        {
+            debugText.text = "Connected to " + _networkIP + "\nNumber of players: "  + NumberOfPlayers;
         }
     }
 }

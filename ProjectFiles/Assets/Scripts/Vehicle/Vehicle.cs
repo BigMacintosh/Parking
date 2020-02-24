@@ -35,7 +35,7 @@ namespace Vehicle
 
             //Link with UIController
             uicontroller = FindObjectOfType<UIController>();
-            uicontroller.vehicle = this;
+            uicontroller.Vehicle = this;
         }
 
         public VehicleDriver getDriver()

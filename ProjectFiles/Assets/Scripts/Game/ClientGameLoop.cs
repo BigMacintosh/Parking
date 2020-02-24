@@ -85,7 +85,7 @@ namespace Game
             // Start the client connection
             var success = client.Start();
 
-            uiController.getHUD().playernum = world.Players.Count;
+            uiController.getHUD().NumberOfPlayers = world.Players.Count;
             uiController.getHUD().NetworkIP = client.getServerIP();
             uiController.getHUD().exitButton.onClick.AddListener(Shutdown);
             client.GameStartEvent += uiController.OnGameStart;

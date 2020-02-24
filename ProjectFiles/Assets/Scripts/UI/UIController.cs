@@ -22,8 +22,19 @@ namespace UI
         private int roundnum;
         private int roundduration;
 
-        public Vehicle.Vehicle vehicle { get; set; }
+        private Vehicle.Vehicle _vehicle;
 
+        public Vehicle.Vehicle Vehicle
+        {
+            get => _vehicle;
+            set
+            {
+                _vehicle = value;
+                _car = _vehicle.GetComponent<Rigidbody>();
+            }
+        }
+        private Rigidbody _car;
+        
         private bool preroundflag = false;
         private bool inroundflag = false;
         private bool endroundflag = false;
@@ -49,26 +60,33 @@ namespace UI
 
             if (Input.GetKey(KeyCode.Escape) && ClientConfig.GameMode != GameMode.AdminMode && !IsServerMode)
             {
-                if (!active && timer > 30)
-                {
-                    escmenu.SetActive(true);
-                    // vehicle.getDriver().setAcceptInput(false);
-                    active = true;
-                    timer = 0;
-                }
-                else if (timer > 30)
-                {
-                    escmenu.SetActive(false);
-                    // vehicle.getDriver().setAcceptInput(true);
-                    if (ClientConfig.GameMode != GameMode.AdminMode)
-                    {
-                        Cursor.visible = false;
-                    }
-                    active = false;
-                    timer = 0;
-                }
+                active = !active;
+                escmenu.SetActive(active);
+                
+//                if (!active && timer > 30)
+//                {
+//                    escmenu.SetActive(true);
+//                    // vehicle.getDriver().setAcceptInput(false);
+//                    active = true;
+//                    timer = 0;
+//                }
+//                else if (timer > 30)
+//                {
+//                    escmenu.SetActive(false);
+//                    // vehicle.getDriver().setAcceptInput(true);
+//                    if (ClientConfig.GameMode != GameMode.AdminMode)
+//                    {
+//                        Cursor.visible = false;
+//                    }
+//                    active = false;
+//                    timer = 0;
+//                }
             }
             
+            if (!(_car is null))
+            {
+                hud.Velocity = _car.velocity.magnitude * 3.6f;
+            }
         }
 
         public void SubscribeTriggerGameStartEvent(TriggerGameStartDelegate handler)
@@ -131,7 +149,7 @@ namespace UI
         public void OnPlayerCountChange(ushort nPlayers)
         {
             // Update the player count on the hud
-            hud.playernum = nPlayers;
+            hud.NumberOfPlayers = nPlayers;
             hud.playerCountText.text = nPlayers + " players remaining";
         }
 
