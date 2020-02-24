@@ -1,47 +1,22 @@
 using System.Collections.Generic;
 using Network;
 using UnityEngine;
+using Utils;
+
 
 namespace Game
 {
-    static class RoundTimings
+    static class DefaultRoundProperties
     {
         // All times in seconds
+        public const ushort FreeroamLength = 10;
         public const ushort PreRoundLength = 10;
-        public const ushort RoundLength = 45;
+        public const ushort RoundLength = 5;
+        public const ushort MaxRounds = 5;
     }
 
-    public delegate void TimerOverDelegate();
-
-
-    public class Timer
-    {
-        public event TimerOverDelegate Elapsed;
-        private float timeLeft;
-        private bool started;
-
-        public Timer(float length)
-        {
-            timeLeft = length;
-        }
-
-        public void Update()
-        {
-            timeLeft -= Time.deltaTime;
-            if (timeLeft < 0 & started)
-            {
-                started = false;
-                Elapsed?.Invoke();
-            }
-        }
-
-        public void Start()
-        {
-            started = true;
-        }
-    }
-
-
+    
+    
     public class RoundManager
     {
         public bool GameInProgress { get; private set; }
@@ -50,28 +25,30 @@ namespace Game
 
         // Timer to countdown to the start of the round.
         private Timer roundTimer;
+        private ushort freeroamLength;
         private ushort preRoundLength;
         private ushort roundLength;
+        private ushort maxRounds;
 
+        // Spawn all the players that have connected. Allow free-roam for the players. Disallow new connections.
         public event GameStartDelegate GameStartEvent;
+
+        // Start a countdown until the beginning of a new round. Provides all the initial info for a round.
         public event PreRoundStartDelegate PreRoundStartEvent;
+
+        // Immediately start a round.
         public event RoundStartDelegate RoundStartEvent;
+
+        // Immediately end a around.
         public event RoundEndDelegate RoundEndEvent;
+        
         public event EliminatePlayersDelegate EliminatePlayersEvent;
+        
+        public event GameEndDelegate GameEndEvent;
 
         public RoundManager(World world)
         {
             this.world = world;
-        }
-
-        public void StartGame()
-        {
-            NotifyGameStart();
-            preRoundLength = RoundTimings.PreRoundLength;
-            roundLength = RoundTimings.RoundLength;
-
-            StartPreRound();
-            GameInProgress = true;
         }
 
         public void Update()
@@ -80,6 +57,27 @@ namespace Game
             {
                 roundTimer.Update();
             }
+        }
+
+        public void StartGame()
+        {
+            preRoundLength = DefaultRoundProperties.PreRoundLength;
+            roundLength = DefaultRoundProperties.RoundLength;
+            freeroamLength = DefaultRoundProperties.FreeroamLength;
+            maxRounds = DefaultRoundProperties.MaxRounds;
+            NotifyGameStart(freeroamLength);
+            StartFreeroam();
+            GameInProgress = true;
+        }
+
+        public void StartFreeroam()
+        {
+            // Start timer to for PreRoundCountdown 
+            roundTimer = new Timer(freeroamLength);
+
+            // Add StartRoundEvent to timer observers.
+            roundTimer.Elapsed += StartPreRound;
+            roundTimer.Start();
         }
 
         public void StartPreRound()
@@ -109,13 +107,22 @@ namespace Game
         private void EndRoundEvent()
         {
             NotifyRoundEnd();
-            List<ushort> eliminatedPlayers = world.GetPlayersNotInSpace();
-            NotifyEliminatePlayers(eliminatedPlayers);
+//            List<ushort> eliminatedPlayers = world.GetPlayersNotInSpace();
+//            NotifyEliminatePlayers(eliminatedPlayers);
+            roundNumber++;
+            if (roundNumber < maxRounds)
+            {
+                StartPreRound();
+            }
+            else
+            {
+                GameEndEvent?.Invoke();
+            }
         }
 
-        private void NotifyGameStart()
+        private void NotifyGameStart(ushort freeRoamLength)
         {
-            GameStartEvent?.Invoke(world.GetNumPlayers());
+            GameStartEvent?.Invoke(freeRoamLength, world.GetNumPlayers());
         }
 
         private void NotifyPreRoundStart(List<ushort> spacesActive)
@@ -133,7 +140,7 @@ namespace Game
             RoundEndEvent?.Invoke(roundNumber);
         }
 
-        private void NotifyEliminatePlayers(List<ushort> eliminatedPlayers)
+        private void NotifyEliminatePlayers(List<int> eliminatedPlayers)
         {
             EliminatePlayersEvent?.Invoke(roundNumber, eliminatedPlayers);
         }

@@ -1,35 +1,37 @@
-using Game;
-using Unity.Networking.Transport;
-using UnityEngine;
+﻿using Unity.Networking.Transport;
 
 namespace Network.Events
 {
-    public class ServerHandshakeEvent : Event
+    public class ServerSpaceClaimedEvent : Event
     {
+        public ushort SpaceID { get; private set; }
         public int PlayerID { get; private set; }
 
-        public ServerHandshakeEvent()
+        public ServerSpaceClaimedEvent()
         {
-            ID = EventType.ServerHandshake;
-            Length = sizeof(int) + sizeof(byte);
+            ID = EventType.ClientSpaceExitEvent;    
+            Length = sizeof(byte) + sizeof(int) + sizeof(ushort);
         }
 
-        public ServerHandshakeEvent(int playerID) : this()
+        public ServerSpaceClaimedEvent(int playerID, ushort spaceID) : this()
         {
             PlayerID = playerID;
+            SpaceID = spaceID;
         }
 
         public override void Serialise(DataStreamWriter writer)
         {
             base.Serialise(writer);
             writer.Write(PlayerID);
+            writer.Write(SpaceID);
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
             PlayerID = reader.ReadInt(ref context);
+            SpaceID = reader.ReadUShort(ref context);
         }
-        
+
         public override void Handle(Server server, NetworkConnection connection)
         {
             server.Handle(this, connection);
