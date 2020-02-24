@@ -8,25 +8,28 @@ namespace Gameplay
 {
     public class ParkingSpaceManager
     {
-        protected Dictionary<ushort, ParkingSpace> parkingSpaces;
-
+        protected Dictionary<ushort, ParkingSpace> parkingSpacesBySpaceID;
+        protected Dictionary<int, ParkingSpace> parkingSpacesByPlayerID;
         public ParkingSpaceManager()
         {
-            parkingSpaces = new Dictionary<ushort, ParkingSpace>();
+            parkingSpacesBySpaceID = new Dictionary<ushort, ParkingSpace>();
+            parkingSpacesByPlayerID = new Dictionary<int, ParkingSpace>();
+
             var parkingSpaceList = Object.FindObjectsOfType<ParkingSpace>();
             foreach (var parkingSpace in parkingSpaceList)
             {
-                parkingSpaces.Add(parkingSpace.SpaceID, parkingSpace);
+                parkingSpacesBySpaceID.Add(parkingSpace.SpaceID, parkingSpace);
                 Debug.Log($"Space Added, SpaceID: {parkingSpace.SpaceID}.");
             }
         }
         
         private void DisableAllSpaces()
         {
-            foreach (var space in parkingSpaces.Values)
+            foreach (var space in parkingSpacesBySpaceID.Values)
             {
                 space.Disable();
             }
+            parkingSpacesByPlayerID.Clear();
         }
         // OnPreRoundStart: Disable all spaces and only enable the new spaces.
         public void EnableSpaces(List<ushort> spaces)
@@ -34,8 +37,33 @@ namespace Gameplay
             DisableAllSpaces();
             foreach (var space in spaces) 
             {
-                parkingSpaces[space].Enable();
+                parkingSpacesBySpaceID[space].Enable();
             }
+        }
+        
+        public void OnSpaceClaimed(int playerID, ushort spaceID)
+        {
+            var parkingSpace = parkingSpacesBySpaceID[spaceID];
+            if (parkingSpace.Occupied())
+            {
+                Debug.Log(playerID + " stole a space from " + parkingSpace.OccupiedBy);
+            }
+            else
+            {
+                Debug.Log(playerID + " claimed an empty space " + parkingSpace.SpaceID);
+            }
+
+            // If a player already claimed a space in this round, make sure they lose it.
+            
+            if (parkingSpacesByPlayerID.ContainsKey(playerID))
+            {
+                var previousSpace = parkingSpacesByPlayerID[playerID];
+                Debug.Log(playerID + " lost their previous space " + previousSpace.SpaceID);
+                parkingSpacesByPlayerID[playerID].SetEmpty();
+            }
+
+            parkingSpacesByPlayerID[playerID] = parkingSpace;
+            parkingSpace.SetOccupied(playerID);
         }
 
         public List<Transform> GetSpaceTransforms()
@@ -53,7 +81,7 @@ namespace Gameplay
     {
         public void SubscribeSpaceEnter(SpaceEnterDelegate f)
         {
-            foreach (var p in parkingSpaces)
+            foreach (var p in parkingSpacesBySpaceID)
             {
                 p.Value.SpaceEnterEvent += f;
             }
@@ -61,25 +89,10 @@ namespace Gameplay
 
         public void SubscribeSpaceExit(SpaceExitDelegate f)
         {
-            foreach (var p in parkingSpaces)
+            foreach (var p in parkingSpacesBySpaceID)
             {
                 p.Value.SpaceExitEvent += f;
             }
-        }
-
-        public void OnSpaceClaimed(int playerID, ushort spaceID)
-        {
-            var parkingSpace = parkingSpaces[spaceID];
-            if (parkingSpace.Occupied())
-            {
-                Debug.Log(playerID + " Stole a space from " + parkingSpace.OccupiedBy);
-            }
-            else
-            {
-                Debug.Log(playerID + " CLAIMED AN EMPTY SPACE" + spaceID);
-            }
-
-            parkingSpace.SetOccupied(playerID);
         }
     }
 
@@ -94,7 +107,7 @@ namespace Gameplay
 
 
             // Start a timer for a space if space does not belong to the player
-            var parkingSpace = parkingSpaces[spaceID];
+            var parkingSpace = parkingSpacesBySpaceID[spaceID];
             
             if (!parkingSpace.Enabled)
             {
@@ -137,7 +150,7 @@ namespace Gameplay
 
         public void OnSpaceExit(int playerID, ushort spaceID)
         {
-            var parkingSpace = parkingSpaces[spaceID];
+            var parkingSpace = parkingSpacesBySpaceID[spaceID];
 
             // Cancel a timer for a space
             if (parkingSpace.Timer.Set)
@@ -158,13 +171,13 @@ namespace Gameplay
         {
             Debug.Log("Timer has elapsed");
             // Space timer has elapsed.
-            parkingSpaces[spaceID].OccupiedBy = playerID;
+            OnSpaceClaimed(playerID, spaceID);
             SpaceClaimedEvent?.Invoke(playerID, spaceID);
         }
 
         public List<ushort> GetNearestSpaces(Vector2 position, int amount)
         {
-            List<ushort> spaces = parkingSpaces.Values.OrderBy(space => {
+            List<ushort> spaces = parkingSpacesBySpaceID.Values.OrderBy(space => {
                     var spacePos = space.transform.position;
 
                     return new Vector2(spacePos.x - position.x, spacePos.z - position.y).magnitude;
