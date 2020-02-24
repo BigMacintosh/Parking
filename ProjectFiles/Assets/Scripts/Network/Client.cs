@@ -17,19 +17,22 @@ namespace Network
 
     public interface IClient
     {
-        bool Start(string ip = "127.0.0.1", ushort port = 25565);
+        bool Start(ushort port = 25565);
         void Shutdown();
         void SendLocationUpdate();
         void HandleNetworkEvents();
+        String getServerIP();
         event GameStartDelegate GameStartEvent;
         event PreRoundStartDelegate PreRoundStartEvent;
         event RoundStartDelegate RoundStartEvent;
         event RoundEndDelegate RoundEndEvent;
         event SpaceClaimedDelegate SpaceClaimedEvent;
         event EliminatePlayersDelegate EliminatePlayersEvent;
+        event PlayerCountChangeDelegate PlayerCountChangeEvent;
         event GameEndDelegate GameEndEvent;
         void OnSpaceEnter(int playerID, ushort spaceID);
         void OnSpaceExit(int playerID, ushort spaceID);
+        void OnTriggerGameStart();
     }
 
     public class Client : IClient
@@ -50,6 +53,7 @@ namespace Network
         public event RoundStartDelegate RoundStartEvent;
         public event RoundEndDelegate RoundEndEvent;
         public event EliminatePlayersDelegate EliminatePlayersEvent;
+        public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         public event GameEndDelegate GameEndEvent;
         public event SpaceClaimedDelegate SpaceClaimedEvent;
         
@@ -67,9 +71,9 @@ namespace Network
             return new DummyClient(world);
         }
 
-        public bool Start(string ip = "127.0.0.1", ushort port = 25565)
+        public bool Start(ushort port = 25565)
         {
-            serverIP = ip;
+            serverIP = ClientConfig.ServerIP;
             serverPort = port;
             
             Debug.Log($"Client: Connecting to {serverIP}:{serverPort}...");
@@ -98,7 +102,10 @@ namespace Network
         
         public void SendLocationUpdate()
         {
+            // Don't send location if not in game
             if (!inGame) return;
+            // Don't send location if you are admin client
+            if (ClientConfig.GameMode == GameMode.AdminMode) return;
             var locationUpdate = new ClientLocationUpdateEvent(world);
             sendEventToServer(locationUpdate);
         }
@@ -126,7 +133,7 @@ namespace Network
                     case NetworkEvent.Type.Connect:
                     {
                         Debug.Log($"Client: Successfully connected to {serverIP}:{serverPort}.");
-                        var handshake = new ClientHandshakeEvent();
+                        var handshake = new ClientHandshakeEvent(ClientConfig.GameMode);
                         sendEventToServer(handshake);
                         break;
                     }
@@ -214,7 +221,11 @@ namespace Network
             ev.Handle(this, connection);
         }
         
-        
+        public String getServerIP()
+        {
+            return serverIP;
+        }
+
         // Handle Event methods
         public void Handle(Event ev, NetworkConnection conn) {
             throw new ArgumentException("Client received an event that it cannot handle");
@@ -225,6 +236,8 @@ namespace Network
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
             var playerID = ev.PlayerID;
             world.ClientID = playerID;
+            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
+
             Debug.Log($"Client: My playerID is {playerID}");
         }
         
@@ -233,8 +246,11 @@ namespace Network
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
 
             ev.SpawnPlayers(world);
-            
-            world.SetPlayerControllable(world.ClientID);
+
+            if (ClientConfig.GameMode == GameMode.PlayerMode)
+            {
+                world.SetPlayerControllable(world.ClientID);
+            }
 
             inGame = true;
             GameStartEvent?.Invoke(ev.FreeRoamLength, (ushort) ev.Length);
@@ -248,17 +264,18 @@ namespace Network
         public void Handle(ServerDisconnectEvent ev, NetworkConnection conn)
         {
             if (inGame) world.DestroyPlayer(ev.PlayerID);
+            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
             Debug.Log($"Client: Destroyed player { ev.PlayerID } due to disconnect.");
         }
 
         public void Handle(ServerPreRoundStartEvent ev, NetworkConnection conn)
         {
-            PreRoundStartEvent?.Invoke(ev.RoundNumber, ev.PreRoundLength, ev.RoundLength, ev.PlayerCount, ev.Spaces);
+            PreRoundStartEvent?.Invoke(ev.RoundNumber, ev.PreRoundLength, ev.RoundLength, ev.PlayerCount);
         }
 
         public void Handle(ServerRoundStartEvent ev, NetworkConnection conn)
         {
-            RoundStartEvent?.Invoke(ev.RoundNumber);
+            RoundStartEvent?.Invoke(ev.RoundNumber, ev.Spaces);
         }
 
         public void Handle(ServerRoundEndEvent ev, NetworkConnection conn)
@@ -268,7 +285,13 @@ namespace Network
 
         public void Handle(ServerEliminatePlayersEvent ev, NetworkConnection conn)
         {
+            
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
+
+            if (ev.Players.Contains(world.ClientID))
+            {
+                Shutdown();
+            }
         }
         
         public void Handle(ServerGameEndEvent ev, NetworkConnection conn)
@@ -301,6 +324,12 @@ namespace Network
             ClientSpaceExitEvent ev = new ClientSpaceExitEvent(spaceID);
             sendEventToServer(ev);
             Debug.Log($"Someone exited the space #{spaceID}");
+        }
+
+        public void OnTriggerGameStart()
+        {
+            AdminClientStartGameEvent ev = new AdminClientStartGameEvent();
+            sendEventToServer(ev);
         }
         
     }

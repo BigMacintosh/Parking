@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Game;
 using Network.Events;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using Event = Network.Events.Event;
 using NetworkConnection = Unity.Networking.Transport.NetworkConnection; 
@@ -18,9 +16,11 @@ namespace Network
     {
         public event SpaceEnterDelegate SpaceEnterEvent;
         public event SpaceExitDelegate SpaceExitEvent;
+        public event TriggerGameStartDelegate TriggerGameStartEvent;
         
         private bool acceptingNewPlayers;
         private List<int> playersToSpawn;
+        private int adminClient = -1;
         
         private UdpCNetworkDriver driver;
         private NativeList<NetworkConnection> connections;
@@ -65,6 +65,11 @@ namespace Network
         
         public void Shutdown()
         {
+            foreach (var connection in connections)
+            {
+                connection.Disconnect(driver);
+            }
+
             driver.Dispose();
             connections.Dispose();
         }
@@ -138,12 +143,18 @@ namespace Network
                         case NetworkEvent.Type.Disconnect:
                             var playerID = connections[i].InternalId;
                             // Remove this player from the world if they are spawned.
-                            if (!acceptingNewPlayers) world.DestroyPlayer(playerID);
-                    
-                            // Notify users of disconnect
-                            var disconnectEvent = new ServerDisconnectEvent((ushort) playerID);
-                            sendToAll(disconnectEvent);
-                    
+                            if (playerID != adminClient)
+                            {
+                                if (!acceptingNewPlayers) world.DestroyPlayer(playerID);
+                                
+                                // Notify users of disconnect
+                                var disconnectEvent = new ServerDisconnectEvent((ushort) playerID);
+                                sendToAll(disconnectEvent);
+                            }
+                            
+                            // Remove the admin client
+                            if (playerID == adminClient) adminClient = -1;
+
                             // Destroy the actual network connection
                             Debug.Log($"Server: Destroyed player { playerID } due to disconnect.");
                             connections[i] = default(NetworkConnection);
@@ -180,6 +191,11 @@ namespace Network
                     ev = new ClientSpaceExitEvent();
                     break;
                 }
+                case EventType.AdminClientStartGameEvent:
+                {
+                    ev = new AdminClientStartGameEvent();
+                    break;
+                }
                 default:
                 {
                     Debug.Log($"Server: Received unexpected event { eventType }.");
@@ -199,14 +215,42 @@ namespace Network
         public void Handle(ClientHandshakeEvent ev, NetworkConnection srcConnection)
         {
             var playerID = srcConnection.InternalId;
-            Debug.Log($"Server: Received handshake from { playerID }.");
-            playersToSpawn.Add(playerID);
-            var handshakeResponse = new ServerHandshakeEvent(playerID);
-            using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
+            if (ev.GameMode == GameMode.PlayerMode)
             {
-                handshakeResponse.Serialise(writer);
-                driver.Send(pipeline, srcConnection, writer);
+                Debug.Log($"Server: Received handshake from { playerID }.");
+                playersToSpawn.Add(playerID);
+                var handshakeResponse = new ServerHandshakeEvent(playerID);
+                using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
+                {
+                    handshakeResponse.Serialise(writer);
+                    driver.Send(pipeline, srcConnection, writer);
+                }
+            } 
+            else if (ev.GameMode == GameMode.AdminMode)
+            {
+                Debug.Log($"Server: Admin Client attempting to connect with id {playerID}");
+                if (adminClient == -1)
+                {
+                    // Accept the new admin
+                    Debug.Log($"Server: Accepting new admin user {playerID}");
+                    adminClient = playerID;
+                    var handshakeResponse = new ServerHandshakeEvent(playerID);
+                    using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
+                    {
+                        handshakeResponse.Serialise(writer);
+                        driver.Send(pipeline, srcConnection, writer);
+                    }
+                }
+                else
+                {
+                    // Already have an admin client, drop connection.
+                    Debug.Log($"Server: Rejecting admin connection, already admin");
+                    srcConnection.Disconnect(driver);
+                }
+                
             }
+            
+            
         }
 
         public void Handle(ClientLocationUpdateEvent ev, NetworkConnection srcConnection)
@@ -223,6 +267,15 @@ namespace Network
         {
             SpaceExitEvent?.Invoke(srcConnection.InternalId, ev.SpaceID);
         }
+
+        public void Handle(AdminClientStartGameEvent ev, NetworkConnection srcConnection)
+        {
+            if (srcConnection.InternalId == adminClient)
+            {
+                TriggerGameStartEvent?.Invoke();
+            }
+        }
+        
         // Used to send a packet to all clients.
         private void sendToAll(Event ev)
         {
@@ -244,7 +297,6 @@ namespace Network
                 driver.Send(pipeline, connection, writer);
             }
         }
-        
 
         public void OnStartGame(ushort freeRoamLength, ushort nPlayers)
         {
@@ -259,52 +311,6 @@ namespace Network
             
             var spawnPlayersEvent = new ServerGameStart(world, freeRoamLength);
             sendToAll(spawnPlayersEvent);
-
-            // foreach (var playerID in playersToSpawn)
-            // {
-            //     var srcConnection = connections[playerID];
-            //
-            //     // TODO: This is bad code below... How does it even work?!? Fix it
-            //     // One packet per player with each players spawn location.
-            //     // Handshake should be in response to ClientHandshake.
-            //     // Handshake shouldn't be used to spawn players when the game starts.
-            //     // Need one GameStart packet which contains the players spawn locations.
-            //
-            //     // Get spawn location
-            //     var transform = world.GetPlayerTransform(playerID);
-            //     var handshakeResponse = new ServerHandshakeEvent(transform, playerID, freeRoamLength);
-            //     using (var writer = new DataStreamWriter(handshakeResponse.Length, Allocator.Temp))
-            //     {
-            //         handshakeResponse.Serialise(writer);
-            //         // respond to the handshake
-            //         driver.Send(pipeline, srcConnection, writer);
-            //     }
-            //
-            //     // tell other clients this client has spawned
-            //     var spawnNewPlayer = new ServerSpawnPlayerEvent(transform, playerID);
-            //     using (var writer = new DataStreamWriter(spawnNewPlayer.Length, Allocator.Temp))
-            //     {
-            //         spawnNewPlayer.Serialise(writer);
-            //         foreach (var otherClient in connections)
-            //         {
-            //             if (otherClient.InternalId == playerID) continue;
-            //             driver.Send(pipeline, otherClient, writer);
-            //         }
-            //     }
-            //
-            //     // tell new player about the existing players
-            //     foreach (var otherPlayer in world.PlayerIDs.Where(otherPlayer => otherPlayer != playerID))
-            //     {
-            //         var otherTransform = world.GetPlayerTransform(otherPlayer);
-            //         var spawnOtherPlayer = new ServerSpawnPlayerEvent(otherTransform, otherPlayer);
-            //         using (var writer = new DataStreamWriter(spawnOtherPlayer.Length, Allocator.Temp))
-            //         {
-            //             spawnOtherPlayer.Serialise(writer);
-            //             driver.Send(pipeline, srcConnection, writer);
-            //         }
-            //     }
-            // }
-
             playersToSpawn.Clear();
         }
  
@@ -317,17 +323,17 @@ namespace Network
             sendToAll(keepAlive);
         }
 
-        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
+        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers)
         {
             if (world.GetNumPlayers() == 0) return;
-            var preRoundStart = new ServerPreRoundStartEvent(roundNumber, preRoundLength, roundLength, nPlayers, spacesActive);
+            var preRoundStart = new ServerPreRoundStartEvent(roundNumber, preRoundLength, roundLength, nPlayers);
             sendToAll(preRoundStart);
         }
 
-        public void OnRoundStart(ushort roundNumber)
+        public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive)
         {
             if (world.GetNumPlayers() == 0) return;
-            var roundStart = new ServerRoundStartEvent(roundNumber);
+            var roundStart = new ServerRoundStartEvent(roundNumber, spacesActive);
             sendToAll(roundStart);
         }
 
@@ -343,6 +349,13 @@ namespace Network
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             sendToAll(eliminatePlayers);
+            
+            // // Drop connection to all players who are eliminated
+            // foreach (var playerID in players)
+            // {
+            //     dropConnection(playerID);
+            // }
+            
         }
 
         public void OnGameEnd()

@@ -338,6 +338,9 @@ PlayerSettings:
   - m_BuildTarget: MetroSupport
     m_APIs: 02000000
     m_Automatic: 1
+  - m_BuildTarget: WindowsStandaloneSupport
+    m_APIs: 02000000
+    m_Automatic: 1
   m_BuildTargetVRSettings:
   - m_BuildTarget: Standalone
     m_Enabled: 0

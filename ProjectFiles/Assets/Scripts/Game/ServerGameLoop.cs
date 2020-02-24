@@ -1,5 +1,6 @@
 ﻿using Gameplay;
 using Network;
+using UI;
 using UnityEngine;
 
 namespace Game
@@ -10,30 +11,42 @@ namespace Game
         private World world;
         private RoundManager roundManager;
         private ServerParkingSpaceManager parkingSpaceManager;
-
+        
+#if UNITY_EDITOR
+        private UIController uiController;
+#endif
         public bool Init(string[] args)
         {
             // Load default server config
             var config = ServerConfig.LoadConfigOrDefault("server-config.json");
-
+            
             // Initialise Gameplay components
             parkingSpaceManager = new ServerParkingSpaceManager();
             world = new World(parkingSpaceManager);
-            roundManager = new RoundManager(world);
-            
+            roundManager = new RoundManager(world, parkingSpaceManager);
 
             // Initialise network
             server = new Server(world, config);
-
+            
+#if UNITY_EDITOR
+            uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
+            uiController.IsServerMode = true;
+            uiController.SubscribeTriggerGameStartEvent(roundManager.StartGame);
+            roundManager.GameStartEvent += uiController.OnGameStart;
+#endif
+            
             // Subscribe to network events.
             // Client -> Server
             server.SpaceEnterEvent += parkingSpaceManager.OnSpaceEnter;
             server.SpaceExitEvent += parkingSpaceManager.OnSpaceExit;
+            server.TriggerGameStartEvent += roundManager.StartGame;
             
             // Server -> Client
             roundManager.GameStartEvent += server.OnStartGame;
             roundManager.RoundStartEvent += server.OnRoundStart;
             roundManager.PreRoundStartEvent += server.OnPreRoundStart;
+            roundManager.RoundStartEvent += (number, active) =>
+                parkingSpaceManager.EnableSpaces(active);
             roundManager.RoundEndEvent += server.OnRoundEnd;
             roundManager.EliminatePlayersEvent += server.OnEliminatePlayers;
             roundManager.GameEndEvent += server.OnGameEnd;
@@ -54,10 +67,6 @@ namespace Game
 
         public void Update()
         {
-            if(Input.GetKeyDown("a") && Input.GetKeyDown("b") && !roundManager.GameInProgress)
-            {
-                roundManager.StartGame();
-            }
             server.HandleNetworkEvents();
             world.Update();
             roundManager.Update();

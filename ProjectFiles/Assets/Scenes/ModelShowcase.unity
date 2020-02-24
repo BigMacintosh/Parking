@@ -11570,7 +11570,7 @@ PrefabInstance:
     - target: {fileID: 3657530969704683872, guid: c055a795f5369db49b6d50b5af6fad9e,
         type: 3}
       propertyPath: gameLoop
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3657530969704683873, guid: c055a795f5369db49b6d50b5af6fad9e,
         type: 3}
@@ -23441,7 +23441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44c07d85576ad4116ab7ccf23790c418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 8, z: -10}
+  offset: {x: 0, y: 4, z: -15}
   followSpeed: 10
   lookSpeed: 2
 --- !u!1001 &1611541907

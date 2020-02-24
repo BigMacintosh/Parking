@@ -38,8 +38,8 @@ public class ServerBuild
     public static void BuildClient()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.scenes = new[] { "Assets/Scenes/ModelShowcase.unity" };
-        
+        buildPlayerOptions.scenes = new[] {"Assets/Scenes/MainMenu.unity", "Assets/Scenes/ModelShowcase.unity"};
+
 
         const string buildFolder = "../builds/client/client";
         
