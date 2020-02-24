@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Game;
 using Network;
 using Vehicle;
 
@@ -38,7 +39,7 @@ namespace UI
             active = false;
             timer = 0;
             hud = FindObjectOfType<HUD>();
-            hud.Car = vehicle.GetComponent<Rigidbody>();
+            //hud.Car = vehicle.GetComponent<Rigidbody>();
         }
 
         // Update is called once per frame
@@ -49,7 +50,7 @@ namespace UI
             if (active)
             {
                 Cursor.visible = true;
-                vehicle.getDriver().setAcceptInput(false);
+                //svehicle.getDriver().setAcceptInput(false);
             }
             else
             {

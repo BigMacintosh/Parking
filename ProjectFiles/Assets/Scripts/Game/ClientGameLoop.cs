@@ -30,10 +30,10 @@ namespace Game
 
             // Create gameplay components
             
-            if (ClientConfig.GameMode == GameMode.PlayerMode)
-            {
+            //if (ClientConfig.GameMode == GameMode.PlayerMode)
+            //{
                 parkingSpaceManager = new ClientParkingSpaceManager();
-            }
+            //}
             world = new World(parkingSpaceManager);
 
             // Create UI Controller
