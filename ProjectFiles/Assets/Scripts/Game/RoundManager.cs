@@ -16,7 +16,6 @@ namespace Game
         public const ushort RoundLength = 15;
         public const ushort MaxRounds = 5;
     }
-
     
     
     public class RoundManager

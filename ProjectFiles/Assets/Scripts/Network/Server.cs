@@ -244,6 +244,11 @@ namespace Network
                 driver.Send(pipeline, connection, writer);
             }
         }
+
+        private void dropConnection(int playerID)
+        {
+            connections[playerID].Disconnect(driver);
+        }
         
 
         public void OnStartGame(ushort freeRoamLength, ushort nPlayers)
@@ -343,6 +348,13 @@ namespace Network
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             sendToAll(eliminatePlayers);
+            
+            // Drop connection to all players who are eliminated
+            foreach (var playerID in players)
+            {
+                dropConnection(playerID);
+            }
+            
         }
 
         public void OnGameEnd()
