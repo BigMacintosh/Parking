@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Gameplay;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 using Random = System.Random;
 
@@ -10,18 +12,20 @@ namespace Game
     {
         private readonly GameObject carPrefab;
         private readonly Dictionary<int, GameObject> cars;
+        private ParkingSpaceManager parkingSpaceManager;
+        private PlayerSpawner spawner;
         public Dictionary<int, GameObject> Players => cars;
         public int ClientID { get; set; }
 
-        public World()
+        public World(ParkingSpaceManager parkingSpaceManager)
         {
             carPrefab = Resources.Load<GameObject>("Car");
             cars = new Dictionary<int, GameObject>();
             ClientID = -1;
+            this.parkingSpaceManager = parkingSpaceManager;
+            spawner = new PlayerSpawner(parkingSpaceManager);
         }
-
         
-
         public void Update()
         {
             // Loop here and apply all network changes.
@@ -40,8 +44,8 @@ namespace Game
         // Server one
         public void SpawnPlayer(int playerID)
         {
-            var position = SpawnLocations.GetSpawn();
-            SpawnPlayer(playerID, position, Quaternion.identity);
+            var spawnPosition = spawner.GetSpawnPosition();
+            SpawnPlayer(playerID, spawnPosition.position, spawnPosition.rotation);
         }
 
         // Client one
@@ -50,6 +54,8 @@ namespace Game
             var newCar = Object.Instantiate(carPrefab, position, rotation);
             cars.Add(playerID, newCar);
         }
+        
+        
         
         public void SetPlayerControllable(int playerID)
         {
@@ -129,24 +135,4 @@ namespace Game
             return Locations[rand.Next(0, Locations.Count - 1)];
         }
     }
-    
-    // public class SpawnLocations
-    // {
-    //     private readonly List<Vector3> locations = new List<Vector3>();
-    //
-    //     public SpawnLocations()
-    //     {
-    //         locations.Add(new Vector3(41.5f, 39.7f, 94.671f));
-    //         locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
-    //         locations.Add(new Vector3(41.5f, 39.7f, 130.0f));
-    //     }
-    //
-    //     public Vector3 GetSpawn()
-    //     {
-    //         
-    //         
-    //         var rand = new Random();
-    //         return locations[rand.Next(0, locations.Count - 1)];
-    //     }
-    // }
 }
