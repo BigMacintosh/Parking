@@ -29,7 +29,7 @@ namespace Game
             }
 
             // Create gameplay components
-            world = new World();
+            world = new World(parkingSpaceManager);
             if (ClientConfig.GameMode == GameMode.PlayerMode)
             {
                 parkingSpaceManager = new ClientParkingSpaceManager();
