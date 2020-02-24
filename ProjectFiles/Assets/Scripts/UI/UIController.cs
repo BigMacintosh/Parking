@@ -95,7 +95,7 @@ namespace UI
 
         }
         
-        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
+        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers)
         {
             // Display countdown on the hud that is preRoundLength seconds long
             //countdown = preRoundLength;
@@ -114,7 +114,7 @@ namespace UI
             }
         }
 
-        public void OnRoundStart(ushort roundNumber)
+        public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive)
         {
             // Display message on HUD to say that round is in progress
             hud.eventtext.text = "Round " + roundnum + " has begun!";
