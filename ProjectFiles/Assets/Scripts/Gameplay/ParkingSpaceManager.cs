@@ -69,7 +69,7 @@ namespace Gameplay
         public List<Transform> GetSpaceTransforms()
         {
             List<Transform> transforms = new List<Transform>();
-            foreach (var space in parkingSpaces)
+            foreach (var space in parkingSpacesBySpaceID)
             {
                 transforms.Add(space.Value.transform);
             }
