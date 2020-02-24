@@ -63,14 +63,22 @@ namespace Game
             }
 
             // Server -> Client
-            client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
+            client.PreRoundStartEvent += (number, length, roundLength, players) =>
                 Debug.Log($"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
 
-            client.PreRoundStartEvent += (number, length, roundLength, players, active) =>
-                parkingSpaceManager.EnableSpaces(active);
             
-            client.RoundStartEvent += number => Debug.Log($"Round start event received rN:{number}");
-            client.RoundEndEvent += number => Debug.Log($"Round end event received rN:{number}");
+            client.RoundStartEvent += (number, active) =>
+            {
+                Debug.Log($"Round start event received rN:{number}");
+                parkingSpaceManager.EnableSpaces(active);
+            };
+            
+            client.RoundEndEvent += number =>
+            {
+                Debug.Log($"Round end event received rN:{number}");
+                parkingSpaceManager.DisableAllSpaces();
+            };
+            
             client.SpaceClaimedEvent += parkingSpaceManager.OnSpaceClaimed;
             
             // Start the client connection

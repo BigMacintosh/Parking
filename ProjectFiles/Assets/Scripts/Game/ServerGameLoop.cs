@@ -45,7 +45,7 @@ namespace Game
             roundManager.GameStartEvent += server.OnStartGame;
             roundManager.RoundStartEvent += server.OnRoundStart;
             roundManager.PreRoundStartEvent += server.OnPreRoundStart;
-            roundManager.PreRoundStartEvent += (number, length, roundLength, players, active) =>
+            roundManager.RoundStartEvent += (number, active) =>
                 parkingSpaceManager.EnableSpaces(active);
             roundManager.RoundEndEvent += server.OnRoundEnd;
             roundManager.EliminatePlayersEvent += server.OnEliminatePlayers;

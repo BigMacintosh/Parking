@@ -21,9 +21,11 @@ namespace Gameplay
                 parkingSpacesBySpaceID.Add(parkingSpace.SpaceID, parkingSpace);
                 Debug.Log($"Space Added, SpaceID: {parkingSpace.SpaceID}.");
             }
+            DisableAllSpaces();
         }
         
-        private void DisableAllSpaces()
+        // OnRoundEnd
+        public void DisableAllSpaces()
         {
             foreach (var space in parkingSpacesBySpaceID.Values)
             {
@@ -31,10 +33,10 @@ namespace Gameplay
             }
             parkingSpacesByPlayerID.Clear();
         }
-        // OnPreRoundStart: Disable all spaces and only enable the new spaces.
+        
+        // OnRoundStart
         public void EnableSpaces(List<ushort> spaces)
         {
-            DisableAllSpaces();
             foreach (var space in spaces) 
             {
                 parkingSpacesBySpaceID[space].Enable();

@@ -270,12 +270,12 @@ namespace Network
 
         public void Handle(ServerPreRoundStartEvent ev, NetworkConnection conn)
         {
-            PreRoundStartEvent?.Invoke(ev.RoundNumber, ev.PreRoundLength, ev.RoundLength, ev.PlayerCount, ev.Spaces);
+            PreRoundStartEvent?.Invoke(ev.RoundNumber, ev.PreRoundLength, ev.RoundLength, ev.PlayerCount);
         }
 
         public void Handle(ServerRoundStartEvent ev, NetworkConnection conn)
         {
-            RoundStartEvent?.Invoke(ev.RoundNumber);
+            RoundStartEvent?.Invoke(ev.RoundNumber, ev.Spaces);
         }
 
         public void Handle(ServerRoundEndEvent ev, NetworkConnection conn)
