@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5841944939872574284}
   - component: {fileID: 5841944939872574287}
   - component: {fileID: 5841944939872574283}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Space
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3af5355119024528c01a5be2d35b5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpaceID: 1
 --- !u!1 &5841944940103826900
 GameObject:
   m_ObjectHideFlags: 0
@@ -119,7 +118,7 @@ GameObject:
   - component: {fileID: 5841944940103826901}
   - component: {fileID: 5841944940103826896}
   - component: {fileID: 5841944940103826899}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Decal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
