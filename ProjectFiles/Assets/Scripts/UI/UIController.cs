@@ -62,7 +62,10 @@ namespace UI
                 else if (timer > 30)
                 {
                     escmenu.SetActive(false);
-                    Cursor.visible = false;
+                    if (ClientConfig.GameMode != GameMode.AdminMode)
+                    {
+                        Cursor.visible = false;
+                    }
                     active = false;
                     timer = 0;
                 }
