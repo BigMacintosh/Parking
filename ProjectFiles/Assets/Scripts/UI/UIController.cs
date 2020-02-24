@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Network;
+using Vehicle;
 
 
 namespace UI
@@ -11,14 +12,16 @@ namespace UI
         [SerializeField] private GameObject settingsmenu;
         [SerializeField] private AdminMenu adminMenu;
 
+        private VehicleDriver vehicledriver;
         private HUD hud;
         private int timer;
         private Rigidbody rb;
         private float v;
         private bool active;
         public bool IsServerMode { get; set; }
-        private double countdown;
         private int roundnum;
+
+
         private bool preroundflag = false;
         private bool inroundflag = false;
         private bool endroundflag = false;
@@ -34,6 +37,7 @@ namespace UI
             active = false;
             timer = 0;
             hud = FindObjectOfType<HUD>();
+            vehicledriver = FindObjectOfType<VehicleDriver>();
             
         }
 
@@ -45,10 +49,12 @@ namespace UI
             if (active)
             {
                 Cursor.visible = true;
+                hud.Vehicle.getDriver().setAcceptInput(false);
             }
             else
             {
                 Cursor.visible = false;
+                hud.Vehicle.getDriver().setAcceptInput(true);
             }
 
             if (Input.GetKey(KeyCode.Escape) && ClientConfig.GameMode != GameMode.AdminMode && !IsServerMode)
@@ -56,12 +62,14 @@ namespace UI
                 if (!active && timer > 30)
                 {
                     escmenu.SetActive(true);
+                    hud.Vehicle.getDriver().setAcceptInput(false);
                     active = true;
                     timer = 0;
                 }
                 else if (timer > 30)
                 {
                     escmenu.SetActive(false);
+                    hud.Vehicle.getDriver().setAcceptInput(true);
                     if (ClientConfig.GameMode != GameMode.AdminMode)
                     {
                         Cursor.visible = false;

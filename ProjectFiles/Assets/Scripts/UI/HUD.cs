@@ -17,6 +17,7 @@ namespace UI
         private String ip;
         private bool isSet;
 
+        public Vehicle.Vehicle Vehicle;
         public Rigidbody Car { private get; set; }
         public String NetworkIP { private get; set; }
         public int playernum { private get; set; }

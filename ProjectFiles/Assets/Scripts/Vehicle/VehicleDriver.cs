@@ -15,6 +15,8 @@ namespace Vehicle
 
         public List<DriveWheel> driveWheels;
 
+        private bool acceptinput;
+
     // Start is called before the first frame update
         void Start()
         {
@@ -32,7 +34,7 @@ namespace Vehicle
             }
             
             //Driving Forces
-            if (Input.GetAxis("Vertical") != 0 && grounded && Mathf.Abs(GetForward()) < maxSpeed)
+            if (acceptinput && Input.GetAxis("Vertical") != 0 && grounded && Mathf.Abs(GetForward()) < maxSpeed)
             {
                 body.AddForce(body.mass * accel * Input.GetAxis("Vertical") * transform.forward);
             }
@@ -43,7 +45,7 @@ namespace Vehicle
                 body.AddTorque(Input.GetAxis("Horizontal") * steer * (GetForward()/Mathf.Abs(GetForward())) * transform.up);
             }
 
-            if (Input.GetAxis("Jump") != 0 && grounded)
+            if (acceptinput && Input.GetAxis("Jump") != 0 && grounded)
             {
                 body.AddForce(body.mass * accel * Input.GetAxis("Jump") * transform.up * 10f);
             }
@@ -77,5 +79,11 @@ namespace Vehicle
         {
             return Vector3.Dot(body.velocity, transform.right);
         }
+
+        public void setAcceptInput(bool option)
+        {
+            acceptinput = option;
+        }
+        
     }
 }

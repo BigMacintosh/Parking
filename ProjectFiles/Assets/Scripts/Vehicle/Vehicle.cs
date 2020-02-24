@@ -24,6 +24,7 @@ namespace Vehicle
             driver.driveWheels = driveWheels;
             driver.steer = 4000;
             driver.driftFactor = 0.75f;
+            driver.setAcceptInput(true);
 
             // Set camera to follow car
             var camera = FindObjectOfType<CameraFollowController>();
@@ -34,7 +35,13 @@ namespace Vehicle
             
             // Set car object in HUD.
             var hud = FindObjectOfType<HUD>();
+            hud.Vehicle = this;
             hud.Car = GetComponent<Rigidbody>();
+        }
+
+        public VehicleDriver getDriver()
+        {
+            return driver;
         }
     }
     
