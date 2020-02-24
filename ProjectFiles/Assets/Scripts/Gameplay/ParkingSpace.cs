@@ -27,6 +27,21 @@ namespace Gameplay
             mat.color = new Color(1, 1, 1, 0.3f);
             Timer = new Timer(0);
             OccupiedBy = -1;
+            
+            // set ID based upon name (e.g. Space (3) -> 3, Space -> 0)
+            var split = name.Split(' ');
+
+            if (split.Length == 1)
+            {
+                SpaceID = 0;
+            }
+            else
+            {
+                var numStr = split[1].Trim(new char[] {'(', ')'});
+                var id = ushort.Parse(numStr);
+
+                SpaceID = id;
+            }
         }
 
         void Update()
