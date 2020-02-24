@@ -5,9 +5,9 @@ namespace Network
     public delegate void GameStartDelegate(ushort freeRoamLength, ushort nPlayers);
     
     public delegate void PreRoundStartDelegate(
-        ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive);
+        ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers);
     
-    public delegate void RoundStartDelegate(ushort roundNumber);
+    public delegate void RoundStartDelegate(ushort roundNumber, List<ushort> spacesActive);
     
     public delegate void RoundEndDelegate(ushort roundNumber);
     

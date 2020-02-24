@@ -317,17 +317,17 @@ namespace Network
             sendToAll(keepAlive);
         }
 
-        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers, List<ushort> spacesActive)
+        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers)
         {
             if (world.GetNumPlayers() == 0) return;
-            var preRoundStart = new ServerPreRoundStartEvent(roundNumber, preRoundLength, roundLength, nPlayers, spacesActive);
+            var preRoundStart = new ServerPreRoundStartEvent(roundNumber, preRoundLength, roundLength, nPlayers);
             sendToAll(preRoundStart);
         }
 
-        public void OnRoundStart(ushort roundNumber)
+        public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive)
         {
             if (world.GetNumPlayers() == 0) return;
-            var roundStart = new ServerRoundStartEvent(roundNumber);
+            var roundStart = new ServerRoundStartEvent(roundNumber, spacesActive);
             sendToAll(roundStart);
         }
 

@@ -13,7 +13,7 @@ namespace Game
         // All times in seconds
         public const ushort FreeroamLength = 10;
         public const ushort PreRoundLength = 5;
-        public const ushort RoundLength = 120;
+        public const ushort RoundLength = 15;
         public const ushort MaxRounds = 5;
     }
 
@@ -88,13 +88,8 @@ namespace Game
 
         public void StartPreRound()
         {
-            // TODO: give an actual dynamic value to num space
-            Vector2 spacesAround = new Vector2(random.Next(-200, 201), random.Next(-200, 201));
-            List<ushort> activeSpaces = spaceManager.GetNearestSpaces(spacesAround, 3);
-            Debug.Log($"Round { roundNumber } spaces from point ({ spacesAround.x }, { spacesAround.y }): { String.Join(", ", activeSpaces) }.");
-
-            // Send 5 seconds round warning.
-            NotifyPreRoundStart(activeSpaces);
+            // Send pre round warning.
+            NotifyPreRoundStart();
 
             // Start timer to for PreRoundCountdown 
             roundTimer = new Timer(preRoundLength);
@@ -106,7 +101,12 @@ namespace Game
 
         private void StartRoundEvent()
         {
-            NotifyRoundStart();
+            // TODO: give an actual dynamic value to num space
+            Vector2 spacesAround = new Vector2(random.Next(-200, 201), random.Next(-200, 201));
+            List<ushort> activeSpaces = spaceManager.GetNearestSpaces(spacesAround, 3);
+            Debug.Log($"Round { roundNumber } spaces from point ({ spacesAround.x }, { spacesAround.y }): { String.Join(", ", activeSpaces) }.");
+            
+            NotifyRoundStart(activeSpaces);
 
             roundTimer = new Timer(roundLength);
             roundTimer.Elapsed += EndRoundEvent;
@@ -134,14 +134,14 @@ namespace Game
             GameStartEvent?.Invoke(freeRoamLength, world.GetNumPlayers());
         }
 
-        private void NotifyPreRoundStart(List<ushort> spacesActive)
+        private void NotifyPreRoundStart()
         {
-            PreRoundStartEvent?.Invoke(roundNumber, preRoundLength, roundLength, world.GetNumPlayers(), spacesActive);
+            PreRoundStartEvent?.Invoke(roundNumber, preRoundLength, roundLength, world.GetNumPlayers());
         }
 
-        private void NotifyRoundStart()
+        private void NotifyRoundStart(List<ushort> spacesActive)
         {
-            RoundStartEvent?.Invoke(roundNumber);
+            RoundStartEvent?.Invoke(roundNumber, spacesActive);
         }
 
         private void NotifyRoundEnd()
