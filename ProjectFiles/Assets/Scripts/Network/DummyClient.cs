@@ -39,7 +39,7 @@ namespace Network
 
         public string getServerIP()
         {
-            throw new System.NotImplementedException();
+            return "Standalone";
         }
 
         public event GameStartDelegate GameStartEvent;

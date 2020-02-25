@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5841944939872574284}
   - component: {fileID: 5841944939872574287}
   - component: {fileID: 5841944939872574283}
+  - component: {fileID: 2395173246631392838}
   m_Layer: 0
   m_Name: Space
   m_TagString: Untagged
@@ -107,7 +108,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3af5355119024528c01a5be2d35b5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpaceID: 1
+--- !u!114 &2395173246631392838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5841944939872574286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff110e9182d0456082306e077f12914, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: a18112684b0a0344e86203496c4cc3b4, type: 3}
+  colour: {r: 0, g: 0, b: 0, a: 0}
+  size: {x: 16, y: 16}
 --- !u!1 &5841944940103826900
 GameObject:
   m_ObjectHideFlags: 0
