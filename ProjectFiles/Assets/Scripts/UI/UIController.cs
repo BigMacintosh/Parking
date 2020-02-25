@@ -131,7 +131,7 @@ namespace UI
             Hud.eventText.text = "Round " + roundNumber + " has ended!";
         }
 
-        public void OnPlayerCountChange(int nPlayers)
+        public void OnPlayerCountChange(ushort nPlayers)
         {
             // Update the player count on the hud
             Hud.NumberOfPlayers = nPlayers;

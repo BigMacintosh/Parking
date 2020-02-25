@@ -84,14 +84,14 @@ namespace Game
             // Start the client connection
             var success = client.Start();
 
-            uiController.OnPlayerCountChange(world.Players.Count);
+            uiController.OnPlayerCountChange(world.GetNumPlayers());
             uiController.Hud.NetworkIP = client.getServerIP();
             uiController.Hud.exitButton.onClick.AddListener(Shutdown);
             client.GameStartEvent += uiController.OnGameStart;
             client.PreRoundStartEvent += uiController.OnPreRoundStart;
             client.RoundStartEvent += uiController.OnRoundStart;
             client.RoundEndEvent += uiController.OnRoundEnd;
-            client.PlayerCountChangeEvent += players => uiController.OnPlayerCountChange(players);
+            client.PlayerCountChangeEvent += uiController.OnPlayerCountChange;
 
             if (ClientConfig.GameMode == GameMode.AdminMode)
             {
