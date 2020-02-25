@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using SceneUtilities;
 using UnityEngine;
+using UI;
 
 namespace Vehicle
 {
@@ -9,7 +10,7 @@ namespace Vehicle
     {
         public VehicleProperties vehicleProperties;
         private VehicleDriver driver;
-
+        private UIController uicontroller;
         public List<DriveWheel> driveWheels;
 
 
@@ -23,6 +24,7 @@ namespace Vehicle
             driver.driveWheels = driveWheels;
             driver.maxSteer = 30;
             driver.driftFactor = 3f;
+            driver.setAcceptInput(true);
 
             // Set camera to follow car
             var camera = FindObjectOfType<CameraFollowController>();
@@ -30,10 +32,15 @@ namespace Vehicle
 
             var minimap = FindObjectOfType<MinimapScroller>();
             minimap.ObjectToFollow = transform;
-            
-            // Set car object in HUD.
-            var hud = FindObjectOfType<HUD>();
-            hud.Car = GetComponent<Rigidbody>();
+
+            //Link with UIController
+            uicontroller = FindObjectOfType<UIController>();
+            uicontroller.Vehicle = this;
+        }
+
+        public VehicleDriver getDriver()
+        {
+            return driver;
         }
     }
     

@@ -13,7 +13,8 @@ namespace Network
         {
             this.world = world;
         }
-        public bool Start(string ip, ushort port)
+
+        public bool Start(ushort port = 25565)
         {
             world.ClientID = 0;
             world.SpawnPlayer(world.ClientID);
@@ -35,12 +36,19 @@ namespace Network
         {
                 
         }
+
+        public string getServerIP()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public event GameStartDelegate GameStartEvent;
         public event PreRoundStartDelegate PreRoundStartEvent;
         public event RoundStartDelegate RoundStartEvent;
         public event RoundEndDelegate RoundEndEvent;
         public event SpaceClaimedDelegate SpaceClaimedEvent;
         public event EliminatePlayersDelegate EliminatePlayersEvent;
+        public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         public event GameEndDelegate GameEndEvent;
 
         public void OnSpaceEnter(int playerID, ushort spaceID)
@@ -51,6 +59,11 @@ namespace Network
         public void OnSpaceExit(int playerID, ushort spaceID)
         {
             Debug.Log($"Someone exited the space #{spaceID}");
+        }
+
+        public void OnTriggerGameStart()
+        {
+            
         }
     }
 }
