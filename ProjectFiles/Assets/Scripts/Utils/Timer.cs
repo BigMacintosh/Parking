@@ -12,7 +12,7 @@ namespace Utils
         public event TimerOneSecondPassedDelegate OneSecondPassed;
         private float timeLeft;
         private float length;
-        private bool repeat;
+//        private bool repeat;
 
         private float deltaSinceOneSecondPassed;
         
@@ -20,15 +20,18 @@ namespace Utils
 
         public Timer(float length)
         {
-            timeLeft = length;
-            deltaSinceOneSecondPassed = 0;
+            SetTime(length);
+            Set = false;
         }
-        public Timer(float length, bool repeat) : this(length)
-        {
-            this.repeat = repeat;
-        }
+        
+        // TODO: Repeat does not actually work
+//        public Timer(float length, bool repeat) : this(length)
+//        {
+//            this.repeat = repeat;
+//        }
 
 
+        // Timer DOES NOT update itself !!!
         public void Update()
         {
             var delta = Time.deltaTime;
@@ -40,6 +43,7 @@ namespace Utils
                 Elapsed?.Invoke();
             } else if (deltaSinceOneSecondPassed >= 1)
             {
+//                Debug.Log("Invoked! " + deltaSinceOneSecondPassed + " " + timeLeft);
                 OneSecondPassed?.Invoke(timeLeft);
                 deltaSinceOneSecondPassed = 0;
             }
@@ -63,6 +67,8 @@ namespace Utils
         public void SetTime(float length)
         {
             this.length = length;
+            timeLeft = length;
+            deltaSinceOneSecondPassed = 0;
         }
     }
 }

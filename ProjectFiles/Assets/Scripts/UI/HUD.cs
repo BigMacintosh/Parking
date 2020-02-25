@@ -8,14 +8,24 @@ namespace UI
 {
     public class HUD : MonoBehaviour
     {
-        [SerializeField] private Text velocityText;
-        [SerializeField] private Text debugText;
+        [SerializeField] public Text velocityText;
+        [SerializeField] public Text debugText;
         [FormerlySerializedAs("exitbutton")] [SerializeField] public Button exitButton;
         [FormerlySerializedAs("eventtext")] [SerializeField] public Text eventText;
         [FormerlySerializedAs("roundtext")] [SerializeField] public Text roundText;
         [FormerlySerializedAs("playercounttext")] [SerializeField] public Text playerCountText;
 
-
+        private int _roundCountdown;
+        public int RoundCountdown
+        {
+            get => _roundCountdown;
+            set
+            {
+                _roundCountdown = value;
+                UpdateRoundText();
+            }
+        }
+        
         private float _velocity;
         public float Velocity
         {
@@ -50,10 +60,22 @@ namespace UI
                 UpdatePlayerCountText();
             }
         }
-        
+
+        private String _roundTextPrefix;
+
+        public string RoundTextPrefix
+        {
+            get => _roundTextPrefix;
+            set
+            {
+                _roundTextPrefix = value;
+                UpdateRoundText();
+            }
+        }
+
         private void UpdateVelocityText()
         {
-            velocityText.text = "Speed: " + _velocity + " km/h";
+            velocityText.text = "Speed: " + _velocity + " !!!! km/h";
         }
 
         private void UpdateDebugText()
@@ -64,6 +86,17 @@ namespace UI
         private void UpdatePlayerCountText()
         {
             playerCountText.text = "Number of players: "  + NumberOfPlayers;
+        }
+
+        private void UpdateRoundText()
+        {
+            roundText.text = RoundTextPrefix + _roundCountdown + " seconds";
+        }
+
+        public  void ClearRoundText()
+        {
+            RoundTextPrefix = "";
+            roundText.text = "";
         }
     }
 }

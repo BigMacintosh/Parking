@@ -44,7 +44,9 @@ namespace Network
             // ReliableSequenced might not be the best choice 
             driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
-            keepAliveTimer = new Utils.Timer(10, true);
+            
+            // TODO: Keep alive timer does not actually loop
+            keepAliveTimer = new Utils.Timer(10);
             keepAliveTimer.Elapsed += OnKeepAlive;
         }
 
@@ -346,9 +348,11 @@ namespace Network
 
         public void OnEliminatePlayers(ushort roundNumber, List<int> players)
         {
-            if (world.GetNumPlayers() == 0) return;
-            var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
-            sendToAll(eliminatePlayers);
+            
+            // TODO: Line 353 throws an exception and crashes the server
+//            if (world.GetNumPlayers() == 0) return;
+//            var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
+//            sendToAll(eliminatePlayers);
             
             // // Drop connection to all players who are eliminated
             // foreach (var playerID in players)
