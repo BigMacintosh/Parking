@@ -28,7 +28,6 @@ namespace SceneUtilities
             };
             ObjectToFollow = FindObjectOfType<Game.Game>().transform;
             parentTransform = transform.parent;
-            Debug.Log(parentTransform);
         }
 
         public void Update()
