@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 using Game;
 using Network;
+using Utils;
 using Vehicle;
 
 
@@ -13,73 +15,68 @@ namespace UI
         [SerializeField] private GameObject settingsmenu;
         [SerializeField] private AdminMenu adminMenu;
 
-        private HUD hud;
-        private int timer;
-        private Rigidbody rb;
-        private float v;
+        private Timer timer;
+        
+        private HUD _hud;
+        public HUD Hud
+        {
+            get => _hud;
+            set => _hud = value;
+        }
+        
         private bool active;
         public bool IsServerMode { get; set; }
-        private int roundnum;
-        private int roundduration;
 
-        public Vehicle.Vehicle vehicle { get; set; }
+        private Vehicle.Vehicle _vehicle;
 
-        private bool preroundflag = false;
-        private bool inroundflag = false;
-        private bool endroundflag = false;
+        public Vehicle.Vehicle Vehicle
+        {
+            get => _vehicle;
+            set
+            {
+                _vehicle = value;
+                _car = _vehicle.GetComponent<Rigidbody>();
+            }
+        }
+        private Rigidbody _car;
 
-        public int preroundtimer;
+
+        private ushort roundLength;
+        public UIController()
+        {
+            timer = new Timer(0);
+            active = ClientConfig.GameMode == GameMode.AdminMode;
+        }
+
+        private void Awake()
+        {
+            Hud = FindObjectOfType<HUD>();
+        }
 
         private void Start()
         {
-            Cursor.visible = false;
+            Cursor.visible = active;
             escmenu.SetActive(false);
             settingsmenu.SetActive(false);
             adminMenu.SetServerMode(IsServerMode);
-            active = false;
-            timer = 0;
-            hud = FindObjectOfType<HUD>();
-            //hud.Car = vehicle.GetComponent<Rigidbody>();
         }
-
+        
         // Update is called once per frame
         private void Update()
         {
-            timer++;
-
-            if (active)
-            {
-                Cursor.visible = true;
-                //svehicle.getDriver().setAcceptInput(false);
-            }
-            else
-            {
-                Cursor.visible = false;
-                // vehicle.getDriver().setAcceptInput(true);
-            }
-
+            timer.Update();
+            
             if (Input.GetKey(KeyCode.Escape) && ClientConfig.GameMode != GameMode.AdminMode && !IsServerMode)
             {
-                if (!active && timer > 30)
-                {
-                    escmenu.SetActive(true);
-                    // vehicle.getDriver().setAcceptInput(false);
-                    active = true;
-                    timer = 0;
-                }
-                else if (timer > 30)
-                {
-                    escmenu.SetActive(false);
-                    // vehicle.getDriver().setAcceptInput(true);
-                    if (ClientConfig.GameMode != GameMode.AdminMode)
-                    {
-                        Cursor.visible = false;
-                    }
-                    active = false;
-                    timer = 0;
-                }
+                active = !active;
+                Cursor.visible = active;
+                escmenu.SetActive(active);
             }
             
+            if (!(_car is null))
+            {
+                Hud.Velocity = _car.velocity.magnitude * 3.6f;
+            }
         }
 
         public void SubscribeTriggerGameStartEvent(TriggerGameStartDelegate handler)
@@ -93,82 +90,51 @@ namespace UI
             {
                 adminMenu.OnGameStart();
             }
-
         }
         
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers)
         {
-            // Display countdown on the hud that is preRoundLength seconds long
-            //countdown = preRoundLength;
-            roundnum = roundNumber;
-            //preroundflag = true;
-            /*for (int i=preRoundLength; i>0; i--)
-            {
-                Invoke(hud.eventtext.text = "Round " + roundNumber + " starting in " + i + " seconds", (preRoundLength - i));
-            }*/
-            hud.eventtext.text = "Round " + roundNumber + " starting in " + 10 + " seconds";
-            preroundtimer = preRoundLength;
-            roundduration = roundLength;
-            for (int i=preRoundLength; i>0; i--)
-            {
-                Invoke("countDownRoundStart", preRoundLength - i);
-            }
+            // Store the round length to be used later.
+            this.roundLength = roundLength;
+            
+            // Display countdown on the hud that is preRoundLength seconds long.
+            Hud.RoundTextPrefix = "Round " + roundNumber + " starting in ";
+            Hud.RoundCountdown = preRoundLength;
+            
+            // Create a new timer otherwise we will subscribe the same method many many times over a whole game.
+            timer = new Timer(1, preRoundLength);
+
+            // TODO: Do they need clearing after the timer elapsed?
+            timer.Tick += left => Hud.RoundCountdown = left;
+            timer.Elapsed += () => Hud.ClearRoundText();
+            
+            timer.Start();
         }
 
         public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive)
         {
-            // Display message on HUD to say that round is in progress
-            hud.eventtext.text = "Round " + roundnum + " has begun!";
-            Invoke("clearEventText", 2);
-            for (int i = roundduration; i > 0; i--)
-            {
-                if(i < 11)
-                {
-                    roundduration = i;
-                    Invoke("countDownRoundEnd", 10 - i);
-                }
-            }
-            hud.roundtext.text = "Round " + roundNumber;
+            // Display message on HUD to say that round is in progress.
+            Hud.eventText.text = "Round Started!";
+            Hud.RoundTextPrefix = "Round " + roundNumber + " ending in ";
+            Hud.RoundCountdown = roundLength;
+            
+            // Create a new timer otherwise we will subscribe the same method many many times over a whole game.
+            timer = new Timer(1, roundLength);
+            timer.Tick += left => Hud.RoundCountdown = left;
+            timer.Elapsed += () => Hud.ClearRoundText();
+            timer.Start();
         }
 
         public void OnRoundEnd(ushort roundNumber)
         {
-            // Display message on HUD to say that round has ended
-            //roundnum = roundNumber;
-            hud.eventtext.text = "Round " + roundnum + " has ended!";
-            //endroundflag = true;
+            // Display message on HUD to say that round has ended.
+            Hud.eventText.text = "Round " + roundNumber + " has ended!";
         }
 
         public void OnPlayerCountChange(ushort nPlayers)
         {
             // Update the player count on the hud
-            hud.playernum = nPlayers;
-            hud.playercounttext.text = nPlayers + " players remaining";
-        }
-
-        public void countDownRoundStart()
-        {
-            hud.eventtext.text = "Round " + roundnum + " starting in " + preroundtimer + " seconds";
-            preroundtimer -= 1;
-        }
-
-        public void countDownRoundEnd()
-        {
-            hud.eventtext.text = "Round " + roundnum + " ending in " + roundduration + " seconds";
-        }
-
-        public void clearEventText()
-        {
-            hud.eventtext.text = "";
-        }
-        
-        public HUD getHUD()
-        {
-            if (hud is null)
-            {
-                hud = FindObjectOfType<HUD>();
-            }
-            return hud;
+            Hud.NumberOfPlayers = nPlayers;
         }
     }
 }

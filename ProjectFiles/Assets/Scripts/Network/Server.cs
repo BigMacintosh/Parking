@@ -44,8 +44,10 @@ namespace Network
             // ReliableSequenced might not be the best choice 
             driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
+            
+            // TODO: Keep alive timer does not actually loop
             keepAliveTimer = new Utils.Timer(10, true);
-            keepAliveTimer.Elapsed += OnKeepAlive;
+            keepAliveTimer.Tick += OnKeepAlive;
         }
 
         public bool Start()
@@ -316,7 +318,7 @@ namespace Network
  
         
 
-        public void OnKeepAlive()
+        public void OnKeepAlive(int ticksLeft)
         {
             if (world.GetNumPlayers() == 0) return;
             var keepAlive = new ServerKeepAlive();
@@ -349,13 +351,7 @@ namespace Network
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             sendToAll(eliminatePlayers);
-            
-            // // Drop connection to all players who are eliminated
-            // foreach (var playerID in players)
-            // {
-            //     dropConnection(playerID);
-            // }
-            
+
         }
 
         public void OnGameEnd()

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 
@@ -7,33 +8,95 @@ namespace UI
 {
     public class HUD : MonoBehaviour
     {
-        [SerializeField] private Text velocityText;
-        [SerializeField] private Text debugText;
-        [SerializeField] public Button exitbutton;
-        [SerializeField] public Text eventtext;
-        [SerializeField] public Text roundtext;
-        [SerializeField] public Text playercounttext;
-        private float v;
-        private String ip;
+        [SerializeField] public Text velocityText;
+        [SerializeField] public Text debugText;
+        [FormerlySerializedAs("exitbutton")] [SerializeField] public Button exitButton;
+        [FormerlySerializedAs("eventtext")] [SerializeField] public Text eventText;
+        [FormerlySerializedAs("roundtext")] [SerializeField] public Text roundText;
+        [FormerlySerializedAs("playercounttext")] [SerializeField] public Text playerCountText;
 
-        public Rigidbody Car { private get; set; }
-        public String NetworkIP { private get; set; }
-        public int playernum { private get; set; }
-
-        // Update is called once per frame
-        private void Update()
+        private int _roundCountdown;
+        public int RoundCountdown
         {
-            if (!(Car is null))
+            get => _roundCountdown;
+            set
             {
-                v = (float)Math.Round(Car.velocity.magnitude * 3.6f, 0);
-                velocityText.text = "Speed: " + v + " km/h";
-                
+                _roundCountdown = value;
+                UpdateRoundText();
             }
-            if (!(NetworkIP is null))
+        }
+        
+        private float _velocity;
+        public float Velocity
+        {
+            get => _velocity;
+            set
             {
-                ip = NetworkIP;
-                debugText.text = "Connected to " + ip + "\nNumber of players: "  + playernum;
+                _velocity = value;
+                UpdateVelocityText();
             }
+        }
+
+        private String _networkIP;
+        public string NetworkIP
+        {
+            get => _networkIP;
+            set
+            {
+                _networkIP = value;
+                UpdateDebugText();
+            }
+        }
+
+        private int _numberOfPlayers;
+
+        public int NumberOfPlayers
+        {
+            get => _numberOfPlayers;
+            set
+            {
+                _numberOfPlayers = value;
+                UpdateDebugText();
+                UpdatePlayerCountText();
+            }
+        }
+
+        private String _roundTextPrefix;
+
+        public string RoundTextPrefix
+        {
+            get => _roundTextPrefix;
+            set
+            {
+                _roundTextPrefix = value;
+                UpdateRoundText();
+            }
+        }
+
+        private void UpdateVelocityText()
+        {
+            velocityText.text = "Speed: " + _velocity + " !!!! km/h";
+        }
+
+        private void UpdateDebugText()
+        {
+            debugText.text = "Connected to " + _networkIP + "\nNumber of players: "  + NumberOfPlayers;
+        }
+        
+        private void UpdatePlayerCountText()
+        {
+            playerCountText.text = "Number of players: "  + NumberOfPlayers;
+        }
+
+        private void UpdateRoundText()
+        {
+            roundText.text = RoundTextPrefix + _roundCountdown + " seconds";
+        }
+
+        public  void ClearRoundText()
+        {
+            RoundTextPrefix = "";
+            roundText.text = "";
         }
     }
 }

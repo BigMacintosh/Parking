@@ -42,7 +42,6 @@ namespace Game
                 Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             }
             uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
-            
 
             // Initialise the client
             if (isStandalone)
@@ -85,9 +84,9 @@ namespace Game
             // Start the client connection
             var success = client.Start();
 
-            uiController.getHUD().playernum = world.Players.Count;
-            uiController.getHUD().NetworkIP = client.getServerIP();
-            uiController.getHUD().exitbutton.onClick.AddListener(Shutdown);
+            uiController.OnPlayerCountChange(world.GetNumPlayers());
+            uiController.Hud.NetworkIP = client.getServerIP();
+            uiController.Hud.exitButton.onClick.AddListener(Shutdown);
             client.GameStartEvent += uiController.OnGameStart;
             client.PreRoundStartEvent += uiController.OnPreRoundStart;
             client.RoundStartEvent += uiController.OnRoundStart;
