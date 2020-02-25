@@ -106,6 +106,7 @@ namespace Network
             if (!inGame) return;
             // Don't send location if you are admin client
             if (ClientConfig.GameMode == GameMode.AdminMode) return;
+            
             var locationUpdate = new ClientLocationUpdateEvent(world);
             sendEventToServer(locationUpdate);
         }
@@ -167,11 +168,6 @@ namespace Network
                     ev = new ServerLocationUpdateEvent();
                     break;
                 }
-                // case EventType.ServerSpawnPlayerEvent:
-                // {
-                //     ev = new ServerSpawnPlayerEvent();
-                //     break;
-                // }
                 case EventType.ServerPreRoundStartEvent:
                 {
                     ev = new ServerPreRoundStartEvent();

@@ -46,8 +46,8 @@ namespace Network
             pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
             
             // TODO: Keep alive timer does not actually loop
-            keepAliveTimer = new Utils.Timer(10);
-            keepAliveTimer.Elapsed += OnKeepAlive;
+            keepAliveTimer = new Utils.Timer(10, true);
+            keepAliveTimer.Tick += OnKeepAlive;
         }
 
         public bool Start()
@@ -318,7 +318,7 @@ namespace Network
  
         
 
-        public void OnKeepAlive()
+        public void OnKeepAlive(int ticksLeft)
         {
             if (world.GetNumPlayers() == 0) return;
             var keepAlive = new ServerKeepAlive();
@@ -348,18 +348,10 @@ namespace Network
 
         public void OnEliminatePlayers(ushort roundNumber, List<int> players)
         {
-            
-            // TODO: Line 353 throws an exception and crashes the server
-//            if (world.GetNumPlayers() == 0) return;
-//            var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
-//            sendToAll(eliminatePlayers);
-            
-            // // Drop connection to all players who are eliminated
-            // foreach (var playerID in players)
-            // {
-            //     dropConnection(playerID);
-            // }
-            
+            if (world.GetNumPlayers() == 0) return;
+            var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
+            sendToAll(eliminatePlayers);
+
         }
 
         public void OnGameEnd()

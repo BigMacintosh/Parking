@@ -15,7 +15,7 @@ namespace UI
         [SerializeField] private GameObject settingsmenu;
         [SerializeField] private AdminMenu adminMenu;
 
-        private Timer _timer;
+        private Timer timer;
         
         private HUD _hud;
         public HUD Hud
@@ -23,8 +23,7 @@ namespace UI
             get => _hud;
             set => _hud = value;
         }
-
-//        private Timer _countdownTimer;
+        
         private bool active;
         public bool IsServerMode { get; set; }
 
@@ -42,10 +41,10 @@ namespace UI
         private Rigidbody _car;
 
 
-        private ushort _roundLength;
+        private ushort roundLength;
         public UIController()
         {
-            _timer = new Timer(0);
+            timer = new Timer(0);
             active = ClientConfig.GameMode == GameMode.AdminMode;
         }
 
@@ -65,7 +64,7 @@ namespace UI
         // Update is called once per frame
         private void Update()
         {
-            _timer.Update();
+            timer.Update();
             
             if (Input.GetKey(KeyCode.Escape) && ClientConfig.GameMode != GameMode.AdminMode && !IsServerMode)
             {
@@ -91,30 +90,25 @@ namespace UI
             {
                 adminMenu.OnGameStart();
             }
-
         }
         
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers)
         {
             // Store the round length to be used later.
-            _roundLength = roundLength;
+            this.roundLength = roundLength;
             
             // Display countdown on the hud that is preRoundLength seconds long.
             Hud.RoundTextPrefix = "Round " + roundNumber + " starting in ";
             Hud.RoundCountdown = preRoundLength;
-            _timer.Stop();
-            _timer.SetTime(preRoundLength);
             
+            // Create a new timer otherwise we will subscribe the same method many many times over a whole game.
+            timer = new Timer(1, preRoundLength);
+
             // TODO: Do they need clearing after the timer elapsed?
-            _timer.OneSecondPassed += left =>
-            {
-                Hud.RoundCountdown = (int) left;
-            };
-            _timer.Elapsed += () =>
-            {
-                Hud.ClearRoundText();
-            };
-            _timer.Start();
+            timer.Tick += left => Hud.RoundCountdown = left;
+            timer.Elapsed += () => Hud.ClearRoundText();
+            
+            timer.Start();
         }
 
         public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive)
@@ -122,12 +116,13 @@ namespace UI
             // Display message on HUD to say that round is in progress.
             Hud.eventText.text = "Round Started!";
             Hud.RoundTextPrefix = "Round " + roundNumber + " ending in ";
-            Hud.RoundCountdown = _roundLength;
-            _timer.Stop();
-            _timer.SetTime(_roundLength);
-            _timer.OneSecondPassed += left => Hud.RoundCountdown = (int) left;
-            _timer.Elapsed += () => Hud.ClearRoundText();
-            _timer.Start();
+            Hud.RoundCountdown = roundLength;
+            
+            // Create a new timer otherwise we will subscribe the same method many many times over a whole game.
+            timer = new Timer(1, roundLength);
+            timer.Tick += left => Hud.RoundCountdown = left;
+            timer.Elapsed += () => Hud.ClearRoundText();
+            timer.Start();
         }
 
         public void OnRoundEnd(ushort roundNumber)

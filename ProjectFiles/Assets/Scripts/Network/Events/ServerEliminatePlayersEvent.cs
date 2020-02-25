@@ -11,14 +11,13 @@ namespace Network.Events
         public ServerEliminatePlayersEvent()
         {
             ID = EventType.ServerEliminatePlayersEvent;
-            Length = 1;
         }
 
-        public ServerEliminatePlayersEvent(ushort roundNumber, List<int> players)
+        public ServerEliminatePlayersEvent(ushort roundNumber, List<int> players) : this()
         {
             RoundNumber = roundNumber;
             Players = players;
-            Length = sizeof(ushort) * (Players.Count + 2) + sizeof(byte);
+            Length = 2 * sizeof(ushort) + (Players.Count) * sizeof(int) + sizeof(byte);
         }
 
         public override void Serialise(DataStreamWriter writer)

@@ -1,20 +1,22 @@
 using Game;
 using UnityEngine;
+using UnityEngine.Polybrush;
 
 namespace Utils
 {
     public delegate void TimerOverDelegate();
-    public delegate void TimerOneSecondPassedDelegate(float timeLeft);
+    public delegate void TimerTickDelegate(int ticksLeft);
     
     public class Timer
     {
         public event TimerOverDelegate Elapsed;
-        public event TimerOneSecondPassedDelegate OneSecondPassed;
+        public event TimerTickDelegate Tick;
         private float timeLeft;
+        private int ticksLeft;
         private float length;
-//        private bool repeat;
-
-        private float deltaSinceOneSecondPassed;
+        private int nTicks;
+        private bool repeat;
+        
         
         public bool Set { get; private set; }
 
@@ -24,28 +26,51 @@ namespace Utils
             Set = false;
         }
         
-        // TODO: Repeat does not actually work
-//        public Timer(float length, bool repeat) : this(length)
-//        {
-//            this.repeat = repeat;
-//        }
+        public Timer(float length, bool repeat) : this(length)
+        {
+            this.repeat = repeat;
+            
+            // Repeat 'infinitely'
+            SetTicks(int.MaxValue);
+        }
+
+        public Timer(float length, int nTicks) : this(length)
+        {
+            this.repeat = true;
+            
+            // Repeat nTicks times.
+            SetTicks(nTicks);
+        }
 
 
-        // Timer DOES NOT update itself !!!
+        // Funily enough like almost everything that isnt a monobehavior
+        // when we give it an Update function, you have to call it.
+        // big shock?!?!
         public void Update()
         {
-            var delta = Time.deltaTime;
-            timeLeft -= delta;
-            deltaSinceOneSecondPassed += delta;
-            if (timeLeft < 0 & Set)
+            if (Set)
             {
-                Set = false;
-                Elapsed?.Invoke();
-            } else if (deltaSinceOneSecondPassed >= 1)
-            {
-//                Debug.Log("Invoked! " + deltaSinceOneSecondPassed + " " + timeLeft);
-                OneSecondPassed?.Invoke(timeLeft);
-                deltaSinceOneSecondPassed = 0;
+                var delta = Time.deltaTime;
+                timeLeft -= delta;
+
+                if (timeLeft < 0)
+                {
+
+                    // Deal with timer tick
+                    if (repeat)
+                    {
+                        ticksLeft -= 1;
+                        timeLeft += length;
+                        Tick?.Invoke(ticksLeft);
+                    }
+
+                    // Deal with timer end.
+                    if (nTicks <= 0 && repeat || !repeat)
+                    {
+                        Set = false;
+                        Elapsed?.Invoke();
+                    }
+                }
             }
         }
 
@@ -58,17 +83,24 @@ namespace Utils
         {
             Set = false;
         }
+        
         public void Reset()
         {
             Set = false;
             timeLeft = length;
+            ticksLeft = nTicks;
         }
         
         public void SetTime(float length)
         {
             this.length = length;
             timeLeft = length;
-            deltaSinceOneSecondPassed = 0;
+        }
+
+        public void SetTicks(int nTicks)
+        {
+            this.nTicks = nTicks;
+            ticksLeft = nTicks;
         }
     }
 }
