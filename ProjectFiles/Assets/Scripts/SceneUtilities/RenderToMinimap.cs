@@ -7,10 +7,11 @@ namespace SceneUtilities
     {
         [SerializeField] private Sprite sprite;
         [SerializeField] private Color colour;
+        [SerializeField] private Vector2 size = new Vector2(16, 16);
 
         private MinimapScroller scroller;
         private GameObject indicator;
-        private Transform indicatorTransform;
+        private RectTransform indicatorTransform;
         private bool setup;
 
         public void Update()
@@ -31,12 +32,14 @@ namespace SceneUtilities
                 var image = indicator.GetComponent<Image>();
                 image.sprite = sprite;
                 indicator.transform.SetParent(mask.transform);
-                indicatorTransform = indicator.transform;
+                indicatorTransform = (RectTransform) indicator.transform;
+                indicatorTransform.sizeDelta = size;
                 scroller = mask.transform.GetChild(0).GetComponent<MinimapScroller>();
                 setup = true;
             }
             var mapPosition = scroller.MapPosition;
             indicatorTransform.localPosition = new Vector2(mapPosition.x - transform.position.x / scroller.MapScale.x, mapPosition.y - transform.position.z / scroller.MapScale.y);
+            indicatorTransform.rotation = Quaternion.Euler(0, 0, -transform.rotation.eulerAngles.y);
         }
     }
 }

@@ -18,7 +18,6 @@ namespace SceneUtilities
         // init in Awake rather than Start because the .localPosition needs to be set up first
         public void Awake()
         {
-            Debug.Log("Awake");
             var rect = ((RectTransform) transform).rect;
             MapScale = new Vector2
             {
