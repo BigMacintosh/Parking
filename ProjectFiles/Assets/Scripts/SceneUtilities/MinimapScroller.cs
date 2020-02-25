@@ -11,6 +11,7 @@ namespace SceneUtilities
         public float XScale { get; private set; }
         public float YScale { get; private set; }
         public Transform ObjectToFollow { get; set; }
+        public Vector3 MapPosition => transform.localPosition;
 
         // private RectTransform rectTransform;
 
@@ -19,7 +20,6 @@ namespace SceneUtilities
             var rect = ((RectTransform) transform).rect;
             XScale = (BottomRight.x - TopLeft.x) / rect.width;
             YScale = (TopLeft.y - BottomRight.y) / rect.height;
-            Debug.Log(XScale);
             ObjectToFollow = FindObjectOfType<Game.Game>().transform;
         }
 
