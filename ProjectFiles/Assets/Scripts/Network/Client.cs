@@ -232,8 +232,7 @@ namespace Network
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
             var playerID = ev.PlayerID;
             world.ClientID = playerID;
-            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
-
+            
             Debug.Log($"Client: My playerID is {playerID}");
         }
         
@@ -249,7 +248,9 @@ namespace Network
             }
 
             inGame = true;
+            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
             GameStartEvent?.Invoke(ev.FreeRoamLength, (ushort) ev.Length);
+            
         }
 
         public void Handle(ServerLocationUpdateEvent ev, NetworkConnection conn)
@@ -266,6 +267,7 @@ namespace Network
 
         public void Handle(ServerPreRoundStartEvent ev, NetworkConnection conn)
         {
+            PlayerCountChangeEvent?.Invoke(ev.PlayerCount);
             PreRoundStartEvent?.Invoke(ev.RoundNumber, ev.PreRoundLength, ev.RoundLength, ev.PlayerCount);
         }
 

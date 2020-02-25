@@ -8,12 +8,13 @@ namespace UI
 {
     public class HUD : MonoBehaviour
     {
-        [SerializeField] public Text velocityText;
-        [SerializeField] public Text debugText;
+        // TODO: sort out the accessors here, we don't want public fields if possible
+        [SerializeField] private Text velocityText;
+        [SerializeField] private Text debugText;
         [FormerlySerializedAs("exitbutton")] [SerializeField] public Button exitButton;
         [FormerlySerializedAs("eventtext")] [SerializeField] public Text eventText;
-        [FormerlySerializedAs("roundtext")] [SerializeField] public Text roundText;
-        [FormerlySerializedAs("playercounttext")] [SerializeField] public Text playerCountText;
+        [FormerlySerializedAs("roundtext")] [SerializeField] private Text roundText;
+        [FormerlySerializedAs("playercounttext")] [SerializeField] private Text playerCountText;
 
         private int _roundCountdown;
         public int RoundCountdown
@@ -75,7 +76,7 @@ namespace UI
 
         private void UpdateVelocityText()
         {
-            velocityText.text = "Speed: " + _velocity + " !!!! km/h";
+            velocityText.text = $"Speed: {_velocity:N0} km/h";
         }
 
         private void UpdateDebugText()
