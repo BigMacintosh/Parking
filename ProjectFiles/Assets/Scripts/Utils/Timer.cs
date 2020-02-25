@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Utils
 {
     public delegate void TimerOverDelegate();
-    public delegate void TimerOneSecondPassedDelegate();
+    public delegate void TimerOneSecondPassedDelegate(float timeLeft);
     
     public class Timer
     {
@@ -40,7 +40,7 @@ namespace Utils
                 Elapsed?.Invoke();
             } else if (deltaSinceOneSecondPassed >= 1)
             {
-                OneSecondPassed?.Invoke();
+                OneSecondPassed?.Invoke(timeLeft);
                 deltaSinceOneSecondPassed = 0;
             }
         }
