@@ -38,8 +38,10 @@ namespace SceneUtilities
                 setup = true;
             }
             var mapPosition = scroller.MapPosition;
-            indicatorTransform.localPosition = new Vector2(mapPosition.x - transform.position.x / scroller.MapScale.x, mapPosition.y - transform.position.z / scroller.MapScale.y);
-            indicatorTransform.rotation = Quaternion.Euler(0, 0, -transform.rotation.eulerAngles.y);
+            var trans = transform;
+            var position = trans.position;
+            indicatorTransform.localPosition = new Vector2(mapPosition.x - position.x / scroller.MapScale.x, mapPosition.y - position.z / scroller.MapScale.y);
+            indicatorTransform.localRotation = Quaternion.Euler(0, 0, -trans.rotation.eulerAngles.y);
         }
     }
 }

@@ -15,6 +15,8 @@ namespace SceneUtilities
         public Transform ObjectToFollow { get; set; }
         public Vector3 MapPosition => transform.localPosition;
 
+        private Transform parentTransform;
+        
         // init in Awake rather than Start because the .localPosition needs to be set up first
         public void Awake()
         {
@@ -25,11 +27,15 @@ namespace SceneUtilities
                 y = (TopLeft.y - BottomRight.y) / rect.height
             };
             ObjectToFollow = FindObjectOfType<Game.Game>().transform;
+            parentTransform = transform.parent;
+            Debug.Log(parentTransform);
         }
 
         public void Update()
         {
-            transform.localPosition = new Vector2(ObjectToFollow.position.x / MapScale.x, ObjectToFollow.position.z / MapScale.y);
+            var position = ObjectToFollow.position;
+            transform.localPosition = new Vector2(position.x / MapScale.x, position.z / MapScale.y);
+            parentTransform.rotation = Quaternion.Euler(0, 0, ObjectToFollow.rotation.eulerAngles.y);
         }
     }
 }
