@@ -21,7 +21,7 @@ namespace Network
         void Shutdown();
         void SendLocationUpdate();
         void HandleNetworkEvents();
-        String getServerIP();
+        string GetServerIP();
         event GameStartDelegate GameStartEvent;
         event PreRoundStartDelegate PreRoundStartEvent;
         event RoundStartDelegate RoundStartEvent;
@@ -122,7 +122,6 @@ namespace Network
                 {
                     Debug.Log($"Client: Something went wrong when connecting to {serverIP}:{serverPort}.");
                 }
-                
                 return;
             }
 
@@ -147,6 +146,7 @@ namespace Network
                     }
                     case NetworkEvent.Type.Disconnect:
                         Debug.Log($"Client: Disconnected from the server.");
+                        done = true;
                         connection = default(NetworkConnection);
                         break;
                 }
@@ -217,7 +217,7 @@ namespace Network
             ev.Handle(this, connection);
         }
         
-        public String getServerIP()
+        public String GetServerIP()
         {
             return serverIP;
         }
@@ -286,10 +286,10 @@ namespace Network
             
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
 
-            if (ev.Players.Contains(world.ClientID))
-            {
-                Shutdown();
-            }
+//            if (ev.Players.Contains(world.ClientID))
+//            {
+//                Shutdown();
+//            }
         }
         
         public void Handle(ServerGameEndEvent ev, NetworkConnection conn)
