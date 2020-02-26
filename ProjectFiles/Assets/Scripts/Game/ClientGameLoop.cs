@@ -87,12 +87,15 @@ namespace Game
             uiController.OnPlayerCountChange(world.GetNumPlayers());
             uiController.Hud.NetworkIP = client.getServerIP();
             uiController.Hud.exitButton.onClick.AddListener(Shutdown);
+            
             client.GameStartEvent += uiController.OnGameStart;
             client.PreRoundStartEvent += uiController.OnPreRoundStart;
             client.RoundStartEvent += uiController.OnRoundStart;
             client.RoundEndEvent += uiController.OnRoundEnd;
             client.PlayerCountChangeEvent += uiController.OnPlayerCountChange;
-
+            
+            parkingSpaceManager.SpaceStateChangeEvent += uiController.OnSpaceStateChange;
+            
             if (ClientConfig.GameMode == GameMode.AdminMode)
             {
                 uiController.SubscribeTriggerGameStartEvent(client.OnTriggerGameStart);
@@ -115,7 +118,7 @@ namespace Game
 
         public void FixedUpdate()
         {
-            if (world.ClientID >= 0)
+            if (ClientConfig.PlayerID >= 0)
             {
                 client.SendLocationUpdate();
             }
