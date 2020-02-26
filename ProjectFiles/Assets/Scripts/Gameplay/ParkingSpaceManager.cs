@@ -2,6 +2,7 @@
 using System.Linq;
 using Utils;
 using Network;
+using UI;
 using UnityEngine;
 
 namespace Gameplay
@@ -10,6 +11,8 @@ namespace Gameplay
     {
         protected Dictionary<ushort, ParkingSpace> parkingSpacesBySpaceID;
         public Dictionary<int, ParkingSpace> parkingSpacesByPlayerID { get; protected set; }
+
+        public event SpaceStateChangeDelegate SpaceStateChangeEvent;
         public ParkingSpaceManager()
         {
             parkingSpacesBySpaceID = new Dictionary<ushort, ParkingSpace>();
@@ -49,10 +52,25 @@ namespace Gameplay
             if (parkingSpace.Occupied())
             {
                 Debug.Log(playerID + " stole a space from " + parkingSpace.OccupiedBy);
+                if (parkingSpace.OccupiedBy == ClientConfig.PlayerID)
+                {
+                    // Tell the UI "parkingSpace.OccupiedBy" had their space stolen.
+                    SpaceStateChangeEvent?.Invoke(SpaceState.StolenLost, spaceID);
+                } 
+                else if (playerID == ClientConfig.PlayerID)
+                {
+                    // Tell the UI "playerID" stole someone's space.
+                    SpaceStateChangeEvent?.Invoke(SpaceState.StolenGained, spaceID);
+                }
             }
             else
             {
                 Debug.Log(playerID + " claimed an empty space " + parkingSpace.SpaceID);
+                if (playerID == ClientConfig.PlayerID)
+                {
+                    // Tell the UI "playerID" claimed an empty space.
+                    SpaceStateChangeEvent?.Invoke(SpaceState.EmptyGained, spaceID);
+                }
             }
 
             // If a player already claimed a space in this round, make sure they lose it.

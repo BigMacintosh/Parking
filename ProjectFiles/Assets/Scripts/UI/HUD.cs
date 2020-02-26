@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -15,6 +16,12 @@ namespace UI
         [FormerlySerializedAs("eventtext")] [SerializeField] public Text eventText;
         [FormerlySerializedAs("roundtext")] [SerializeField] private Text roundText;
         [FormerlySerializedAs("playercounttext")] [SerializeField] private Text playerCountText;
+        [SerializeField] private Text parkingSpaceText;
+        public Text ParkingSpaceText
+        {
+            get => parkingSpaceText;
+            set => parkingSpaceText = value;
+        }
 
         private int _roundCountdown;
         public int RoundCountdown
@@ -71,6 +78,18 @@ namespace UI
             {
                 _roundTextPrefix = value;
                 UpdateRoundText();
+            }
+        }
+
+        private short spaceID;
+
+        public short SpaceID
+        {
+            get => spaceID;
+            set
+            {
+                spaceID = value;
+                
             }
         }
 

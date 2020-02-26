@@ -19,11 +19,11 @@ namespace Network.Events
 
         public ClientLocationUpdateEvent(World world) : this()
         {
-            var transform = world.GetPlayerTransform(world.ClientID);
+            var transform = world.GetPlayerTransform(ClientConfig.PlayerID);
             Position = transform.position;
             Rotation = transform.rotation;
-            Velocity = world.GetPlayerVelocity(world.ClientID);
-            AngularVelocity = world.GetPlayerAngularVelocity(world.ClientID);
+            Velocity = world.GetPlayerVelocity(ClientConfig.PlayerID);
+            AngularVelocity = world.GetPlayerAngularVelocity(ClientConfig.PlayerID);
         }
 
         public override void Serialise(DataStreamWriter writer)

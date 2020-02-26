@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gameplay;
+using Network;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
@@ -15,13 +16,11 @@ namespace Game
         private readonly Dictionary<int, GameObject> cars;
         private PlayerSpawner spawner;
         public Dictionary<int, GameObject> Players => cars;
-        public int ClientID { get; set; }
 
         public World(ParkingSpaceManager parkingSpaceManager)
         {
             carPrefab = Resources.Load<GameObject>("Car");
             cars = new Dictionary<int, GameObject>();
-            ClientID = -1;
             spawner = new PlayerSpawner(parkingSpaceManager);
         }
         
@@ -59,12 +58,17 @@ namespace Game
         public void SetPlayerControllable(int playerID)
         {
             cars[playerID].GetComponent<Vehicle.Vehicle>().SetControllable();
+            ClientConfig.PlayerID = playerID;
         }
         
         public void DestroyPlayer(int playerID)
         {
             Object.Destroy(cars[playerID]);
             cars.Remove(playerID);
+            if (playerID == ClientConfig.PlayerID)
+            {
+                ClientConfig.PlayerID = -1;
+            }
         }
         
         public ushort GetNumPlayers()

@@ -231,7 +231,7 @@ namespace Network
         {                    
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
             var playerID = ev.PlayerID;
-            world.ClientID = playerID;
+            ClientConfig.PlayerID = playerID;
             
             Debug.Log($"Client: My playerID is {playerID}");
         }
@@ -244,7 +244,7 @@ namespace Network
 
             if (ClientConfig.GameMode == GameMode.PlayerMode)
             {
-                world.SetPlayerControllable(world.ClientID);
+                world.SetPlayerControllable(ClientConfig.PlayerID);
             }
 
             inGame = true;
@@ -286,7 +286,7 @@ namespace Network
             
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
 
-            if (ev.Players.Contains(world.ClientID))
+            if (ev.Players.Contains(ClientConfig.PlayerID))
             {
                 Shutdown();
             }

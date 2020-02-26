@@ -136,5 +136,21 @@ namespace UI
             // Update the player count on the hud
             Hud.NumberOfPlayers = nPlayers;
         }
+
+        public void OnSpaceStateChange(SpaceState state, ushort spaceID)
+        {
+            switch (state)
+            {
+                case SpaceState.EmptyGained:
+                    Hud.ParkingSpaceText.text = "You claimed an empty space!";
+                    break;
+                case SpaceState.StolenGained:
+                    Hud.ParkingSpaceText.text = "You stole someone's space!";
+                    break;
+                case SpaceState.StolenLost:
+                    Hud.ParkingSpaceText.text = "Your space was stolen ...";
+                    break;
+            }
+        }
     }
 }
