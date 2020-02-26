@@ -320,7 +320,6 @@ namespace Network
 
         public void OnKeepAlive(int ticksLeft)
         {
-            if (world.GetNumPlayers() == 0) return;
             var keepAlive = new ServerKeepAlive();
             sendToAll(keepAlive);
         }
