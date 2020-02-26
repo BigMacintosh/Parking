@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game;
@@ -286,6 +286,13 @@ namespace Network
             
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
 
+            Debug.Log(ev.Players);
+            foreach (var PlayerID in ev.Players)
+            {
+                world.DestroyPlayer(PlayerID);
+            }
+            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
+            
 //            if (ev.Players.Contains(world.ClientID))
 //            {
 //                Shutdown();
