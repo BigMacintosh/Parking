@@ -37,7 +37,7 @@ namespace Network
                 
         }
 
-        public string getServerIP()
+        public string GetServerIP()
         {
             return "Standalone";
         }
