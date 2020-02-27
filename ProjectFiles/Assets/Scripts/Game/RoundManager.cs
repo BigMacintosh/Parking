@@ -120,7 +120,7 @@ namespace Game
         {
             NotifyRoundEnd();
             roundNumber++;
-            if (roundNumber < RoundProperties.MaxRounds)
+            if (roundNumber < RoundProperties.MaxRounds && world.GetNumPlayers() > 1)
             {
                 var eliminatedPlayers = GetPlayersEliminated();
                 NotifyEliminatePlayers(eliminatedPlayers);
