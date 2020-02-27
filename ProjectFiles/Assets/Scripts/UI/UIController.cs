@@ -152,5 +152,30 @@ namespace UI
                     break;
             }
         }
+
+        public void OnGameEnd(List<int> winners)
+        {
+            foreach (var player in winners)
+            {
+                if (player == ClientConfig.PlayerID)
+                {
+                    Hud.eventText.text = "YOU WON !!!";
+                    return;
+                }
+            }
+            Hud.eventText.text = "You lost ...";
+        }
+
+        public void OnEliminatePlayers(ushort roundNumber, List<int> eliminated)
+        {
+            foreach (var player in eliminated)
+            {
+                if (player == ClientConfig.PlayerID)
+                {
+                    Hud.eventText.text = "You lost ...";
+                    return;
+                }
+            }
+        }
     }
 }

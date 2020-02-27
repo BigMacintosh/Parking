@@ -1,18 +1,42 @@
+using System.Collections.Generic;
 using Unity.Networking.Transport;
 
 namespace Network.Events
 {
     public class ServerGameEndEvent : Event
     {
+        
+        public List<int> Winners { get; private set; }
         public ServerGameEndEvent()
         {
             ID = EventType.ServerGameEndEvent;
-            Length = 1;
+        }
+        
+        public ServerGameEndEvent(List <int> players) : this()
+        {
+            ID = EventType.ServerGameEndEvent;
+            Length = sizeof(ushort) + (Winners.Count) * sizeof(int) + sizeof(byte);
         }
 
+        public override void Serialise(DataStreamWriter writer)
+        {
+            base.Serialise(writer);
+            writer.Write((ushort) Winners.Count);
+            foreach (var p in Winners)
+            {
+                writer.Write(p);
+            }
+        }
+        
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context)
         {
-            // ClientHandshake is empty, no need to deserialise
+            var playerCount = reader.ReadByte(ref context);
+            Winners = new List<int>();
+            for (int i = 0; i < playerCount; i++)
+            {
+                Winners.Add(reader.ReadByte(ref context));
+            }
+            Length = sizeof(ushort) * (Winners.Count + 2);
         }
         
         public override void Handle(Server server, NetworkConnection connection)

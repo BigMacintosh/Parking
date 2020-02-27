@@ -93,6 +93,8 @@ namespace Game
             client.RoundStartEvent += uiController.OnRoundStart;
             client.RoundEndEvent += uiController.OnRoundEnd;
             client.PlayerCountChangeEvent += uiController.OnPlayerCountChange;
+            client.GameEndEvent += uiController.OnGameEnd;
+            client.EliminatePlayersEvent += uiController.OnEliminatePlayers;
             
             parkingSpaceManager.SpaceStateChangeEvent += uiController.OnSpaceStateChange;
             

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gameplay;
 using Network;
 using UnityEngine;
@@ -128,7 +129,8 @@ namespace Game
             }
             else
             {
-                GameEndEvent?.Invoke();
+                var winners = world.GetPlayers();
+                GameEndEvent?.Invoke(winners);
             }
         }
 

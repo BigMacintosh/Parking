@@ -300,7 +300,7 @@ namespace Network
         
         public void Handle(ServerGameEndEvent ev, NetworkConnection conn)
         {
-            GameEndEvent?.Invoke();
+            GameEndEvent?.Invoke(ev.Winners);
         }
         
         public void Handle(ServerKeepAlive ev, NetworkConnection conn)
