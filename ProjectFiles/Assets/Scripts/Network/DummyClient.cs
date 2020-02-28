@@ -1,16 +1,13 @@
 using Game;
 using UnityEngine;
 
-namespace Network
-{
-    class DummyClient : IClient
-    {
+namespace Network {
+    class DummyClient : IClient {
         private World world;
-        private int playerID;
-            
-            
-        public DummyClient(World world)
-        {
+        private int   playerID;
+
+
+        public DummyClient(World world) {
             this.world = world;
         }
 
@@ -22,19 +19,13 @@ namespace Network
             return true;
         }
 
-        public void Shutdown()
-        {
-                
+        public void Shutdown() {
         }
 
-        public void SendLocationUpdate()
-        {
-                
+        public void SendLocationUpdate() {
         }
 
-        public void HandleNetworkEvents()
-        {
-                
+        public void HandleNetworkEvents() {
         }
 
         public string GetServerIP()
@@ -51,13 +42,11 @@ namespace Network
         public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         public event GameEndDelegate GameEndEvent;
 
-        public void OnSpaceEnter(int playerID, ushort spaceID)
-        {
-            Debug.Log($"Someone entered the space #{spaceID}");   
+        public void OnSpaceEnter(int playerID, ushort spaceID) {
+            Debug.Log($"Someone entered the space #{spaceID}");
         }
 
-        public void OnSpaceExit(int playerID, ushort spaceID)
-        {
+        public void OnSpaceExit(int playerID, ushort spaceID) {
             Debug.Log($"Someone exited the space #{spaceID}");
         }
 
