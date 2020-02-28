@@ -27,8 +27,7 @@ namespace UI
         [FormerlySerializedAs("playercounttext")] [SerializeField]
         private Text playerCountText;
 
-        [SerializeField] private Text parkingSpaceText;
-
+        
         [SerializeField] private Image connectionIcon;
         [SerializeField] private Image parkingIcon;
         [SerializeField] private Text parkingSpaceText;
@@ -65,17 +64,7 @@ namespace UI
             }
         }
 
-        private float _velocity;
-
-        public float Velocity
-        {
-            get => _velocity;
-            set
-            {
-                _velocity = value;
-                UpdateVelocityText();
-            }
-        }
+        
 
         private String _networkIP;
 
