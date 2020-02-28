@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game;
@@ -21,7 +21,7 @@ namespace Network
         void Shutdown();
         void SendLocationUpdate();
         void HandleNetworkEvents();
-        String getServerIP();
+        string GetServerIP();
         event GameStartDelegate GameStartEvent;
         event PreRoundStartDelegate PreRoundStartEvent;
         event RoundStartDelegate RoundStartEvent;
@@ -122,7 +122,6 @@ namespace Network
                 {
                     Debug.Log($"Client: Something went wrong when connecting to {serverIP}:{serverPort}.");
                 }
-                
                 return;
             }
 
@@ -147,6 +146,7 @@ namespace Network
                     }
                     case NetworkEvent.Type.Disconnect:
                         Debug.Log($"Client: Disconnected from the server.");
+                        done = true;
                         connection = default(NetworkConnection);
                         break;
                 }
@@ -208,6 +208,9 @@ namespace Network
                     ev = new ServerSpaceClaimedEvent();
                     break;
                 }
+                case EventType.ServerGameEndEvent:
+                    ev = new ServerGameEndEvent();
+                    break;
                 default:
                     Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
                     return;
@@ -217,7 +220,7 @@ namespace Network
             ev.Handle(this, connection);
         }
         
-        public String getServerIP()
+        public String GetServerIP()
         {
             return serverIP;
         }
@@ -286,15 +289,21 @@ namespace Network
             
             EliminatePlayersEvent?.Invoke(ev.RoundNumber, ev.Players);
 
-            if (ev.Players.Contains(ClientConfig.PlayerID))
+            foreach (var PlayerID in ev.Players)
             {
-                Shutdown();
+                world.DestroyPlayer(PlayerID);
             }
+            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
+            
+//            if (ev.Players.Contains(world.ClientID))
+//            {
+//                Shutdown();
+//            }
         }
         
         public void Handle(ServerGameEndEvent ev, NetworkConnection conn)
         {
-            GameEndEvent?.Invoke();
+            GameEndEvent?.Invoke(ev.Winners);
         }
         
         public void Handle(ServerKeepAlive ev, NetworkConnection conn)

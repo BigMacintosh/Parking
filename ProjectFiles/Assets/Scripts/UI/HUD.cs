@@ -2,7 +2,6 @@
 using System.Net;
 using Network;
 using TMPro;
-using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -16,9 +15,20 @@ namespace UI
         // TODO: sort out the accessors here, we don't want public fields if possible
         [SerializeField] private Text velocityText;
         [SerializeField] private Text debugText;
-        [FormerlySerializedAs("exitbutton")] [SerializeField] public Button exitButton;
-        [FormerlySerializedAs("eventtext")] [SerializeField] public Text eventText;
-        [FormerlySerializedAs("roundtext")] [SerializeField] private Text roundText;
+        [FormerlySerializedAs("exitbutton")] [SerializeField]
+        public Button exitButton;
+
+        [FormerlySerializedAs("eventtext")] [SerializeField]
+        public Text eventText;
+
+        [FormerlySerializedAs("roundtext")] [SerializeField]
+        private Text roundText;
+
+        [FormerlySerializedAs("playercounttext")] [SerializeField]
+        private Text playerCountText;
+
+        [SerializeField] private Text parkingSpaceText;
+
         [SerializeField] private Image connectionIcon;
         [SerializeField] private Image parkingIcon;
         [SerializeField] private Text parkingSpaceText;
@@ -44,6 +54,7 @@ namespace UI
         }
 
         private int _roundCountdown;
+
         public int RoundCountdown
         {
             get => _roundCountdown;
@@ -54,7 +65,20 @@ namespace UI
             }
         }
 
+        private float _velocity;
+
+        public float Velocity
+        {
+            get => _velocity;
+            set
+            {
+                _velocity = value;
+                UpdateVelocityText();
+            }
+        }
+
         private String _networkIP;
+
         public string NetworkIP
         {
             get => _networkIP;
@@ -94,15 +118,12 @@ namespace UI
         public short SpaceID
         {
             get => spaceID;
-            set
-            {
-                spaceID = value;
-                
-            }
+            set { spaceID = value; }
         }
 
         private void UpdateDebugText()
         {
+
             if (_networkIP == null || (_networkIP == "Standalone" || _networkIP.Contains("Disconnected")))
             {
                 debugText.color = badThingsRed;
@@ -127,7 +148,7 @@ namespace UI
             roundText.text = RoundTextPrefix + _roundCountdown + " seconds";
         }
 
-        public  void ClearRoundText()
+        public void ClearRoundText()
         {
             RoundTextPrefix = "";
             roundText.text = "";
