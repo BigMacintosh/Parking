@@ -1,146 +1,111 @@
-﻿using System;
-using System.Net;
-using Network;
-using TMPro;
+﻿using Network;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using Image = UnityEngine.UI.Image;
 
-
-namespace UI
-{
-    public class HUD : MonoBehaviour
-    {
+namespace UI {
+    public class HUD : MonoBehaviour {
+        // Public Fields
         // TODO: sort out the accessors here, we don't want public fields if possible
-        [SerializeField] private Text velocityText;
-        [SerializeField] private Text debugText;
-        [FormerlySerializedAs("exitbutton")] [SerializeField]
-        public Button exitButton;
-
-        [FormerlySerializedAs("eventtext")] [SerializeField]
-        public Text eventText;
-
-        [FormerlySerializedAs("roundtext")] [SerializeField]
-        private Text roundText;
-
-        [FormerlySerializedAs("playercounttext")] [SerializeField]
-        private Text playerCountText;
-
-        
-        [SerializeField] private Image connectionIcon;
-        [SerializeField] private Image parkingIcon;
-        [SerializeField] private Text parkingSpaceText;
-        private readonly Color goodThingsGreen = new Color(139f/255f, 195f/255f, 74f/255f);
-        private readonly Color badThingsRed = new Color(244f/255f, 67f/255f, 54f/255f);
-
-        private bool _hasParkingSpace;
-        public bool HasParkingSpace
-        {
+        public bool HasParkingSpace {
             get => _hasParkingSpace;
-            set
-            {
-                _hasParkingSpace = value;
-                parkingIcon.color = HasParkingSpace ? goodThingsGreen : badThingsRed;
+            set {
+                _hasParkingSpace       = value;
+                parkingIcon.color      = HasParkingSpace ? goodThingsGreen : badThingsRed;
                 parkingSpaceText.color = HasParkingSpace ? goodThingsGreen : badThingsRed;
             }
         }
 
-        public Text ParkingSpaceText
-        {
+        public Text ParkingSpaceText {
             get => parkingSpaceText;
             set => parkingSpaceText = value;
         }
 
-        private int _roundCountdown;
-
-        public int RoundCountdown
-        {
+        public int RoundCountdown {
             get => _roundCountdown;
-            set
-            {
+            set {
                 _roundCountdown = value;
                 UpdateRoundText();
             }
         }
 
-        
-
-        private String _networkIP;
-
-        public string NetworkIP
-        {
+        public string NetworkIP {
             get => _networkIP;
-            set
-            {
+            set {
                 _networkIP = value;
                 UpdateDebugText();
             }
         }
 
-        private int _numberOfPlayers;
-
-        public int NumberOfPlayers
-        {
+        public int NumberOfPlayers {
             get => _numberOfPlayers;
-            set
-            {
+            set {
                 _numberOfPlayers = value;
                 UpdateDebugText();
             }
         }
 
-        private String _roundTextPrefix;
-
-        public string RoundTextPrefix
-        {
+        public string RoundTextPrefix {
             get => _roundTextPrefix;
-            set
-            {
+            set {
                 _roundTextPrefix = value;
                 UpdateRoundText();
             }
         }
 
-        private short spaceID;
+        // Serializable Fields
+        [SerializeField] private Image connectionIcon;
+        [SerializeField] private Text  debugText;
 
-        public short SpaceID
-        {
-            get => spaceID;
-            set { spaceID = value; }
-        }
+        [FormerlySerializedAs("eventtext")] [SerializeField]
+        public Text eventText;
 
-        private void UpdateDebugText()
-        {
+        [FormerlySerializedAs("exitbutton")] [SerializeField]
+        public Button exitButton;
 
-            if (_networkIP == null || (_networkIP == "Standalone" || _networkIP.Contains("Disconnected")))
-            {
-                debugText.color = badThingsRed;
+        [SerializeField] private Image parkingIcon;
+        [SerializeField] private Text  parkingSpaceText;
+
+        [FormerlySerializedAs("playercounttext")] [SerializeField]
+        private Text playerCountText;
+
+        [FormerlySerializedAs("roundtext")] [SerializeField]
+        private Text roundText;
+
+        // Private Fields
+        private readonly Color badThingsRed    = new Color(244f / 255f, 67f  / 255f, 54f / 255f);
+        private readonly Color goodThingsGreen = new Color(139f / 255f, 195f / 255f, 74f / 255f);
+
+        private bool   _hasParkingSpace;
+        private string _networkIP;
+        private int    _numberOfPlayers;
+        private int    _roundCountdown;
+        private string _roundTextPrefix;
+
+
+        private void UpdateDebugText() {
+            if (_networkIP == null || _networkIP == "Standalone" || _networkIP.Contains("Disconnected")) {
+                debugText.color      = badThingsRed;
                 connectionIcon.color = badThingsRed;
-            }
-            else
-            {
-                debugText.color = goodThingsGreen;
+            } else {
+                debugText.color      = goodThingsGreen;
                 connectionIcon.color = goodThingsGreen;
             }
-            
-            if (ClientConfig.GameMode == GameMode.AdminMode)
-            {
-                debugText.text = $"{ _networkIP } ({ NumberOfPlayers } player{ (NumberOfPlayers == 1 ? "" : "s") }) ";
+
+            if (ClientConfig.GameMode == GameMode.AdminMode) {
+                debugText.text = $"{_networkIP} ({NumberOfPlayers} player{(NumberOfPlayers == 1 ? "" : "s")}) ";
             }
-            
+
             debugText.text = $"{_networkIP}";
         }
 
-        private void UpdateRoundText()
-        {
+        private void UpdateRoundText() {
             roundText.text = RoundTextPrefix + _roundCountdown + " seconds";
         }
 
-        public void ClearRoundText()
-        {
+        public void ClearRoundText() {
             RoundTextPrefix = "";
-            roundText.text = "";
+            roundText.text  = "";
         }
     }
 }

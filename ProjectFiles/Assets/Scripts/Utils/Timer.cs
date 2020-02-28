@@ -1,72 +1,60 @@
-using Game;
 using UnityEngine;
-using UnityEngine.Polybrush;
 
-namespace Utils
-{
+namespace Utils {
     public delegate void TimerOverDelegate();
+
     public delegate void TimerTickDelegate(int ticksLeft);
-    
-    public class Timer
-    {
+
+    public class Timer {
+        // Delegates
         public event TimerOverDelegate Elapsed;
         public event TimerTickDelegate Tick;
-        private float timeLeft;
-        private int ticksLeft;
-        private float length;
-        private int nTicks;
-        private bool repeat;
-        
-        
+
+        // Public Fields
         public bool Set { get; private set; }
 
-        public Timer(float length)
-        {
+        // Private Fields
+        private int   nTicks;
+        private int   ticksLeft;
+        private float length;
+        private float timeLeft;
+
+        private readonly bool repeat;
+
+        public Timer(float length) {
             SetTime(length);
             Set = false;
         }
-        
-        public Timer(float length, bool repeat) : this(length)
-        {
+
+        public Timer(float length, bool repeat) : this(length) {
             this.repeat = repeat;
-            
+
             // Repeat 'infinitely'
             SetTicks(int.MaxValue);
         }
 
-        public Timer(float length, int nTicks) : this(length)
-        {
-            this.repeat = true;
-            
+        public Timer(float length, int nTicks) : this(length) {
+            repeat = true;
+
             // Repeat nTicks times.
             SetTicks(nTicks);
         }
-
-
-        // Funily enough like almost everything that isnt a monobehavior
-        // when we give it an Update function, you have to call it.
-        // big shock?!?!
-        public void Update()
-        {
-            if (Set)
-            {
+        
+        public void Update() {
+            if (Set) {
                 var delta = Time.deltaTime;
                 timeLeft -= delta;
 
-                if (timeLeft < 0)
-                {
-
+                if (timeLeft < 0) {
                     // Deal with timer tick
-                    if (repeat)
-                    {
+                    if (repeat) {
                         ticksLeft -= 1;
-                        timeLeft += length;
+                        timeLeft  += length;
                         Tick?.Invoke(ticksLeft);
                     }
 
                     // Deal with timer end.
-                    if (ticksLeft <= 0 && repeat || !repeat)
-                    {
+                    if (ticksLeft <= 0 && repeat || !repeat) {
                         Set = false;
                         Elapsed?.Invoke();
                     }
@@ -74,33 +62,28 @@ namespace Utils
             }
         }
 
-        public void Start()
-        {
+        public void Start() {
             Set = true;
         }
 
-        public void Stop()
-        {
+        public void Stop() {
             Set = false;
-        }
-        
-        public void Reset()
-        {
-            Set = false;
-            timeLeft = length;
-            ticksLeft = nTicks;
-        }
-        
-        public void SetTime(float length)
-        {
-            this.length = length;
-            timeLeft = length;
         }
 
-        public void SetTicks(int nTicks)
-        {
-            this.nTicks = nTicks;
+        public void Reset() {
+            Set       = false;
+            timeLeft  = length;
             ticksLeft = nTicks;
+        }
+
+        public void SetTime(float length) {
+            this.length = length;
+            timeLeft    = length;
+        }
+
+        public void SetTicks(int nTicks) {
+            this.nTicks = nTicks;
+            ticksLeft   = nTicks;
         }
     }
 }

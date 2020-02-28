@@ -1,11 +1,9 @@
-namespace UI
-{
+namespace UI {
     public delegate void SpaceStateChangeDelegate(SpaceState state, ushort spaceID);
 
-    public enum SpaceState
-    {
+    public enum SpaceState {
         StolenLost,
         StolenGained,
-        EmptyGained,
+        EmptyGained
     }
 }
