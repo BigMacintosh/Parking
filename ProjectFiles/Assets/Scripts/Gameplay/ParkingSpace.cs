@@ -15,9 +15,16 @@ namespace Gameplay
         public event SpaceExitDelegate SpaceExitEvent;
 
         public ushort SpaceID { get; set; }
-        private Material mat;
+        private Renderer rend;
+        private MaterialPropertyBlock block;
         public Timer Timer { get; set; }
         public int OccupiedBy { get; set; }
+        
+        private Color inProg = new Color(1,1,0,0.3f);
+        private Color claimed = new Color(0, 1, 0, 0.3f);
+        private Color empty = new Color(0, 0, 1, 0.3f);
+        private Color disable = new Color(1, 1, 1, 0);
+        
 
         public bool Enabled { get; private set; }
 
@@ -25,7 +32,10 @@ namespace Gameplay
         // Start is called before the first frame update
         void Start()
         {
-            mat = GetComponent<Renderer>().material;
+            rend = GetComponent<Renderer>();
+            block = new MaterialPropertyBlock();
+            SetColour(empty);
+            
             Timer = new Timer(0);
             OccupiedBy = -1;
             Disable();
@@ -59,7 +69,7 @@ namespace Gameplay
 
             if (other.TryGetComponent(out VehicleDriver driver))
             {
-//                mat.color = new Color(1, 1, 0, 0.3f);
+                SetColour( inProg);
                 SpaceEnterEvent?.Invoke(0, SpaceID);
             }
             else if (other.TryGetComponent(out Vehicle.Vehicle v))
@@ -93,20 +103,19 @@ namespace Gameplay
         public void SetOccupied(int playerID)
         {
             OccupiedBy = playerID;
-            mat.color = new Color(0, 1, 0, 0.3f);
+            SetColour(claimed);
         }
 
         public void SetEmpty()
         {
             OccupiedBy = -1;
-            mat.color = new Color(0, 0, 1, 0.3f);
+            SetColour(empty);
         }
 
         public bool Occupied()
         {
             return OccupiedBy != -1;
         }
-
         public void Enable()
         {
             Enabled = true;
@@ -117,7 +126,15 @@ namespace Gameplay
         {
             Enabled = false;
             SetEmpty();
-            mat.color = new Color(1, 1, 1, 0);
+            SetColour(disable);
+
+        }
+
+        private void SetColour(Color colour)
+        {
+            rend.GetPropertyBlock(block);
+            block.SetColor("_BaseColor", colour);
+            rend.SetPropertyBlock(block);
         }
     }
 }

@@ -73,3 +73,5 @@ crashlytics-build.properties
 Assembly-CSharp.csproj.DotSettings
 
 ProjectSettings/Packages/com.unity.probuilder/Settings.json
+
+.vscode/

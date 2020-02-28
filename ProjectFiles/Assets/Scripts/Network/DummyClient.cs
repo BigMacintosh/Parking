@@ -13,9 +13,9 @@ namespace Network {
 
         public bool Start(ushort port = 25565)
         {
-            world.ClientID = 0;
-            world.SpawnPlayer(world.ClientID);
-            world.SetPlayerControllable(world.ClientID);
+            ClientConfig.PlayerID = 0;
+            world.SpawnPlayer(ClientConfig.PlayerID);
+            world.SetPlayerControllable(ClientConfig.PlayerID);
             return true;
         }
 
@@ -28,7 +28,7 @@ namespace Network {
         public void HandleNetworkEvents() {
         }
 
-        public string getServerIP()
+        public string GetServerIP()
         {
             return "Standalone";
         }

@@ -10,18 +10,13 @@ namespace Network
         ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers);
     
     public delegate void RoundStartDelegate(ushort roundNumber, List<ushort> spacesActive);
-    
     public delegate void RoundEndDelegate(ushort roundNumber);
-
     public delegate void EliminatePlayersDelegate(ushort roundNumber, List<int> eliminatedPlayers);
 
     // Parking Space Delegates
     public delegate void SpaceEnterDelegate(int playerID, ushort spaceID);
-
     public delegate void SpaceExitDelegate(int playerID, ushort spaceID);
-
-    public delegate void GameEndDelegate();
-
+    public delegate void GameEndDelegate(List<int> winners);
     public delegate void SpaceClaimedDelegate(int playerID, ushort spaceID);
     public delegate void PlayerCountChangeDelegate(ushort nPlayers);
 }

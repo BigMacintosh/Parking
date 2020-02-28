@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Game;
 using Network;
+using UnityEditor;
 using Utils;
 using Vehicle;
 
@@ -59,6 +60,9 @@ namespace UI
             escmenu.SetActive(false);
             settingsmenu.SetActive(false);
             adminMenu.SetServerMode(IsServerMode);
+            
+            _hud.HasParkingSpace = false;
+            _hud.ParkingSpaceText.text = "No active spaces.";
         }
         
         // Update is called once per frame
@@ -73,10 +77,10 @@ namespace UI
                 escmenu.SetActive(active);
             }
             
-            if (!(_car is null))
-            {
-                Hud.Velocity = _car.velocity.magnitude * 3.6f;
-            }
+//            if (!(_car is null))
+//            {
+//                Hud.Velocity = _car.velocity.magnitude * 3.6f;
+//            }
         }
 
         public void SubscribeTriggerGameStartEvent(TriggerGameStartDelegate handler)
@@ -108,6 +112,8 @@ namespace UI
             timer.Tick += left => Hud.RoundCountdown = left;
             timer.Elapsed += () => Hud.ClearRoundText();
             
+            Hud.ParkingSpaceText.text = "No active spaces";
+            
             timer.Start();
         }
 
@@ -122,6 +128,9 @@ namespace UI
             timer = new Timer(1, roundLength);
             timer.Tick += left => Hud.RoundCountdown = left;
             timer.Elapsed += () => Hud.ClearRoundText();
+            
+            Hud.ParkingSpaceText.text = $"{ spacesActive.Count } active spaces";
+            
             timer.Start();
         }
 
@@ -129,12 +138,59 @@ namespace UI
         {
             // Display message on HUD to say that round has ended.
             Hud.eventText.text = "Round " + roundNumber + " has ended!";
+            
+            Hud.HasParkingSpace = false;
+            Hud.ParkingSpaceText.text = "No active spaces";
         }
 
         public void OnPlayerCountChange(ushort nPlayers)
         {
             // Update the player count on the hud
             Hud.NumberOfPlayers = nPlayers;
+        }
+
+        public void OnSpaceStateChange(SpaceState state, ushort spaceID)
+        {
+            switch (state)
+            {
+                case SpaceState.EmptyGained:
+                    Hud.ParkingSpaceText.text = "You claimed an empty space!";
+                    Hud.HasParkingSpace = true;
+                    break;
+                case SpaceState.StolenGained:
+                    Hud.ParkingSpaceText.text = "You stole someone's space!";
+                    Hud.HasParkingSpace = true;
+                    break;
+                case SpaceState.StolenLost:
+                    Hud.ParkingSpaceText.text = "Your space was stolen ...";
+                    Hud.HasParkingSpace = false;
+                    break;
+            }
+        }
+
+        public void OnGameEnd(List<int> winners)
+        {
+            foreach (var player in winners)
+            {
+                if (player == ClientConfig.PlayerID)
+                {
+                    Hud.eventText.text = "YOU WON !!!";
+                    return;
+                }
+            }
+            Hud.eventText.text = "You lost ...";
+        }
+
+        public void OnEliminatePlayers(ushort roundNumber, List<int> eliminated)
+        {
+            foreach (var player in eliminated)
+            {
+                if (player == ClientConfig.PlayerID)
+                {
+                    Hud.eventText.text = "You lost ...";
+                    return;
+                }
+            }
         }
     }
 }
