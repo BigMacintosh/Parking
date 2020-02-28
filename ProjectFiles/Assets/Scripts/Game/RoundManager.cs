@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Gameplay;
 using Network;
 using UnityEngine;
@@ -8,16 +10,19 @@ using Utils;
 
 namespace Game
 {
-    static class DefaultRoundProperties
+    static class RoundProperties
     {
         // All times in seconds
-        public const ushort FreeroamLength = 10;
+        public const ushort FreeroamLength = 30;
         public const ushort PreRoundLength = 5;
-        public const ushort RoundLength = 15;
+        public const ushort RoundLength = 30;
         public const ushort MaxRounds = 5;
+
+        // 0 means no parking spaces would activate, 1 means there would be 1 space per player
+        public const float SpacesToPlayersRatio = 0.8f;
     }
-    
-    
+
+
     public class RoundManager
     {
         public bool GameInProgress { get; private set; }
@@ -26,10 +31,6 @@ namespace Game
 
         // Timer to countdown to the start of the round.
         private Timer roundTimer;
-        private ushort freeroamLength;
-        private ushort preRoundLength;
-        private ushort roundLength;
-        private ushort maxRounds;
         private ServerParkingSpaceManager spaceManager;
         private System.Random random;
 
@@ -44,9 +45,9 @@ namespace Game
 
         // Immediately end a around.
         public event RoundEndDelegate RoundEndEvent;
-        
+
         public event EliminatePlayersDelegate EliminatePlayersEvent;
-        
+
         public event GameEndDelegate GameEndEvent;
 
         public RoundManager(World world, ServerParkingSpaceManager spaceManager)
@@ -67,32 +68,28 @@ namespace Game
         public void StartGame()
         {
             if (GameInProgress) return;
-            preRoundLength = DefaultRoundProperties.PreRoundLength;
-            roundLength = DefaultRoundProperties.RoundLength;
-            freeroamLength = DefaultRoundProperties.FreeroamLength;
-            maxRounds = DefaultRoundProperties.MaxRounds;
-            NotifyGameStart(freeroamLength);
+            NotifyGameStart(RoundProperties.FreeroamLength);
             StartFreeroam();
             GameInProgress = true;
         }
 
-        public void StartFreeroam()
+        private void StartFreeroam()
         {
             // Start timer to for PreRoundCountdown 
-            roundTimer = new Timer(freeroamLength);
+            roundTimer = new Timer(RoundProperties.FreeroamLength);
 
             // Add StartRoundEvent to timer observers.
             roundTimer.Elapsed += StartPreRound;
             roundTimer.Start();
         }
 
-        public void StartPreRound()
+        private void StartPreRound()
         {
             // Send pre round warning.
             NotifyPreRoundStart();
 
             // Start timer to for PreRoundCountdown 
-            roundTimer = new Timer(preRoundLength);
+            roundTimer = new Timer(RoundProperties.PreRoundLength);
 
             // Add StartRoundEvent to timer observers.
             roundTimer.Elapsed += StartRoundEvent;
@@ -101,42 +98,58 @@ namespace Game
 
         private void StartRoundEvent()
         {
-            // TODO: give an actual dynamic value to num space
+            int numberOfSpaces = 1;
+            // If not the last round
+            if (roundNumber < RoundProperties.MaxRounds - 1)
+            {
+                numberOfSpaces = (int) Math.Floor(world.GetNumPlayers() * RoundProperties.SpacesToPlayersRatio);
+            }
+
             Vector2 spacesAround = new Vector2(random.Next(-200, 201), random.Next(-200, 201));
-            List<ushort> activeSpaces = spaceManager.GetNearestSpaces(spacesAround, 3);
-            Debug.Log($"Round { roundNumber } spaces from point ({ spacesAround.x }, { spacesAround.y }): { String.Join(", ", activeSpaces) }.");
-            
+            List<ushort> activeSpaces = spaceManager.GetNearestSpaces(spacesAround, numberOfSpaces);
+            Debug.Log(
+                $"Round {roundNumber}, {numberOfSpaces} spaces from point ({spacesAround.x}, {spacesAround.y}): {String.Join(", ", activeSpaces)}.");
+
             NotifyRoundStart(activeSpaces);
 
-            roundTimer = new Timer(roundLength);
+            roundTimer = new Timer(RoundProperties.RoundLength);
             roundTimer.Elapsed += EndRoundEvent;
             roundTimer.Start();
         }
 
         private void EndRoundEvent()
         {
+            Debug.Log($"Round {roundNumber} ended.");
             NotifyRoundEnd();
             roundNumber++;
-            if (roundNumber < maxRounds)
+            var eliminatedPlayers = GetEliminatedPlayers();
+            Debug.Log($"Eliminated {eliminatedPlayers}.");
+            
+            var nextNumPlayers = world.GetNumPlayers() - eliminatedPlayers.Count;
+            Debug.Log($"Next num players {nextNumPlayers}.");
+            
+            if (roundNumber < RoundProperties.MaxRounds && nextNumPlayers > 1)
             {
-                var eliminatedPlayers = GetPlayersEliminated();
+                Debug.Log("Continuing the game...");
                 NotifyEliminatePlayers(eliminatedPlayers);
                 StartPreRound();
             }
             else
             {
-                GameEndEvent?.Invoke();
+                Debug.Log("The game has finished...");
+                var winners = GetWinners();
+                GameEndEvent?.Invoke(winners);
             }
         }
 
-        private List<int> GetPlayersEliminated()
+        private List<int> GetEliminatedPlayers()
         {
             // Get players in the game
             List<int> playersInGame = world.GetPlayers();
             Dictionary<int, ParkingSpace> playersInSpace = spaceManager.parkingSpacesByPlayerID;
 
             List<int> eliminatedPlayers = new List<int>();
-            
+
             foreach (var playerID in playersInGame)
             {
                 if (!playersInSpace.ContainsKey(playerID))
@@ -144,8 +157,30 @@ namespace Game
                     eliminatedPlayers.Add(playerID);
                 }
             }
+
             return eliminatedPlayers;
         }
+        
+        private List<int> GetWinners()
+        {
+            // Get players in the game
+            List<int> playersInGame = world.GetPlayers();
+            Dictionary<int, ParkingSpace> playersInSpace = spaceManager.parkingSpacesByPlayerID;
+
+            List<int> winners = new List<int>();
+
+            foreach (var playerID in playersInGame)
+            {
+                if (playersInSpace.ContainsKey(playerID))
+                {
+                    winners.Add(playerID);
+                    Debug.Log($"Winners: {playerID}");
+                }
+            }
+
+            return winners;
+        }
+
 
         private void NotifyGameStart(ushort freeRoamLength)
         {
@@ -154,7 +189,8 @@ namespace Game
 
         private void NotifyPreRoundStart()
         {
-            PreRoundStartEvent?.Invoke(roundNumber, preRoundLength, roundLength, world.GetNumPlayers());
+            PreRoundStartEvent?.Invoke(roundNumber, RoundProperties.PreRoundLength, RoundProperties.RoundLength,
+                world.GetNumPlayers());
         }
 
         private void NotifyRoundStart(List<ushort> spacesActive)

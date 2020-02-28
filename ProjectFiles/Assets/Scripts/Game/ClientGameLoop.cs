@@ -85,7 +85,7 @@ namespace Game
             var success = client.Start();
 
             uiController.OnPlayerCountChange(world.GetNumPlayers());
-            uiController.Hud.NetworkIP = client.getServerIP();
+            uiController.Hud.NetworkIP = client.GetServerIP();
             uiController.Hud.exitButton.onClick.AddListener(Shutdown);
             
             client.GameStartEvent += uiController.OnGameStart;
@@ -93,6 +93,8 @@ namespace Game
             client.RoundStartEvent += uiController.OnRoundStart;
             client.RoundEndEvent += uiController.OnRoundEnd;
             client.PlayerCountChangeEvent += uiController.OnPlayerCountChange;
+            client.GameEndEvent += uiController.OnGameEnd;
+            client.EliminatePlayersEvent += uiController.OnEliminatePlayers;
             
             parkingSpaceManager.SpaceStateChangeEvent += uiController.OnSpaceStateChange;
             

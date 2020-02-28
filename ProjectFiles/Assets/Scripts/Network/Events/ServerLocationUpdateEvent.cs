@@ -68,9 +68,7 @@ namespace Network.Events
 
         public void UpdateLocations(World world)
         {
-            // TODO: If you aren't spawned why should you not update other player locations?
-            // if (world.ClientID == -1) return;
-            foreach (var playerID in Positions.Keys.Where(k => k != ClientConfig.PlayerID))
+            foreach (var playerID in Positions.Keys.Where(k => k != ClientConfig.PlayerID && world.Players.Keys.Contains(k)))
             {
                 world.SetPlayerRotation(playerID, Rotations[playerID]);
                 world.SetPlayerPosition(playerID, Positions[playerID]);

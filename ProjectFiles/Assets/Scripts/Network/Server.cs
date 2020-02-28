@@ -320,7 +320,6 @@ namespace Network
 
         public void OnKeepAlive(int ticksLeft)
         {
-            if (world.GetNumPlayers() == 0) return;
             var keepAlive = new ServerKeepAlive();
             sendToAll(keepAlive);
         }
@@ -351,13 +350,28 @@ namespace Network
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             sendToAll(eliminatePlayers);
-
+            foreach (var player in players)
+            {
+                // TODO: Chris no likey
+                int index = 0;
+                for (index = 0; index != connections[index].InternalId && index < connections.Length; index++)
+                { }
+                
+                connections[index].Disconnect(driver);
+                world.DestroyPlayer(player);
+                
+                // Notify users of disconnect
+                var disconnectEvent = new ServerDisconnectEvent((ushort) player);
+                sendToAll(disconnectEvent);
+                
+                Debug.Log($"Server: Destroyed player { player } due to disconnect.");
+                connections[index] = default(NetworkConnection);
+            }
         }
 
-        public void OnGameEnd()
+        public void OnGameEnd(List<int> winners)
         {
-            if (world.GetNumPlayers() == 0) return;
-            var gameEnd = new ServerGameEndEvent();
+            var gameEnd = new ServerGameEndEvent(winners);
             sendToAll(gameEnd);
         }
 

@@ -65,7 +65,7 @@ namespace Utils
                     }
 
                     // Deal with timer end.
-                    if (nTicks <= 0 && repeat || !repeat)
+                    if (ticksLeft <= 0 && repeat || !repeat)
                     {
                         Set = false;
                         Elapsed?.Invoke();
