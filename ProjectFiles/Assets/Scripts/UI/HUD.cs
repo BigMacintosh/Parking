@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -12,11 +11,21 @@ namespace UI
         // TODO: sort out the accessors here, we don't want public fields if possible
         [SerializeField] private Text velocityText;
         [SerializeField] private Text debugText;
-        [FormerlySerializedAs("exitbutton")] [SerializeField] public Button exitButton;
-        [FormerlySerializedAs("eventtext")] [SerializeField] public Text eventText;
-        [FormerlySerializedAs("roundtext")] [SerializeField] private Text roundText;
-        [FormerlySerializedAs("playercounttext")] [SerializeField] private Text playerCountText;
+
+        [FormerlySerializedAs("exitbutton")] [SerializeField]
+        public Button exitButton;
+
+        [FormerlySerializedAs("eventtext")] [SerializeField]
+        public Text eventText;
+
+        [FormerlySerializedAs("roundtext")] [SerializeField]
+        private Text roundText;
+
+        [FormerlySerializedAs("playercounttext")] [SerializeField]
+        private Text playerCountText;
+
         [SerializeField] private Text parkingSpaceText;
+
         public Text ParkingSpaceText
         {
             get => parkingSpaceText;
@@ -24,6 +33,7 @@ namespace UI
         }
 
         private int _roundCountdown;
+
         public int RoundCountdown
         {
             get => _roundCountdown;
@@ -33,8 +43,9 @@ namespace UI
                 UpdateRoundText();
             }
         }
-        
+
         private float _velocity;
+
         public float Velocity
         {
             get => _velocity;
@@ -46,6 +57,7 @@ namespace UI
         }
 
         private String _networkIP;
+
         public string NetworkIP
         {
             get => _networkIP;
@@ -86,11 +98,7 @@ namespace UI
         public short SpaceID
         {
             get => spaceID;
-            set
-            {
-                spaceID = value;
-                
-            }
+            set { spaceID = value; }
         }
 
         private void UpdateVelocityText()
@@ -100,12 +108,12 @@ namespace UI
 
         private void UpdateDebugText()
         {
-            debugText.text = "Connected to " + _networkIP + "\nNumber of players: "  + NumberOfPlayers;
+            debugText.text = "Connected to " + _networkIP + "\nNumber of players: " + NumberOfPlayers;
         }
-        
+
         private void UpdatePlayerCountText()
         {
-            playerCountText.text = "Number of players: "  + NumberOfPlayers;
+            playerCountText.text = "Number of players: " + NumberOfPlayers;
         }
 
         private void UpdateRoundText()
@@ -113,7 +121,7 @@ namespace UI
             roundText.text = RoundTextPrefix + _roundCountdown + " seconds";
         }
 
-        public  void ClearRoundText()
+        public void ClearRoundText()
         {
             RoundTextPrefix = "";
             roundText.text = "";

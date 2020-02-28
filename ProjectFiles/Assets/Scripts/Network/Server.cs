@@ -353,12 +353,14 @@ namespace Network
             foreach (var player in players)
             {
                 connections[player].Disconnect(driver);
+                var playerID = connections[player].InternalId;
+                world.DestroyPlayer(playerID);
             }
         }
 
         public void OnGameEnd(List<int> winners)
         {
-            if (world.GetNumPlayers() == 0) return;
+//            if (world.GetNumPlayers() == 0) return;
             var gameEnd = new ServerGameEndEvent(winners);
             sendToAll(gameEnd);
         }

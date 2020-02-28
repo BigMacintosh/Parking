@@ -15,11 +15,10 @@ namespace Game
         public const ushort FreeroamLength = 10;
         public const ushort PreRoundLength = 5;
         public const ushort RoundLength = 15;
-
         public const ushort MaxRounds = 5;
 
         // 0 means no parking spaces would activate, 1 means there would be 1 space per player
-        public const float SpacesToPlayersRatio = 0.6f;
+        public const float SpacesToPlayersRatio = 0.8f;
     }
 
 
@@ -102,7 +101,7 @@ namespace Game
             // If not the last round
             if (roundNumber < RoundProperties.MaxRounds - 1)
             {
-                numberOfSpaces = (int) Math.Ceiling(world.GetNumPlayers() * RoundProperties.SpacesToPlayersRatio);
+                numberOfSpaces = (int) Math.Floor(world.GetNumPlayers() * RoundProperties.SpacesToPlayersRatio);
             }
 
             Vector2 spacesAround = new Vector2(random.Next(-200, 201), random.Next(-200, 201));
@@ -119,22 +118,28 @@ namespace Game
 
         private void EndRoundEvent()
         {
+            Debug.Log($"Round {roundNumber} ended.");
             NotifyRoundEnd();
             roundNumber++;
-            if (roundNumber < RoundProperties.MaxRounds && world.GetNumPlayers() > 1)
+            var eliminatedPlayers = GetEliminatedPlayers();
+            Debug.Log($"Eliminated {eliminatedPlayers}.");
+            var nextNumPlayers = world.GetNumPlayers() - eliminatedPlayers.Count;
+            Debug.Log($"Next num players {nextNumPlayers}.");
+            if (roundNumber < RoundProperties.MaxRounds && nextNumPlayers > 1)
             {
-                var eliminatedPlayers = GetPlayersEliminated();
+                Debug.Log($"Continuing the game...");
                 NotifyEliminatePlayers(eliminatedPlayers);
                 StartPreRound();
             }
             else
             {
-                var winners = world.GetPlayers();
+                Debug.Log($"The game has finished...");
+                var winners = GetWinners();
                 GameEndEvent?.Invoke(winners);
             }
         }
 
-        private List<int> GetPlayersEliminated()
+        private List<int> GetEliminatedPlayers()
         {
             // Get players in the game
             List<int> playersInGame = world.GetPlayers();
@@ -152,6 +157,26 @@ namespace Game
 
             return eliminatedPlayers;
         }
+        
+        private List<int> GetWinners()
+        {
+            // Get players in the game
+            List<int> playersInGame = world.GetPlayers();
+            Dictionary<int, ParkingSpace> playersInSpace = spaceManager.parkingSpacesByPlayerID;
+
+            List<int> winners = new List<int>();
+
+            foreach (var playerID in playersInGame)
+            {
+                if (playersInSpace.ContainsKey(playerID))
+                {
+                    winners.Add(playerID);
+                }
+            }
+
+            return winners;
+        }
+
 
         private void NotifyGameStart(ushort freeRoamLength)
         {

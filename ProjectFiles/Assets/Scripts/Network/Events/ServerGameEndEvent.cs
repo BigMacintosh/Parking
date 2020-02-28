@@ -12,9 +12,10 @@ namespace Network.Events
             ID = EventType.ServerGameEndEvent;
         }
         
-        public ServerGameEndEvent(List <int> players) : this()
+        public ServerGameEndEvent(List <int> winners) : this()
         {
             ID = EventType.ServerGameEndEvent;
+            Winners = winners;
             Length = sizeof(ushort) + (Winners.Count) * sizeof(int) + sizeof(byte);
         }
 
