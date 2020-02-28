@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Networking.Transport;
+using UnityEngine;
 
 namespace Network.Events
 {
@@ -22,9 +23,11 @@ namespace Network.Events
         public override void Serialise(DataStreamWriter writer)
         {
             base.Serialise(writer);
+            Debug.Log($"test1");
             writer.Write((ushort) Winners.Count);
             foreach (var p in Winners)
             {
+                Debug.Log($"Writer: {p}");
                 writer.Write(p);
             }
         }

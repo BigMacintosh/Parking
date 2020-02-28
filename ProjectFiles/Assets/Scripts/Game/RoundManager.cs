@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Gameplay;
 using Network;
 using UnityEngine;
@@ -123,8 +124,10 @@ namespace Game
             roundNumber++;
             var eliminatedPlayers = GetEliminatedPlayers();
             Debug.Log($"Eliminated {eliminatedPlayers}.");
+            
             var nextNumPlayers = world.GetNumPlayers() - eliminatedPlayers.Count;
             Debug.Log($"Next num players {nextNumPlayers}.");
+            
             if (roundNumber < RoundProperties.MaxRounds && nextNumPlayers > 1)
             {
                 Debug.Log("Continuing the game...");
@@ -171,6 +174,7 @@ namespace Game
                 if (playersInSpace.ContainsKey(playerID))
                 {
                     winners.Add(playerID);
+                    Debug.Log($"Winners: {playerID}");
                 }
             }
 

@@ -352,15 +352,25 @@ namespace Network
             sendToAll(eliminatePlayers);
             foreach (var player in players)
             {
-                connections[player].Disconnect(driver);
-                var playerID = connections[player].InternalId;
-                world.DestroyPlayer(playerID);
+                // TODO: Chris no likey
+                int index = 0;
+                for (index = 0; index != connections[index].InternalId && index < connections.Length; index++)
+                { }
+                
+                connections[index].Disconnect(driver);
+                world.DestroyPlayer(player);
+                
+                // Notify users of disconnect
+                var disconnectEvent = new ServerDisconnectEvent((ushort) player);
+                sendToAll(disconnectEvent);
+                
+                Debug.Log($"Server: Destroyed player { player } due to disconnect.");
+                connections[index] = default(NetworkConnection);
             }
         }
 
         public void OnGameEnd(List<int> winners)
         {
-//            if (world.GetNumPlayers() == 0) return;
             var gameEnd = new ServerGameEndEvent(winners);
             sendToAll(gameEnd);
         }
