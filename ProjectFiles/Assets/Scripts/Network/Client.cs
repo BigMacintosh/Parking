@@ -208,6 +208,9 @@ namespace Network
                     ev = new ServerSpaceClaimedEvent();
                     break;
                 }
+                case EventType.ServerGameEndEvent:
+                    ev = new ServerGameEndEvent();
+                    break;
                 default:
                     Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
                     return;
