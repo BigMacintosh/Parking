@@ -12,9 +12,9 @@ namespace Game
     static class RoundProperties
     {
         // All times in seconds
-        public const ushort FreeroamLength = 10;
+        public const ushort FreeroamLength = 30;
         public const ushort PreRoundLength = 5;
-        public const ushort RoundLength = 15;
+        public const ushort RoundLength = 30;
         public const ushort MaxRounds = 5;
 
         // 0 means no parking spaces would activate, 1 means there would be 1 space per player
@@ -72,7 +72,7 @@ namespace Game
             GameInProgress = true;
         }
 
-        public void StartFreeroam()
+        private void StartFreeroam()
         {
             // Start timer to for PreRoundCountdown 
             roundTimer = new Timer(RoundProperties.FreeroamLength);
@@ -82,7 +82,7 @@ namespace Game
             roundTimer.Start();
         }
 
-        public void StartPreRound()
+        private void StartPreRound()
         {
             // Send pre round warning.
             NotifyPreRoundStart();
@@ -127,13 +127,13 @@ namespace Game
             Debug.Log($"Next num players {nextNumPlayers}.");
             if (roundNumber < RoundProperties.MaxRounds && nextNumPlayers > 1)
             {
-                Debug.Log($"Continuing the game...");
+                Debug.Log("Continuing the game...");
                 NotifyEliminatePlayers(eliminatedPlayers);
                 StartPreRound();
             }
             else
             {
-                Debug.Log($"The game has finished...");
+                Debug.Log("The game has finished...");
                 var winners = GetWinners();
                 GameEndEvent?.Invoke(winners);
             }
