@@ -30,12 +30,12 @@ namespace Vehicle
             var camera = FindObjectOfType<CameraFollowController>();
             camera.ObjectToFollow = transform;
 
-            var minimap = FindObjectOfType<MinimapController>();
+            var minimap = FindObjectOfType<MinimapScroller>();
             minimap.ObjectToFollow = transform;
 
             //Link with UIController
             uicontroller = FindObjectOfType<UIController>();
-            uicontroller.vehicle = this;
+            uicontroller.Vehicle = this;
         }
 
         public VehicleDriver getDriver()

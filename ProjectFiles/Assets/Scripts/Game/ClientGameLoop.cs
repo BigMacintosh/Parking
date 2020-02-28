@@ -42,7 +42,6 @@ namespace Game
                 Object.Instantiate(Resources.Load<GameObject>("Minimap Canvas"), Vector3.zero, Quaternion.identity);
             }
             uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity).GetComponent<UIController>();
-            
 
             // Initialise the client
             if (isStandalone)
@@ -85,15 +84,20 @@ namespace Game
             // Start the client connection
             var success = client.Start();
 
-            uiController.getHUD().playernum = world.Players.Count;
-            uiController.getHUD().NetworkIP = client.getServerIP();
-            uiController.getHUD().exitbutton.onClick.AddListener(Shutdown);
+            uiController.OnPlayerCountChange(world.GetNumPlayers());
+            uiController.Hud.NetworkIP = client.GetServerIP();
+            uiController.Hud.exitButton.onClick.AddListener(Shutdown);
+            
             client.GameStartEvent += uiController.OnGameStart;
             client.PreRoundStartEvent += uiController.OnPreRoundStart;
             client.RoundStartEvent += uiController.OnRoundStart;
             client.RoundEndEvent += uiController.OnRoundEnd;
             client.PlayerCountChangeEvent += uiController.OnPlayerCountChange;
-
+            client.GameEndEvent += uiController.OnGameEnd;
+            client.EliminatePlayersEvent += uiController.OnEliminatePlayers;
+            
+            parkingSpaceManager.SpaceStateChangeEvent += uiController.OnSpaceStateChange;
+            
             if (ClientConfig.GameMode == GameMode.AdminMode)
             {
                 uiController.SubscribeTriggerGameStartEvent(client.OnTriggerGameStart);
@@ -116,7 +120,7 @@ namespace Game
 
         public void FixedUpdate()
         {
-            if (world.ClientID >= 0)
+            if (ClientConfig.PlayerID >= 0)
             {
                 client.SendLocationUpdate();
             }

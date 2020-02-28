@@ -20,7 +20,6 @@ namespace Network.Events
             RoundNumber = roundNumber;
             Spaces = spaces;
             Length = sizeof(ushort) * (Spaces.Count + 2) + sizeof(byte);
-            Debug.Log("HERE 123456789 " + Spaces.Count);
         }
         
         public override void Serialise(DataStreamWriter writer)

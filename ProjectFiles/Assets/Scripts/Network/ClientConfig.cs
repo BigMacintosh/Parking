@@ -24,5 +24,6 @@ namespace Network
         public static VehicleType VehicleType = VehicleType.Hatchback;
         public static Color VehicleColour = Color.red;
         public static GameMode GameMode = GameMode.PlayerMode;
+        public static int PlayerID = -1;
     }
 }

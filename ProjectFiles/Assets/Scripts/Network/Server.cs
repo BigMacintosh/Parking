@@ -44,8 +44,10 @@ namespace Network
             // ReliableSequenced might not be the best choice 
             driver = new UdpCNetworkDriver(new ReliableUtility.Parameters { WindowSize = 32 });
             pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
+            
+            // TODO: Keep alive timer does not actually loop
             keepAliveTimer = new Utils.Timer(10, true);
-            keepAliveTimer.Elapsed += OnKeepAlive;
+            keepAliveTimer.Tick += OnKeepAlive;
         }
 
         public bool Start()
@@ -316,9 +318,8 @@ namespace Network
  
         
 
-        public void OnKeepAlive()
+        public void OnKeepAlive(int ticksLeft)
         {
-            if (world.GetNumPlayers() == 0) return;
             var keepAlive = new ServerKeepAlive();
             sendToAll(keepAlive);
         }
@@ -349,19 +350,28 @@ namespace Network
             if (world.GetNumPlayers() == 0) return;
             var eliminatePlayers = new ServerEliminatePlayersEvent(roundNumber, players);
             sendToAll(eliminatePlayers);
-            
-            // // Drop connection to all players who are eliminated
-            // foreach (var playerID in players)
-            // {
-            //     dropConnection(playerID);
-            // }
-            
+            foreach (var player in players)
+            {
+                // TODO: Chris no likey
+                int index = 0;
+                for (index = 0; index != connections[index].InternalId && index < connections.Length; index++)
+                { }
+                
+                connections[index].Disconnect(driver);
+                world.DestroyPlayer(player);
+                
+                // Notify users of disconnect
+                var disconnectEvent = new ServerDisconnectEvent((ushort) player);
+                sendToAll(disconnectEvent);
+                
+                Debug.Log($"Server: Destroyed player { player } due to disconnect.");
+                connections[index] = default(NetworkConnection);
+            }
         }
 
-        public void OnGameEnd()
+        public void OnGameEnd(List<int> winners)
         {
-            if (world.GetNumPlayers() == 0) return;
-            var gameEnd = new ServerGameEndEvent();
+            var gameEnd = new ServerGameEndEvent(winners);
             sendToAll(gameEnd);
         }
 
