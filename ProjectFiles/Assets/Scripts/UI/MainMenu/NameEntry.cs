@@ -1,16 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Network;
+﻿using Network;
 using UnityEngine;
 
-
-namespace UI.MainMenu
-{
-    public class NameEntry : MonoBehaviour
-    {
-        // It is actually used.
-        public void UpdateName(string playerName)
-        {
+namespace UI.MainMenu {
+    public class NameEntry : MonoBehaviour {
+        public void UpdateName(string playerName) {
             ClientConfig.PlayerName = playerName;
         }
     }

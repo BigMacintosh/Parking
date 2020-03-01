@@ -1,15 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Network;
+﻿using Network;
 using UnityEngine;
 
-namespace UI.MainMenu
-{
-    public class IPEntry : MonoBehaviour
-    {
-        // It is actually used.
-        public void UpdateIP(string ip)
-        {
+namespace UI.MainMenu {
+    public class IPEntry : MonoBehaviour {
+        public void UpdateIP(string ip) {
             ClientConfig.PlayerName = ip;
         }
     }
