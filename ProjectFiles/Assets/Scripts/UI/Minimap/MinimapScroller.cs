@@ -5,21 +5,18 @@ namespace UI.Minimap {
         // Public Fields
         public Vector2   MapScale       { get; private set; }
         public Transform ObjectToFollow { get; set; }
-        public Vector3   MapPosition    => transform.localPosition;
+        /// <summary>
+        /// The unit-to-pixel scale between the world (X, Z) and the map (X, Y).
+        /// </summary>
+        public Vector3 MapPosition => transform.localPosition;
 
         // Serializable Fields
         [field: Header("World Anchor Points")]
-        [field: SerializeField]
-        public Vector2 TopLeft { get; } = new Vector2(-250, 250);
-
-        [field: SerializeField] public Vector2 BottomRight { get; } = new Vector2(250, -250);
+        [field: SerializeField] public Vector2 TopLeft { get; set; }
+        [field: SerializeField] public Vector2 BottomRight { get; set;  }
 
         // Private Fields
         private Transform parentTransform;
-
-        /// <summary>
-        ///     The unit-to-pixel scale between the world (X, Z) and the map (X, Y).
-        /// </summary>
 
         // init in Awake rather than Start because the .localPosition needs to be set up first
         public void Awake() {
