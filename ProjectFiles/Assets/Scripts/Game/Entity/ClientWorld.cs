@@ -21,15 +21,13 @@ namespace Game.Entity {
                 kv.Value.Spawn(spawnPos);
             }
         }
-        
-        
+
         /// <summary>
         /// Spawns all the players with the given locations
         /// To be used in standard client mode.
         /// </summary>
         /// <param name="playerPositions">A map of player ids to spawn positions</param>
         public void SpawnPlayers(Dictionary<int, PlayerPosition> playerPositions) {
-            // TODO: take map/list of transforms and spawn players.
             foreach (var kv in playerPositions) {
                 Players[kv.Key].Spawn(playerPositions[kv.Key]);
             }

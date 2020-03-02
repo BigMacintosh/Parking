@@ -10,10 +10,6 @@ namespace Game.Entity {
         public Color   CarColour  { get; set; }
         public CarType CarType    { get; set; }
         public string  PlayerName { get; set; }
-
-        public void SwapCar(CarType newCarType) {
-            CarType = newCarType;
-        }
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 using Game.Core.Parking;
+using UnityEngine;
 
 namespace Game.Entity {
     public class ServerWorld : World{

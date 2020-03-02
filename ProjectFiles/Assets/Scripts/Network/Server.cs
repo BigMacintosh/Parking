@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Game;
 using Game.Entity;
 using Network.Events;
 using Unity.Collections;
@@ -122,7 +121,8 @@ namespace Network {
                     continue;
                 }
 
-                var               endpoint = driver.RemoteEndPoint(connection);
+                var endpoint = driver.RemoteEndPoint(connection);
+
                 NetworkEvent.Type command;
                 while ((command = driver.PopEventForConnection(connection, out var reader)) !=
                        NetworkEvent.Type.Empty) {
