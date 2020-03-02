@@ -8,114 +8,75 @@ using Random = System.Random;
 
 namespace Game.Entity {
     public class World {
-        
         // Private Fields
-        private readonly GameObject    carPrefab;
-        private readonly PlayerSpawner spawner;
+        
+        public Dictionary<int, Player> Players { get; }
 
-        public World(ParkingSpaceManager parkingSpaceManager) {
-            carPrefab = Resources.Load<GameObject>("Car");
-            Players   = new Dictionary<int, GameObject>();
-            spawner   = new PlayerSpawner(parkingSpaceManager);
+        protected World() {
+            Players   = new Dictionary<int, Player>();
         }
 
-        public Dictionary<int, GameObject> Players { get; }
-
-        public void Update() {
-            // Loop here and apply all network changes.
-
-            // Interpolate players to new location.
+        /// <summary>
+        /// Creates a player, but does not spawn them
+        /// Should be used when a new player connects
+        /// </summary>
+        /// <param name="playerID">The id of a player</param>
+        /// <param name="playerOptions">The options set by a player</param>
+        /// <param name="isControlledPlayer">Is the player belonging to the client creating it.</param>
+        public void CreatePlayer(int playerID, PlayerOptions playerOptions, bool isControlledPlayer = false) {
+            Players.Add(playerID, new Player(playerID, playerOptions, isControlledPlayer));
         }
 
-        public void SpawnPlayers(List<int> playersToSpawn) {
-            foreach (var player in playersToSpawn) {
-                SpawnPlayer(player);
-            }
-        }
-
-        // Server one
-        public void SpawnPlayer(int playerID) {
-            var spawnPosition = spawner.GetSpawnPosition();
-            SpawnPlayer(playerID, spawnPosition.position, spawnPosition.rotation);
-        }
-
-        // Client one
-        public void SpawnPlayer(int playerID, Vector3 position, Quaternion rotation) {
-            var newCar = Object.Instantiate(carPrefab, position, rotation);
-            Players.Add(playerID, newCar);
-        }
-
-
-        public void SetPlayerControllable(int playerID) {
-            Players[playerID].GetComponent<Vehicle>().SetControllable();
-            ClientConfig.PlayerID = playerID;
-        }
-
+        /// <summary>
+        /// Destroys a players car.
+        /// </summary>
+        /// <param name="playerID">PlayerID of the player whose car should be destroyed.</param>
         public void DestroyPlayer(int playerID) {
-            Object.Destroy(Players[playerID]);
+            Players[playerID].DestroyCar();
             Players.Remove(playerID);
-            if (playerID == ClientConfig.PlayerID) {
-                ClientConfig.PlayerID = -1;
-            }
         }
 
+        /// <summary>
+        /// Gets the number of players connected.
+        /// </summary>
+        /// <returns>Number of players</returns>
         public ushort GetNumPlayers() {
             return (ushort) Players.Count;
         }
 
-        public List<int> GetPlayers() {
-            return Players.Keys.ToList();
+        /// <summary>
+        /// Gets the playerIDs of players who are still in the game (not eliminated)
+        /// </summary>
+        /// <returns>List of playerIDs.</returns>
+        public List<int> GetPlayersInGame() {
+            return Players.Where(k=> !k.Value.IsEliminated)
+                          .Select(k => k.Value.PlayerID)
+                          .ToList();
         }
 
-        // TODO: Do we really want all this stuff below...?
-        public Transform GetPlayerTransform(int playerID) {
-            return Players[playerID].transform;
+        /// <summary>
+        /// Moves a player to the given postion
+        /// </summary>
+        /// <param name="playerID">The ID of the player to be moved.</param>
+        /// <param name="playerPosition">Where to move the player to.</param>
+        public void MovePlayer(int playerID, PlayerPosition playerPosition) {
+            Players[playerID].Move(playerPosition);
         }
 
-        public Vector3 GetPlayerVelocity(int playerID) {
-            return Players[playerID].GetComponent<Rigidbody>().velocity;
+        /// <summary>
+        /// Gets the position of a player.
+        /// </summary>
+        /// <param name="playerID">ID of the player position to get.</param>
+        /// <returns>Players position</returns>
+        public PlayerPosition GetPlayerPositon(int playerID) {
+            return Players[playerID].GetPosition();
         }
 
-        public Vector3 GetPlayerAngularVelocity(int playerID) {
-            return Players[playerID].GetComponent<Rigidbody>().angularVelocity;
-        }
-
-        public void SetPlayerPosition(int playerID, Vector3 position) {
-            if (!Players.ContainsKey(playerID)) return;
-
-            Players[playerID].transform.position = position;
-        }
-
-        public void SetPlayerRotation(int playerID, Quaternion rotation) {
-            if (!Players.ContainsKey(playerID)) return;
-
-            Players[playerID].transform.rotation = rotation;
-        }
-
-        public void SetPlayerVelocity(int playerID, Vector3 velocity) {
-            if (!Players.ContainsKey(playerID)) return;
-
-            Players[playerID].GetComponent<Rigidbody>().velocity = velocity;
-        }
-
-        public void SetPlayerAngularVelocity(int playerID, Vector3 angularVelocity) {
-            if (!Players.ContainsKey(playerID)) return;
-
-            Players[playerID].GetComponent<Rigidbody>().angularVelocity = angularVelocity;
-        }
-
-        public bool PlayerExists(int playerID) {
-            return Players.ContainsKey(playerID);
-        }
-    }
-
-    public static class SpawnLocations {
-        public static List<Vector3> Locations { get; set; }
-
-
-        public static Vector3 GetSpawn() {
-            var rand = new Random();
-            return Locations[rand.Next(0, Locations.Count - 1)];
+        /// <summary>
+        /// To reset the world at the end of the game.
+        /// </summary>
+        public void Reset() {
+            // TODO: reset the world so that we don't need to restart the server each time.
         }
     }
 }

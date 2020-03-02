@@ -36,11 +36,11 @@ namespace Network {
         private readonly Timer           keepAliveTimer;
         private readonly NetworkPipeline pipeline;
         private readonly List<int>       playersToSpawn;
-        private readonly World           world;
+        private readonly ServerWorld     world;
         private readonly ServerConfig    config;
 
 
-        public Server(World world, ServerConfig config) {
+        public Server(ServerWorld world, ServerConfig config) {
             this.world          = world;
             this.config         = config;
             connections         = new NativeList<NetworkConnection>(this.config.MaxPlayers, Allocator.Persistent);
@@ -202,7 +202,8 @@ namespace Network {
             switch (ev.GameMode) {
                 case GameMode.PlayerMode: {
                     Debug.Log($"Server: Received handshake from {playerID}.");
-                    playersToSpawn.Add(playerID);
+                    // playersToSpawn.Add(playerID);
+                    // TODO: Create player in the world
                     var handshakeResponse = new ServerHandshakeEvent(playerID);
                     SendToClient(srcConnection, handshakeResponse);
                     break;
@@ -272,7 +273,7 @@ namespace Network {
             acceptingNewPlayers = false;
 
             // Spawn all the players in the server world
-            world.SpawnPlayers(playersToSpawn);
+            world.SpawnPlayers();
 
             var spawnPlayersEvent = new ServerGameStart(world, freeRoamLength);
             SendToAll(spawnPlayersEvent);

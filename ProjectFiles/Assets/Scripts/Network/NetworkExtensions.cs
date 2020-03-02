@@ -1,3 +1,4 @@
+using Game.Entity;
 using Unity.Networking.Transport;
 using UnityEngine;
 
@@ -27,7 +28,7 @@ namespace Network {
             var vector = new Vector3 {
                 x = reader.ReadFloat(ref context),
                 y = reader.ReadFloat(ref context),
-                z = reader.ReadFloat(ref context)
+                z = reader.ReadFloat(ref context),
             };
             return vector;
         }
@@ -44,9 +45,27 @@ namespace Network {
                 x = reader.ReadFloat(ref context),
                 y = reader.ReadFloat(ref context),
                 z = reader.ReadFloat(ref context),
-                w = reader.ReadFloat(ref context)
+                w = reader.ReadFloat(ref context),
             };
             return quaternion;
+        }
+
+        public static void WritePlayerPosition(this DataStreamWriter writer, PlayerPosition playerPosition) {
+            writer.WriteVector3(playerPosition.Pos);
+            writer.WriteQuaternion(playerPosition.Rot);
+            writer.WriteVector3(playerPosition.Vel);
+            writer.WriteVector3(playerPosition.AVel);
+        }
+
+        public static PlayerPosition ReadPlayerPosition(this DataStreamReader         reader,
+                                                        ref  DataStreamReader.Context context) {
+            return new PlayerPosition {
+                Pos = reader.ReadVector3(ref context),
+                Rot = reader.ReadQuaternion(ref context),
+                Vel = reader.ReadVector3(ref context),
+                AVel = reader.ReadVector3(ref context),
+                    
+            };
         }
     }
 }

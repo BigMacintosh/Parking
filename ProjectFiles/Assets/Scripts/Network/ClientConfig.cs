@@ -1,3 +1,4 @@
+using Game.Entity;
 using UnityEngine;
 
 namespace Network {
@@ -15,7 +16,8 @@ namespace Network {
         public static VehicleType VehicleType   = VehicleType.Hatchback;
         public static Color       VehicleColour = Color.red;
         public static GameMode    GameMode      = GameMode.PlayerMode;
-        public static int         PlayerID      = -1;
+        public static int         PlayerID  => Me.PlayerID;
+        public static Player      Me;
 
     #if UNITY_EDITOR
         public static string ServerIP = "127.0.0.1";

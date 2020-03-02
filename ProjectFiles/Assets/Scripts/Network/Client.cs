@@ -57,17 +57,17 @@ namespace Network {
         private NetworkConnection connection;
 
         private readonly NetworkPipeline pipeline;
-        private readonly World           world;
+        private readonly ClientWorld           world;
 
 
-        public Client(World world) {
+        public Client(ClientWorld world) {
             driver     = new UdpCNetworkDriver(new ReliableUtility.Parameters {WindowSize = 32});
             pipeline   = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
             done       = false;
             this.world = world;
         }
         
-        public static IClient GetDummyClient(World world) {
+        public static IClient GetDummyClient(ClientWorld world) {
             return new DummyClient(world);
         }
 
@@ -230,7 +230,8 @@ namespace Network {
         public void Handle(ServerHandshakeEvent ev, NetworkConnection conn) {
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
             var playerID = ev.PlayerID;
-            ClientConfig.PlayerID = playerID;
+            
+            // TODO: Create player in the world, but dont spawn.
 
             Debug.Log($"Client: My playerID is {playerID}");
         }
@@ -240,9 +241,10 @@ namespace Network {
 
             ev.SpawnPlayers(world);
 
-            if (ClientConfig.GameMode == GameMode.PlayerMode) {
-                world.SetPlayerControllable(ClientConfig.PlayerID);
-            }
+            // TODO: Do we need this?
+            // if (ClientConfig.GameMode == GameMode.PlayerMode) {
+            //     world.SetPlayerControllable(ClientConfig.PlayerID);
+            // }
 
             inGame = true;
             PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());

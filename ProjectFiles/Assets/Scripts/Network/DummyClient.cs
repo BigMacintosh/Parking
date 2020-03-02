@@ -14,20 +14,18 @@ namespace Network {
         public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         public event GameEndDelegate           GameEndEvent;
 
-        // Private Fields
-        private int playerID;
-
-        private readonly World world;
+        private readonly ClientWorld world;
 
 
-        public DummyClient(World world) {
+        public DummyClient(ClientWorld world) {
             this.world = world;
         }
 
         public bool Start(ushort port = 25565) {
-            ClientConfig.PlayerID = 0;
-            world.SpawnPlayer(ClientConfig.PlayerID);
-            world.SetPlayerControllable(ClientConfig.PlayerID);
+            world.CreatePlayer(0, new PlayerOptions {
+                CarType = CarType.Hatchback,
+            }, true);
+            world.SpawnPlayers();
             return true;
         }
 
