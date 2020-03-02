@@ -1,4 +1,5 @@
-﻿﻿using System.Collections.Generic;
+﻿﻿using System;
+ using System.Collections.Generic;
 using UnityEngine;
 
 public class Paver : MonoBehaviour {
@@ -13,22 +14,31 @@ public class Paver : MonoBehaviour {
     private                  List<Vector2> uv;
 
     private                  List<Vector3> vertices;
+    private                  bool          first = true;
     [SerializeField] private float         width;
-
-    [ContextMenu("Pave Road")]
-    private void PaveRoad() {
-        Debug.Log("Paving Road");
-        Awake();
+    
+    public void PaveRoad() {
+        Pave();
     }
 
-    private void Awake() {
+    private void Pave() {
         vertices  = new List<Vector3>();
         triangles = new List<int>();
         uv        = new List<Vector2>();
 
         var mesh     = new Mesh();
-        var filter   = gameObject.AddComponent<MeshFilter>();
-        var renderer = gameObject.AddComponent<MeshRenderer>();
+        MeshFilter filter;
+        MeshRenderer renderer;
+        
+        if(first) {
+            filter = gameObject.AddComponent<MeshFilter>();
+            renderer = gameObject.AddComponent<MeshRenderer>();
+        }
+        else{
+            filter = gameObject.GetComponent<MeshFilter>();
+            renderer = gameObject.GetComponent<MeshRenderer>();
+        }
+
 
         populateVertices();
         populateTris();
@@ -41,7 +51,13 @@ public class Paver : MonoBehaviour {
         renderer.material = surface;
         mesh.RecalculateNormals();
 
-        var collider = gameObject.AddComponent<MeshCollider>();
+        if (first) {
+            var collider = gameObject.AddComponent<MeshCollider>();
+        } else {
+            gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+        }
+
+        first = false;
     }
 
     private void populateVertices() {
