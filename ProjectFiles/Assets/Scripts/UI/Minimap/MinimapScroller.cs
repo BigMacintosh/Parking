@@ -2,28 +2,24 @@
 
 namespace UI.Minimap {
     public class MinimapScroller : MonoBehaviour {
-        // Public Fields
         public Vector2   MapScale       { get; private set; }
         public Transform ObjectToFollow { get; set; }
         /// <summary>
         /// The unit-to-pixel scale between the world (X, Z) and the map (X, Y).
         /// </summary>
         public Vector3 MapPosition => transform.localPosition;
-
-        // Serializable Fields
-        [field: Header("World Anchor Points")]
-        [field: SerializeField] public Vector2 TopLeft { get; set; }
-        [field: SerializeField] public Vector2 BottomRight { get; set;  }
-
-        // Private Fields
+        
+        [Header("World Anchor Points")]
+        [SerializeField] private Vector2 topLeft;
+        [SerializeField] private Vector2 bottomRight;
         private Transform parentTransform;
 
         // init in Awake rather than Start because the .localPosition needs to be set up first
         public void Awake() {
             var rect = ((RectTransform) transform).rect;
             MapScale = new Vector2 {
-                x = (BottomRight.x - TopLeft.x)     / rect.width,
-                y = (TopLeft.y     - BottomRight.y) / rect.height
+                x = (bottomRight.x - topLeft.x)     / rect.width,
+                y = (topLeft.y     - bottomRight.y) / rect.height
             };
             ObjectToFollow  = FindObjectOfType<Game.Main.Game>().transform;
             parentTransform = transform.parent;

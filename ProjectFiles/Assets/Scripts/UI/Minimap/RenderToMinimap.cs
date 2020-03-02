@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.Minimap {
@@ -42,6 +43,10 @@ namespace UI.Minimap {
             indicatorTransform.localPosition = new Vector2(mapPosition.x - position.x / scroller.MapScale.x,
                                                            mapPosition.y - position.z / scroller.MapScale.y);
             indicatorTransform.localRotation = Quaternion.Euler(0, 0, -trans.rotation.eulerAngles.y);
+        }
+
+        public void OnDestroy() {
+            Destroy(indicator);
         }
     }
 }
