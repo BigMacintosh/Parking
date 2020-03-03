@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Game.Core.Driving {
     public class VehicleDriver : MonoBehaviour {
-        
         // Public Fields
         public float            maxSpeed;
         public float            accel;
@@ -18,6 +17,9 @@ namespace Game.Core.Driving {
         private Rigidbody body;
         private float     turn;
         private float     maxTurn;
+        private float     collisionAmplifier = 10f;
+        private float     collisionCooldown  = 0.5f;
+        private float     timestamp          = 0f;
 
         // Start is called before the first frame update
         private void Start() {
@@ -84,21 +86,21 @@ namespace Game.Core.Driving {
         }
 
         private void OnCollisionEnter(Collision other) {
-            if ((mask.value & 1 <<other.gameObject.layer) != 0) {
+            if ((mask.value & 1 << other.gameObject.layer) != 0 && timestamp < Time.time) {
                 Debug.Log("HIT A CAR");
 
                 Rigidbody otherBody = other.gameObject.GetComponent<Rigidbody>();
-                
-                float myMomentum = Vector3.Magnitude(body.velocity) * body.mass;
+
+                float myMomentum    = Vector3.Magnitude(body.velocity)      * body.mass;
                 float otherMomentum = Vector3.Magnitude(otherBody.velocity) * otherBody.mass;
 
                 if (myMomentum < otherMomentum) {
-
                     Vector3 colDir = Vector3.Normalize(transform.position - other.transform.position);
-                    body.AddForce(colDir * otherMomentum);
-                } 
-            }
+                    body.AddForce(colDir * otherMomentum * collisionAmplifier);
+                }
 
+                timestamp = Time.time + collisionCooldown;
+            }
         }
     }
 }
