@@ -133,24 +133,25 @@ namespace Network {
                             HandleEvent(connections[i], endpoint, ev, reader, readerContext);
                             break;
                         }
-                        case NetworkEvent.Type.Disconnect:
+                        case NetworkEvent.Type.Disconnect: {
                             var playerID = connections[i].InternalId;
                             // Remove this player from the world if they are spawned.
                             if (playerID != adminClient) {
-                                if (!acceptingNewPlayers) world.DestroyPlayer(playerID);
+                                world.DestroyPlayer(playerID);
 
                                 // Notify users of disconnect
                                 var disconnectEvent = new ServerDisconnectEvent((ushort) playerID);
                                 SendToAll(disconnectEvent);
+                            } else {
+                                // Remove the admin client
+                                adminClient = -1;
                             }
-
-                            // Remove the admin client
-                            if (playerID == adminClient) adminClient = -1;
-
+                            
                             // Destroy the actual network connection
                             Debug.Log($"Server: Destroyed player {playerID} due to disconnect.");
                             connections[i] = default;
                             break;
+                        }
                     }
                 }
             }
@@ -199,13 +200,18 @@ namespace Network {
 
         public void Handle(ClientHandshakeEvent ev, NetworkConnection srcConnection) {
             var playerID = srcConnection.InternalId;
+            var respond = false;
             switch (ev.GameMode) {
                 case GameMode.PlayerMode: {
                     Debug.Log($"Server: Received handshake from {playerID}.");
-                    // playersToSpawn.Add(playerID);
-                    // TODO: Create player in the world
-                    var handshakeResponse = new ServerHandshakeEvent(playerID);
-                    SendToClient(srcConnection, handshakeResponse);
+
+                    respond = true;
+                    
+                    world.CreatePlayer(playerID, ev.PlayerOptions);
+
+                    var newClient = new ServerNewPlayerConnectedEvent(playerID, ev.PlayerOptions);
+                    SendToAll(newClient);
+                    
                     break;
                 }
                 case GameMode.AdminMode: {
@@ -214,20 +220,25 @@ namespace Network {
                         // Accept the new admin
                         Debug.Log($"Server: Accepting new admin user {playerID}");
                         adminClient = playerID;
-                        var handshakeResponse = new ServerHandshakeEvent(playerID);
-                        SendToClient(srcConnection, handshakeResponse);
+                        
+                        respond = true;
+                        
                     } else {
                         // Already have an admin client, drop connection.
                         Debug.Log("Server: Rejecting admin connection, already admin");
                         srcConnection.Disconnect(driver);
                     }
-
                     break;
                 }
-                default:
+                default: {
                     Debug.Log("Unknown GameMode");
                     break;
+                }
             }
+
+            if (!respond) return;
+            var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
+            SendToClient(srcConnection, handshakeResponse);
         }
 
         public void Handle(ClientLocationUpdateEvent ev, NetworkConnection srcConnection) {

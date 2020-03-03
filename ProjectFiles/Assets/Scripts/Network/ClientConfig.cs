@@ -2,9 +2,6 @@ using Game.Entity;
 using UnityEngine;
 
 namespace Network {
-    public enum VehicleType {
-        Hatchback
-    }
 
     public enum GameMode {
         PlayerMode = 0x01,
@@ -13,7 +10,7 @@ namespace Network {
 
     public static class ClientConfig {
         public static string      PlayerName    = "";
-        public static VehicleType VehicleType   = VehicleType.Hatchback;
+        public static CarType VehicleType   = CarType.Hatchback;
         public static Color       VehicleColour = Color.red;
         public static GameMode    GameMode      = GameMode.PlayerMode;
         public static int         PlayerID  => Me.PlayerID;

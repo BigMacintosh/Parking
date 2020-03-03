@@ -10,6 +10,8 @@ namespace Game.Entity {
         public Color   CarColour  { get; set; }
         public CarType CarType    { get; set; }
         public string  PlayerName { get; set; }
+
+        public int Size => sizeof(float) * 4 + sizeof(byte) + sizeof(byte) * 2 * PlayerName.Length; 
     }
 
     /// <summary>

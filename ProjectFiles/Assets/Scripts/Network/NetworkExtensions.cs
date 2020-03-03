@@ -1,3 +1,4 @@
+using System;
 using Game.Entity;
 using Unity.Networking.Transport;
 using UnityEngine;
@@ -65,6 +66,37 @@ namespace Network {
                 Vel = reader.ReadVector3(ref context),
                 AVel = reader.ReadVector3(ref context),
                     
+            };
+        }
+
+        public static void WriteColor(this DataStreamWriter writer, Color colour) {
+            writer.Write(colour.r);
+            writer.Write(colour.g);
+            writer.Write(colour.b);
+            writer.Write(colour.a);
+        }
+
+        public static Color ReadColor(this DataStreamReader reader, ref DataStreamReader.Context context) {
+            return new Color {
+                r = reader.ReadFloat(ref context),
+                g = reader.ReadFloat(ref context),
+                b = reader.ReadFloat(ref context),
+                a = reader.ReadFloat(ref context),
+            };
+        }
+        
+        public static void WritePlayerOptions(this DataStreamWriter writer, PlayerOptions playerOptions) {
+            writer.WriteColor(playerOptions.CarColour);
+            writer.Write((byte) playerOptions.CarType);
+            writer.WriteString(playerOptions.PlayerName);
+        }
+
+        public static PlayerOptions ReadPlayerOptions(this DataStreamReader         reader,
+                                                      ref  DataStreamReader.Context context) {
+            return new PlayerOptions {
+                CarColour = reader.ReadColor(ref context),
+                CarType = (CarType) reader.ReadByte(ref context),
+                PlayerName = reader.ReadString(ref context).ToString(),
             };
         }
     }

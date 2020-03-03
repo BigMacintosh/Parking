@@ -11,16 +11,19 @@ namespace Game.Entity {
     /// </summary>
     public class Player {
         // Public Fields
-        public int  PlayerID     { get; }
-        public bool IsEliminated { get; set; }
+        public int           PlayerID      { get; }
+        public bool          IsEliminated  { get; set; }
+        public PlayerOptions PlayerOptions => playerOptions;
 
         // Private Fields
         private GameObject    car; // Do not directly set this. Use SetCar method
         private Rigidbody     carRb;
         private Transform     carTrans;
-        private bool          isMe;
         private bool          isSpawned;
         private PlayerOptions playerOptions;
+        
+        private readonly bool isMe;
+
 
         /// <summary>
         /// Constructor
@@ -64,7 +67,7 @@ namespace Game.Entity {
         /// </summary>
         public void Spawn(PlayerPosition spawnPosition) {
             if (isSpawned) throw new PlayerAlreadySpawnedException();
-            var prefab = playerOptions.CarType.GetPrefab();
+            var prefab = PlayerOptions.CarType.GetPrefab();
             Debug.Log($"Spawning at {spawnPosition.Pos} with rot: {spawnPosition.Rot}");
             SetCar(Object.Instantiate(prefab, spawnPosition.Pos, spawnPosition.Rot));
             if (isMe) {
@@ -106,6 +109,7 @@ namespace Game.Entity {
             if (isSpawned) {
                 // TODO: swap the car prefab.
             }
+
 
             playerOptions.CarType = newCarType;
         }

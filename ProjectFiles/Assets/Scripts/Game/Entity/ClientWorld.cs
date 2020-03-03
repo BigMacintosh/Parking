@@ -3,7 +3,7 @@ using Network;
 using UnityEngine;
 
 namespace Game.Entity {
-    public class ClientWorld : World{
+    public class ClientWorld : World {
 
         /// <summary>
         /// For use in standalone mode. 

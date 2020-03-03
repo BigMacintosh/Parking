@@ -116,7 +116,11 @@ namespace Network {
                 switch (command) {
                     case NetworkEvent.Type.Connect: {
                         Debug.Log($"Client: Successfully connected to {serverIP}:{serverPort}.");
-                        var handshake = new ClientHandshakeEvent(ClientConfig.GameMode);
+                        var handshake = new ClientHandshakeEvent(ClientConfig.GameMode, new PlayerOptions {
+                            CarColour = ClientConfig.VehicleColour,
+                            CarType = ClientConfig.VehicleType,
+                            PlayerName = ClientConfig.PlayerName,
+                        });
                         SendEventToServer(handshake);
                         break;
                     }
@@ -126,11 +130,12 @@ namespace Network {
                         HandleEvent(ev, reader, readerContext);
                         break;
                     }
-                    case NetworkEvent.Type.Disconnect:
+                    case NetworkEvent.Type.Disconnect: {
                         Debug.Log("Client: Disconnected from the server.");
                         done       = true;
                         connection = default;
                         break;
+                    }
                 }
             }
         }
@@ -211,6 +216,9 @@ namespace Network {
                 case EventType.ServerGameEndEvent:
                     ev = new ServerGameEndEvent();
                     break;
+                case EventType.ServerNewPlayerConnectedEvent:
+                    ev = new ServerNewPlayerConnectedEvent();
+                    break;
                 default:
                     Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
                     return;
@@ -231,23 +239,25 @@ namespace Network {
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
             var playerID = ev.PlayerID;
             
-            // TODO: Create player in the world, but dont spawn.
+            ev.Apply(world);
 
+            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
             Debug.Log($"Client: My playerID is {playerID}");
+        }
+
+        public void Handle(ServerNewPlayerConnectedEvent ev, NetworkConnection conn) {
+            Debug.Log($"Client: New player has connected to the game");
+            
+            world.CreatePlayer(ev.PlayerID, ev.PlayerOptions);
+            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
         }
 
         public void Handle(ServerGameStart ev, NetworkConnection conn) {
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
 
             ev.SpawnPlayers(world);
-
-            // TODO: Do we need this?
-            // if (ClientConfig.GameMode == GameMode.PlayerMode) {
-            //     world.SetPlayerControllable(ClientConfig.PlayerID);
-            // }
-
             inGame = true;
-            PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
+
             GameStartEvent?.Invoke(ev.FreeRoamLength, (ushort) ev.Length);
         }
 
@@ -256,7 +266,7 @@ namespace Network {
         }
 
         public void Handle(ServerDisconnectEvent ev, NetworkConnection conn) {
-            if (inGame) world.DestroyPlayer(ev.PlayerID);
+            world.DestroyPlayer(ev.PlayerID);
             PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
             Debug.Log($"Client: Destroyed player {ev.PlayerID} due to disconnect.");
         }
@@ -291,8 +301,7 @@ namespace Network {
         public void Handle(ServerKeepAlive ev, NetworkConnection conn) {
             // Don't really need to do anything... Maybe a packet is needed to be sent back.
         }
-
-
+        
         public void Handle(ServerSpaceClaimedEvent ev, NetworkConnection conn) {
             SpaceClaimedEvent?.Invoke(ev.PlayerID, ev.SpaceID);
         }

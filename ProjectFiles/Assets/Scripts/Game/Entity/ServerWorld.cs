@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using Game.Core.Parking;
+using UnityEditor.Build;
 using UnityEngine;
 
 namespace Game.Entity {
@@ -21,6 +24,12 @@ namespace Game.Entity {
             foreach (var kv in Players) {
                 kv.Value.Spawn(spawner);
             }
+        }
+
+        public Dictionary<int, PlayerOptions> GetAllPlayerOptions() {
+            return Players.ToDictionary(
+                p => p.Key,
+                p => p.Value.PlayerOptions);
         }
     }
 }
