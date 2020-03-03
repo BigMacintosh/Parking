@@ -232,6 +232,7 @@ namespace Network {
                 case EventType.ServerGameEndEvent: {
                     ev = new ServerGameEndEvent();
                     break;
+                }
                 case EventType.ServerNewPlayerConnectedEvent:
                     ev = new ServerNewPlayerConnectedEvent();
                     break;
