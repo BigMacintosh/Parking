@@ -219,13 +219,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8f351e96b44f0a86499de675baa951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  driveWheels:
+  - {fileID: 2403165006666639099}
+  - {fileID: 9212954234082358087}
   vehicleProperties:
     <SpeedRating>k__BackingField: 0
     <SteeringRating>k__BackingField: 0
     <WeightRating>k__BackingField: 0
-  driveWheels:
-  - {fileID: 2403165006666639099}
-  - {fileID: 9212954234082358087}
 --- !u!65 &1415444200866933380
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -251,9 +251,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ff110e9182d0456082306e077f12914, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: efc706280a7b10441a55064953a4666b, type: 3}
-  colour: {r: 1, g: 1, b: 1, a: 0}
+  colour: {r: 1, g: 0.6862745, b: 0, a: 1}
   size: {x: 16, y: 16}
+  sprite: {fileID: 21300000, guid: 334a2d2e036e93444ad6961513002b71, type: 3}
 --- !u!1 &2754571377677959052
 GameObject:
   m_ObjectHideFlags: 0
