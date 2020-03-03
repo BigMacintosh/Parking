@@ -92,11 +92,11 @@ namespace Game.Core.Driving {
                 float myMomentum = Vector3.Magnitude(body.velocity) * body.mass;
                 float otherMomentum = Vector3.Magnitude(otherBody.velocity) * otherBody.mass;
 
-                if (myMomentum > otherMomentum) {
-                    Debug.Log("I WIN COLLISION");
-                } else {
-                    Debug.Log("I LOSE COLLISION");
-                }
+                if (myMomentum < otherMomentum) {
+
+                    Vector3 colDir = Vector3.Normalize(transform.position - other.transform.position);
+                    body.AddForce(colDir * otherMomentum);
+                } 
             }
 
         }
