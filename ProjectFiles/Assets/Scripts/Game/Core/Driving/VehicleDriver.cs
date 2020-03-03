@@ -17,7 +17,7 @@ namespace Game.Core.Driving {
         private Rigidbody body;
         private float     turn;
         private float     maxTurn;
-        private float     collisionAmplifier = 10f;
+        private float     collisionAmplifier = 50f;
         private float     collisionCooldown  = 0.5f;
         private float     timestamp          = 0f;
 
@@ -87,7 +87,6 @@ namespace Game.Core.Driving {
 
         private void OnCollisionEnter(Collision other) {
             if ((mask.value & 1 << other.gameObject.layer) != 0 && timestamp < Time.time) {
-                Debug.Log("HIT A CAR");
 
                 Rigidbody otherBody = other.gameObject.GetComponent<Rigidbody>();
 
