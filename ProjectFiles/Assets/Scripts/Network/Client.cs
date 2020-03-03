@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Game;
 using Game.Entity;
 using Network.Events;
@@ -29,7 +31,7 @@ namespace Network {
 
         bool   Start(ushort port = 25565);
         void   Shutdown();
-        void   SendLocationUpdate();
+        void   SendEvents();
         void   HandleNetworkEvents();
         string GetServerIP();
         void   OnSpaceEnter(int playerID, ushort spaceID);
@@ -60,12 +62,14 @@ namespace Network {
         private readonly NetworkPipeline pipeline;
         private readonly ClientWorld     world;
 
+        private readonly Queue<Event> eventQueue;
 
         public Client(ClientWorld world) {
             driver     = new UdpCNetworkDriver(new ReliableUtility.Parameters {WindowSize = 32});
             pipeline   = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
             done       = false;
             this.world = world;
+            eventQueue = new Queue<Event>();
         }
 
         public static IClient GetDummyClient(ClientWorld world) {
@@ -90,15 +94,24 @@ namespace Network {
             driver.Dispose();
         }
 
-        public void SendLocationUpdate() {
-            // Don't send location if not in game
-            if (!inGame) return;
+        public void SendEvents() {
+            // Only send location if in game and in player mode
+            if (inGame && ClientConfig.GameMode == GameMode.PlayerMode) {
+                var locationUpdate = new ClientLocationUpdateEvent(world);
+                SendEventToServer(locationUpdate);
+            }
 
-            // Don't send location if you are admin client
-            if (ClientConfig.GameMode == GameMode.AdminMode) return;
+            var totalLength = eventQueue.Sum(ev => ev.Length);
 
-            var locationUpdate = new ClientLocationUpdateEvent(world);
-            SendEventToServer(locationUpdate);
+            using (var writer = new DataStreamWriter(totalLength, Allocator.Temp)) {
+                while (eventQueue.Count > 0) {
+                    var ev = eventQueue.Dequeue();
+                    
+                    ev.Serialise(writer);
+                }
+                
+                driver.Send(pipeline, connection, writer);
+            }
         }
 
         public void HandleNetworkEvents() {
@@ -128,8 +141,12 @@ namespace Network {
                     }
                     case NetworkEvent.Type.Data: {
                         var readerContext = default(DataStreamReader.Context);
-                        var ev            = (EventType) reader.ReadByte(ref readerContext);
-                        HandleEvent(ev, reader, readerContext);
+                        
+                        while (reader.Length - reader.GetBytesRead(ref readerContext) > 0) {
+                            var ev = (EventType) reader.ReadByte(ref readerContext);
+                            HandleEvent(ev, reader, ref readerContext);
+                        }
+
                         break;
                     }
                     case NetworkEvent.Type.Disconnect: {
@@ -166,13 +183,10 @@ namespace Network {
         }
 
         private void SendEventToServer(Event ev) {
-            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
-                ev.Serialise(writer);
-                driver.Send(pipeline, connection, writer);
-            }
+            eventQueue.Enqueue(ev);
         }
 
-        private void HandleEvent(EventType eventType, DataStreamReader reader, DataStreamReader.Context readerContext) {
+        private void HandleEvent(EventType eventType, DataStreamReader reader, ref DataStreamReader.Context readerContext) {
             Event ev;
             switch (eventType) {
                 case EventType.ServerHandshake: {
@@ -215,7 +229,7 @@ namespace Network {
                     ev = new ServerSpaceClaimedEvent();
                     break;
                 }
-                case EventType.ServerGameEndEvent:
+                case EventType.ServerGameEndEvent: {
                     ev = new ServerGameEndEvent();
                     break;
                 case EventType.ServerNewPlayerConnectedEvent:

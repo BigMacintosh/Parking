@@ -45,7 +45,7 @@ namespace Network {
 
         public void Shutdown() { }
 
-        public void SendLocationUpdate() { }
+        public void SendEvents() { }
 
         public void HandleNetworkEvents() { }
 

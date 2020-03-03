@@ -89,7 +89,7 @@ namespace Game.Main {
         }
 
         public void FixedUpdate() {
-            client.SendLocationUpdate();
+            client.SendEvents();
         }
 
         public void LateUpdate() {
