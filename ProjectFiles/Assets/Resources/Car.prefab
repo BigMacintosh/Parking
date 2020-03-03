@@ -226,6 +226,9 @@ MonoBehaviour:
     <SpeedRating>k__BackingField: 0
     <SteeringRating>k__BackingField: 0
     <WeightRating>k__BackingField: 0
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!65 &1415444200866933380
 BoxCollider:
   m_ObjectHideFlags: 0
