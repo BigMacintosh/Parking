@@ -5,12 +5,12 @@ namespace Network.Events {
     public class ServerEliminatePlayersEvent : Event {
         public ServerEliminatePlayersEvent() {
             ID = EventType.ServerEliminatePlayersEvent;
-            Length      = 2 * sizeof(ushort) + Players.Count * sizeof(int) + sizeof(byte);
         }
 
         public ServerEliminatePlayersEvent(ushort roundNumber, List<int> players) : this() {
             RoundNumber = roundNumber;
             Players     = players;
+            Length      = 2 * sizeof(ushort) + Players.Count * sizeof(int) + sizeof(byte);
         }
 
         public ushort    RoundNumber { get; private set; }
@@ -33,6 +33,7 @@ namespace Network.Events {
             for (var i = 0; i < playerCount; i++) {
                 Players.Add(reader.ReadInt(ref context));
             }
+            Length = 2 * sizeof(ushort) + Players.Count * sizeof(int) + sizeof(byte);
         }
 
         public override void Handle(Server server, NetworkConnection connection) {
