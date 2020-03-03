@@ -79,7 +79,7 @@ namespace Game.Main {
 
         public void FixedUpdate() {
             // Trigger network send.
-            server.SendLocationUpdates();
+            server.SendEvents();
         }
 
         public void LateUpdate() {

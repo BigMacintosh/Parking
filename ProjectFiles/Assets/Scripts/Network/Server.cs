@@ -39,13 +39,16 @@ namespace Network {
         private readonly World           world;
         private readonly ServerConfig    config;
 
+        private readonly Dictionary<int, Queue<Event>> connectionEventQueues;
+
 
         public Server(World world, ServerConfig config) {
-            this.world          = world;
-            this.config         = config;
-            connections         = new NativeList<NetworkConnection>(this.config.MaxPlayers, Allocator.Persistent);
-            playersToSpawn      = new List<int>();
-            acceptingNewPlayers = true;
+            this.world            = world;
+            this.config           = config;
+            connections           = new NativeList<NetworkConnection>(this.config.MaxPlayers, Allocator.Persistent);
+            playersToSpawn        = new List<int>();
+            acceptingNewPlayers   = true;
+            connectionEventQueues = new Dictionary<int, Queue<Event>>();
 
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
@@ -81,10 +84,29 @@ namespace Network {
         }
 
         // Send Messages.
-        public void SendLocationUpdates() {
+        public void SendEvents() {
             if (world.GetNumPlayers() == 0) return;
+
+            // generate location updates
             var locationUpdate = new ServerLocationUpdateEvent(world);
             SendToAll(locationUpdate);
+
+            // send all events in queue
+            foreach (var connection in connections) {
+                var queue = connectionEventQueues[connection.InternalId];
+
+                if (queue.Count == 0) {
+                    Debug.Log($"Queue for { connection.InternalId } empty.");
+                }
+                
+                while (queue.Count > 0) {
+                    var ev = queue.Dequeue();
+                    
+                    Debug.Log($"{ ev } dequeued for client { connection.InternalId }.");
+                    
+                    // driver.Send(pipeline, connection, )
+                }
+            }
         }
 
         public void HandleNetworkEvents() {
@@ -107,6 +129,8 @@ namespace Network {
                     connections.Add(c);
                     var endpoint = driver.RemoteEndPoint(c);
                     Debug.Log($"Server: Accepted a connection from {endpoint.IpAddress()}:{endpoint.Port}.");
+                    
+                    connectionEventQueues.Add(c.InternalId, new Queue<Event>());
                 }
             } else {
                 while ((c = driver.Accept()) != default) {
@@ -147,6 +171,9 @@ namespace Network {
                             // Remove the admin client
                             if (playerID == adminClient) adminClient = -1;
 
+                            // Delete this player's event queue
+                            connectionEventQueues.Remove(playerID);
+                            
                             // Destroy the actual network connection
                             Debug.Log($"Server: Destroyed player {playerID} due to disconnect.");
                             connections[i] = default;
@@ -203,8 +230,10 @@ namespace Network {
                 case GameMode.PlayerMode: {
                     Debug.Log($"Server: Received handshake from {playerID}.");
                     playersToSpawn.Add(playerID);
+                    
                     var handshakeResponse = new ServerHandshakeEvent(playerID);
                     SendToClient(srcConnection, handshakeResponse);
+                    
                     break;
                 }
                 case GameMode.AdminMode: {
@@ -249,19 +278,14 @@ namespace Network {
 
         // Used to send a packet to all clients.
         private void SendToAll(Event ev) {
-            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
-                ev.Serialise(writer);
-                foreach (var connection in connections) {
-                    driver.Send(pipeline, connection, writer);
-                }
+            foreach (var connection in connections) {
+                connectionEventQueues[connection.InternalId].Enqueue(ev);
             }
         }
 
         private void SendToClient(NetworkConnection connection, Event ev) {
-            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
-                ev.Serialise(writer);
-                driver.Send(pipeline, connection, writer);
-            }
+            Debug.Log($"Queueing event { ev } for client { connection.InternalId }.");
+            connectionEventQueues[connection.InternalId].Enqueue(ev);
         }
 
         public void OnStartGame(ushort freeRoamLength, ushort nPlayers) {

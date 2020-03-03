@@ -14,5 +14,9 @@ namespace Network.Events {
         public abstract void Handle(Server server, NetworkConnection connection);
 
         public abstract void Handle(Client client, NetworkConnection connection);
+
+        public override string ToString() {
+            return $"Event[{ID.ToString()}]";
+        }
     }
 }
