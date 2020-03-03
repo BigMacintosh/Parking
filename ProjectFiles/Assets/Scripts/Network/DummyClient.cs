@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using Game;
 using Game.Entity;
 using UnityEngine;
@@ -22,10 +24,20 @@ namespace Network {
         }
 
         public bool Start(ushort port = 25565) {
-            world.CreatePlayer(0, new PlayerOptions {
+            var playerID = 0;
+            world.CreatePlayer(playerID, new PlayerOptions {
                 CarType = CarType.Hatchback,
             }, true);
-            world.SpawnPlayers();
+            var spawnPos = new PlayerPosition {
+                Pos = new Vector3 {
+                    x = -6.82f,
+                    y = 2.19f,
+                    z = -0.7f,
+                },
+                Rot = new Quaternion(),
+            };
+            var dict = new Dictionary<int, PlayerPosition> {{playerID, spawnPos}};
+            world.SpawnPlayers(dict);
             return true;
         }
 

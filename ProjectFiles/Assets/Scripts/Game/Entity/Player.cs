@@ -44,7 +44,6 @@ namespace Game.Entity {
         /// Used to set the car object for a player.
         ///
         /// Used rather than setting to car directly to allow for the rigidbody to be extracted.
-        /// Helps to avoid 
         /// </summary>
         /// <param name="newCar"></param>
         private void SetCar(GameObject newCar) {
