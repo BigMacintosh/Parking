@@ -90,9 +90,7 @@ namespace Game.Main {
         }
 
         public void FixedUpdate() {
-            if (ClientConfig.PlayerID >= 0) {
-                client.SendLocationUpdate();
-            }
+            client.SendEvents();
         }
 
         public void LateUpdate() {

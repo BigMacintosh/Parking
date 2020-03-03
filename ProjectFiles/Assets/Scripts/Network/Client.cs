@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Game;
 using Game.Entity;
@@ -29,7 +30,7 @@ namespace Network {
 
         bool   Start(ushort port = 25565);
         void   Shutdown();
-        void   SendLocationUpdate();
+        void   SendEvents();
         void   HandleNetworkEvents();
         string GetServerIP();
         void   OnSpaceEnter(int playerID, ushort spaceID);
@@ -59,12 +60,15 @@ namespace Network {
         private readonly NetworkPipeline pipeline;
         private readonly World           world;
 
+        private readonly Queue<Event> eventQueue;
+
 
         public Client(World world) {
             driver     = new UdpCNetworkDriver(new ReliableUtility.Parameters {WindowSize = 32});
             pipeline   = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
             done       = false;
             this.world = world;
+            eventQueue = new Queue<Event>();
         }
         
         public static IClient GetDummyClient(World world) {
@@ -89,14 +93,21 @@ namespace Network {
             driver.Dispose();
         }
 
-        public void SendLocationUpdate() {
-            // Don't send location if not in game
-            if (!inGame) return;
-            // Don't send location if you are admin client
-            if (ClientConfig.GameMode == GameMode.AdminMode) return;
+        public void SendEvents() {
+            // Only send location if in game and in player mode
+            if (inGame && ClientConfig.GameMode == GameMode.PlayerMode) {
+                var locationUpdate = new ClientLocationUpdateEvent(world);
+                SendEventToServer(locationUpdate);
+            }
 
-            var locationUpdate = new ClientLocationUpdateEvent(world);
-            SendEventToServer(locationUpdate);
+            while (eventQueue.Count > 0) {
+                var ev = eventQueue.Dequeue();
+                
+                using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
+                    ev.Serialise(writer);
+                    driver.Send(pipeline, connection, writer);
+                }
+            }
         }
 
         public void HandleNetworkEvents() {
@@ -159,10 +170,7 @@ namespace Network {
         }
 
         private void SendEventToServer(Event ev) {
-            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
-                ev.Serialise(writer);
-                driver.Send(pipeline, connection, writer);
-            }
+            eventQueue.Enqueue(ev);
         }
 
         private void HandleEvent(EventType eventType, DataStreamReader reader, DataStreamReader.Context readerContext) {
