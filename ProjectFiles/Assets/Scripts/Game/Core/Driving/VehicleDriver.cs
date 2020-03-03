@@ -86,7 +86,19 @@ namespace Game.Core.Driving {
         private void OnCollisionEnter(Collision other) {
             if ((mask.value & 1 <<other.gameObject.layer) != 0) {
                 Debug.Log("HIT A CAR");
+
+                Rigidbody otherBody = other.gameObject.GetComponent<Rigidbody>();
+                
+                float myMomentum = Vector3.Magnitude(body.velocity) * body.mass;
+                float otherMomentum = Vector3.Magnitude(otherBody.velocity) * otherBody.mass;
+
+                if (myMomentum > otherMomentum) {
+                    Debug.Log("I WIN COLLISION");
+                } else {
+                    Debug.Log("I LOSE COLLISION");
+                }
             }
+
         }
     }
 }
