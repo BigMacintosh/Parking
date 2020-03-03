@@ -174,8 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3a73796d3af64b01a7b06c6b5c5229a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topLeft: {x: 250, y: -250}
-  bottomRight: {x: -250, y: 250}
+  worldSize: {x: 500, y: 500}
 --- !u!1 &8764900754586720072
 GameObject:
   m_ObjectHideFlags: 0
