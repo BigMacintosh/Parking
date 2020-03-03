@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Game;
 using Game.Entity;
 using Network.Events;
@@ -100,13 +101,16 @@ namespace Network {
                 SendEventToServer(locationUpdate);
             }
 
-            while (eventQueue.Count > 0) {
-                var ev = eventQueue.Dequeue();
-                
-                using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
+            var totalLength = eventQueue.Sum(ev => ev.Length);
+
+            using (var writer = new DataStreamWriter(totalLength, Allocator.Temp)) {
+                while (eventQueue.Count > 0) {
+                    var ev = eventQueue.Dequeue();
+                    
                     ev.Serialise(writer);
-                    driver.Send(pipeline, connection, writer);
                 }
+                
+                driver.Send(pipeline, connection, writer);
             }
         }
 
@@ -133,8 +137,12 @@ namespace Network {
                     }
                     case NetworkEvent.Type.Data: {
                         var readerContext = default(DataStreamReader.Context);
-                        var ev            = (EventType) reader.ReadByte(ref readerContext);
-                        HandleEvent(ev, reader, readerContext);
+                        
+                        while (reader.Length - reader.GetBytesRead(ref readerContext) > 0) {
+                            var ev = (EventType) reader.ReadByte(ref readerContext);
+                            HandleEvent(ev, reader, ref readerContext);
+                        }
+
                         break;
                     }
                     case NetworkEvent.Type.Disconnect:
@@ -173,7 +181,7 @@ namespace Network {
             eventQueue.Enqueue(ev);
         }
 
-        private void HandleEvent(EventType eventType, DataStreamReader reader, DataStreamReader.Context readerContext) {
+        private void HandleEvent(EventType eventType, DataStreamReader reader, ref DataStreamReader.Context readerContext) {
             Event ev;
             switch (eventType) {
                 case EventType.ServerHandshake: {
@@ -216,9 +224,10 @@ namespace Network {
                     ev = new ServerSpaceClaimedEvent();
                     break;
                 }
-                case EventType.ServerGameEndEvent:
+                case EventType.ServerGameEndEvent: {
                     ev = new ServerGameEndEvent();
                     break;
+                }
                 default:
                     Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
                     return;

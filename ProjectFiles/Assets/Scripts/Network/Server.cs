@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game;
 using Game.Entity;
 using Network.Events;
@@ -7,6 +8,7 @@ using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEngine;
+using UnityEngine.Playables;
 using Event = Network.Events.Event;
 using Timer = Utils.Timer;
 using UdpCNetworkDriver =
@@ -92,20 +94,21 @@ namespace Network {
             }
 
             // send all events in queue
+            
+            
             foreach (var connection in connections) {
                 var queue = connectionEventQueues[connection.InternalId];
 
-                if (queue.Count == 0) {
-                    Debug.Log($"Queue for { connection.InternalId } empty.");
-                }
-                
-                while (queue.Count > 0) {
-                    var ev = queue.Dequeue();
+                var totalLength = queue.Sum(ev => ev.Length);
 
-                    using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
+                using (var writer = new DataStreamWriter(totalLength, Allocator.Temp)) {
+                    while (queue.Count > 0) {
+                        var ev = queue.Dequeue();
+                        
                         ev.Serialise(writer);
-                        driver.Send(pipeline, connection, writer);
                     }
+                    
+                    driver.Send(pipeline, connection, writer);
                 }
             }
         }
@@ -154,8 +157,12 @@ namespace Network {
                     switch (command) {
                         case NetworkEvent.Type.Data: {
                             var readerContext = default(DataStreamReader.Context);
-                            var ev            = (EventType) reader.ReadByte(ref readerContext);
-                            HandleEvent(connections[i], endpoint, ev, reader, readerContext);
+
+                            while (reader.Length - reader.GetBytesRead(ref readerContext) > 0) {
+                                var ev = (EventType) reader.ReadByte(ref readerContext);
+                                HandleEvent(connections[i], endpoint, ev, reader, ref readerContext);
+                            }
+
                             break;
                         }
                         case NetworkEvent.Type.Disconnect:
@@ -185,7 +192,7 @@ namespace Network {
         }
 
         private void HandleEvent(NetworkConnection connection, NetworkEndPoint          endpoint, EventType eventType,
-                                 DataStreamReader  reader,     DataStreamReader.Context readerContext) {
+                                 DataStreamReader  reader,     ref DataStreamReader.Context readerContext) {
             Event ev;
 
             switch (eventType) {
@@ -285,7 +292,6 @@ namespace Network {
         }
 
         private void SendToClient(NetworkConnection connection, Event ev) {
-            Debug.Log($"Queueing event { ev } for client { connection.InternalId }.");
             connectionEventQueues[connection.InternalId].Enqueue(ev);
         }
 
