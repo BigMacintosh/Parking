@@ -85,11 +85,11 @@ namespace Network {
 
         // Send Messages.
         public void SendEvents() {
-            if (world.GetNumPlayers() == 0) return;
-
-            // generate location updates
-            var locationUpdate = new ServerLocationUpdateEvent(world);
-            SendToAll(locationUpdate);
+            if (world.GetNumPlayers() > 1) {
+                // generate location updates
+                var locationUpdate = new ServerLocationUpdateEvent(world);
+                SendToAll(locationUpdate);
+            }
 
             // send all events in queue
             foreach (var connection in connections) {
@@ -101,10 +101,11 @@ namespace Network {
                 
                 while (queue.Count > 0) {
                     var ev = queue.Dequeue();
-                    
-                    Debug.Log($"{ ev } dequeued for client { connection.InternalId }.");
-                    
-                    // driver.Send(pipeline, connection, )
+
+                    using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
+                        ev.Serialise(writer);
+                        driver.Send(pipeline, connection, writer);
+                    }
                 }
             }
         }
