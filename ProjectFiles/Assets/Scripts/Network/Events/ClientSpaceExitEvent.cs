@@ -4,7 +4,7 @@ namespace Network.Events {
     public class ClientSpaceExitEvent : Event {
         public ClientSpaceExitEvent() {
             ID     = EventType.ClientSpaceExitEvent;
-            Length = sizeof(byte) + sizeof(ushort) * 2;
+            Length = sizeof(byte) + sizeof(ushort);
         }
 
         public ClientSpaceExitEvent(ushort spaceId) : this() {

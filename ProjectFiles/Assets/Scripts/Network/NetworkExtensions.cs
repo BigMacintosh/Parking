@@ -1,5 +1,9 @@
+using System;
+using Game.Entity;
+using Unity.Collections;
 using Unity.Networking.Transport;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Network {
     public static class NetworkExtensions {
@@ -17,6 +21,11 @@ namespace Network {
 
         // turns out that structs are implicitly sealed in C# due to them having fixed size so we can't extend the
         // DataStreamWriter/Reader. Instead there's just lots of extension methods here for Unity types
+        
+        public static int WriterLength(this Vector3 vec) {
+            return sizeof(float) * 3;
+        }
+        
         public static void WriteVector3(this DataStreamWriter writer, Vector3 vector) {
             writer.Write(vector.x);
             writer.Write(vector.y);
@@ -27,11 +36,16 @@ namespace Network {
             var vector = new Vector3 {
                 x = reader.ReadFloat(ref context),
                 y = reader.ReadFloat(ref context),
-                z = reader.ReadFloat(ref context)
+                z = reader.ReadFloat(ref context),
             };
             return vector;
         }
 
+
+        public static int WriterLength(this Quaternion quaternion) {
+            return sizeof(float) * 4;
+        }
+        
         public static void WriteQuaternion(this DataStreamWriter writer, Quaternion quaternion) {
             writer.Write(quaternion.x);
             writer.Write(quaternion.y);
@@ -44,9 +58,69 @@ namespace Network {
                 x = reader.ReadFloat(ref context),
                 y = reader.ReadFloat(ref context),
                 z = reader.ReadFloat(ref context),
-                w = reader.ReadFloat(ref context)
+                w = reader.ReadFloat(ref context),
             };
             return quaternion;
+        }
+
+        public static int WriterLength(this PlayerPosition pos) {
+            return pos.Pos.WriterLength() + pos.Rot.WriterLength() + pos.Vel.WriterLength() + pos.Pos.WriterLength();
+        }
+        
+        public static void WritePlayerPosition(this DataStreamWriter writer, PlayerPosition playerPosition) {
+            writer.WriteVector3(playerPosition.Pos);
+            writer.WriteQuaternion(playerPosition.Rot);
+            writer.WriteVector3(playerPosition.Vel);
+            writer.WriteVector3(playerPosition.AVel);
+        }
+
+        public static PlayerPosition ReadPlayerPosition(this DataStreamReader         reader,
+                                                        ref  DataStreamReader.Context context) {
+            return new PlayerPosition {
+                Pos = reader.ReadVector3(ref context),
+                Rot = reader.ReadQuaternion(ref context),
+                Vel = reader.ReadVector3(ref context),
+                AVel = reader.ReadVector3(ref context),
+                    
+            };
+        }
+
+        public static int WriterLength(this Color col) {
+            return sizeof(float) * 3;
+        }
+        public static void WriteColor(this DataStreamWriter writer, Color colour) {
+            writer.Write(colour.r);
+            writer.Write(colour.g);
+            writer.Write(colour.b);
+            writer.Write(colour.a);
+        }
+
+        public static Color ReadColor(this DataStreamReader reader, ref DataStreamReader.Context context) {
+            return new Color {
+                r = reader.ReadFloat(ref context),
+                g = reader.ReadFloat(ref context),
+                b = reader.ReadFloat(ref context),
+                a = reader.ReadFloat(ref context),
+            };
+        }
+
+        public static int WriterLength(this PlayerOptions playerOptions) {
+            return sizeof(float) * 4 + sizeof(byte) + new NativeString64(playerOptions.PlayerName).LengthInBytes + 2;
+        }
+        
+        public static void WritePlayerOptions(this DataStreamWriter writer, PlayerOptions playerOptions) {
+            writer.WriteColor(playerOptions.CarColour);
+            writer.Write((byte) playerOptions.CarType);
+            writer.WriteString(playerOptions.PlayerName);
+        }
+
+        public static PlayerOptions ReadPlayerOptions(this DataStreamReader         reader,
+                                                      ref  DataStreamReader.Context context) {
+            return new PlayerOptions {
+                CarColour = reader.ReadColor(ref context),
+                CarType = (CarType) reader.ReadByte(ref context),
+                PlayerName = reader.ReadString(ref context).ToString(),
+            };
         }
     }
 }

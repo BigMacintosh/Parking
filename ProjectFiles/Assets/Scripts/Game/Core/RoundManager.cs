@@ -178,7 +178,7 @@ namespace Game.Core {
         /// <returns>List of playerIDs who have been eliminted</returns>
         private List<int> GetEliminatedPlayers() {
             // Get players in the game
-            var playersInGame  = world.GetPlayers();
+            var playersInGame  = world.GetPlayersInGame();
             var playersInSpace = spaceManager.ParkingSpacesByPlayerID;
 
             var eliminatedPlayers = new List<int>();
@@ -198,7 +198,7 @@ namespace Game.Core {
         /// <returns>List of playerIDs who have won.</returns>
         private List<int> GetWinners() {
             // Get players in the game
-            var playersInGame  = world.GetPlayers();
+            var playersInGame  = world.GetPlayersInGame();
             var playersInSpace = spaceManager.ParkingSpacesByPlayerID;
 
             var winners = new List<int>();
