@@ -37,8 +37,8 @@ namespace UI.Minimap {
             var mapPosition = scroller.MapPosition;
             var trans       = transform;
             var position    = trans.position;
-            indicatorTransform.localPosition = new Vector2(mapPosition.x - position.x * scroller.PixelUnitScale.x,
-                                                           mapPosition.y - position.z * scroller.PixelUnitScale.y);
+            indicatorTransform.localPosition = new Vector2(mapPosition.x - position.x * scroller.UnitPixelScale.x,
+                                                           mapPosition.y - position.z * scroller.UnitPixelScale.y);
             indicatorTransform.localRotation = Quaternion.Euler(0, 0, -trans.rotation.eulerAngles.y);
         }
 

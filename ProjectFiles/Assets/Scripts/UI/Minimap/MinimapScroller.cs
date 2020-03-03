@@ -6,7 +6,7 @@ namespace UI.Minimap {
         /// The unit-to-pixel scale between the world (X, Z) and the map (X, Y).
         /// e.g. World * UnitPixelScale = Map
         /// </summary>
-        public Vector2 PixelUnitScale { get; private set; }
+        public Vector2 UnitPixelScale { get; private set; }
 
         public Transform ObjectToFollow { get; set; }
         public Vector3   MapPosition    => transform.localPosition;
@@ -25,14 +25,14 @@ namespace UI.Minimap {
             var rect = ((RectTransform) transform).rect;
             // since we're translating the map, player moves right => map moves left and vice versa... so we need 
             // the NEGATIVE scale
-            PixelUnitScale  = -rect.size / worldSize;
+            UnitPixelScale  = -rect.size / worldSize;
             ObjectToFollow  = FindObjectOfType<Game.Main.Game>().transform;
             parentTransform = transform.parent;
         }
 
         public void Update() {
             var position = ObjectToFollow.position;
-            transform.localPosition  = new Vector2(position.x * PixelUnitScale.x, position.z * PixelUnitScale.y);
+            transform.localPosition  = new Vector2(position.x * UnitPixelScale.x, position.z * UnitPixelScale.y);
             parentTransform.rotation = Quaternion.Euler(0, 0, ObjectToFollow.rotation.eulerAngles.y);
         }
     }
