@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace UI.Minimap {
     public class RenderToMinimap : MonoBehaviour {
-        [SerializeField] private Color   colour;
+        [SerializeField] private Color   colour = Color.white;
         [SerializeField] private Vector2 size = new Vector2(16, 16);
         [SerializeField] private Sprite  sprite;
 
@@ -27,6 +27,7 @@ namespace UI.Minimap {
                 indicator.AddComponent<Image>();
                 var image = indicator.GetComponent<Image>();
                 image.sprite = sprite;
+                image.color = colour;
                 indicator.transform.SetParent(mask.transform);
                 indicatorTransform           = (RectTransform) indicator.transform;
                 indicatorTransform.sizeDelta = size;
