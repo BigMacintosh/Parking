@@ -13,7 +13,7 @@ namespace Network.Events {
         public ClientHandshakeEvent(GameMode gameMode, PlayerOptions playerOptions) : this() {
             GameMode = gameMode;
             PlayerOptions = playerOptions;
-            Length = sizeof(byte) * 2 + playerOptions.Size;
+            Length = sizeof(byte) * 2 + playerOptions.WriterLength();
         }
 
         

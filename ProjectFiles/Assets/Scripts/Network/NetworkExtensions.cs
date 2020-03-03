@@ -1,7 +1,9 @@
 using System;
 using Game.Entity;
+using Unity.Collections;
 using Unity.Networking.Transport;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Network {
     public static class NetworkExtensions {
@@ -19,6 +21,11 @@ namespace Network {
 
         // turns out that structs are implicitly sealed in C# due to them having fixed size so we can't extend the
         // DataStreamWriter/Reader. Instead there's just lots of extension methods here for Unity types
+        
+        public static int WriterLength(this Vector3 vec) {
+            return sizeof(float) * 3;
+        }
+        
         public static void WriteVector3(this DataStreamWriter writer, Vector3 vector) {
             writer.Write(vector.x);
             writer.Write(vector.y);
@@ -34,6 +41,11 @@ namespace Network {
             return vector;
         }
 
+
+        public static int WriterLength(this Quaternion quaternion) {
+            return sizeof(float) * 4;
+        }
+        
         public static void WriteQuaternion(this DataStreamWriter writer, Quaternion quaternion) {
             writer.Write(quaternion.x);
             writer.Write(quaternion.y);
@@ -51,6 +63,10 @@ namespace Network {
             return quaternion;
         }
 
+        public static int WriterLength(this PlayerPosition pos) {
+            return pos.Pos.WriterLength() + pos.Rot.WriterLength() + pos.Vel.WriterLength() + pos.Pos.WriterLength();
+        }
+        
         public static void WritePlayerPosition(this DataStreamWriter writer, PlayerPosition playerPosition) {
             writer.WriteVector3(playerPosition.Pos);
             writer.WriteQuaternion(playerPosition.Rot);
@@ -69,6 +85,9 @@ namespace Network {
             };
         }
 
+        public static int WriterLength(this Color col) {
+            return sizeof(float) * 3;
+        }
         public static void WriteColor(this DataStreamWriter writer, Color colour) {
             writer.Write(colour.r);
             writer.Write(colour.g);
@@ -83,6 +102,10 @@ namespace Network {
                 b = reader.ReadFloat(ref context),
                 a = reader.ReadFloat(ref context),
             };
+        }
+
+        public static int WriterLength(this PlayerOptions playerOptions) {
+            return sizeof(float) * 4 + sizeof(byte) + new NativeString64(playerOptions.PlayerName).LengthInBytes + 2;
         }
         
         public static void WritePlayerOptions(this DataStreamWriter writer, PlayerOptions playerOptions) {

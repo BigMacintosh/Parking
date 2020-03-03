@@ -81,7 +81,7 @@ namespace Network {
 
         // Send Messages.
         public void SendLocationUpdates() {
-            if (world.GetNumPlayers() == 0) return;
+            if (acceptingNewPlayers) return;
             var locationUpdate = new ServerLocationUpdateEvent(world);
             SendToAll(locationUpdate);
         }
@@ -204,8 +204,9 @@ namespace Network {
             switch (ev.GameMode) {
                 case GameMode.PlayerMode: {
                     Debug.Log($"Server: Received handshake from {playerID}.");
-
-                    respond = true;
+                    
+                    var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
+                    SendToClient(srcConnection, handshakeResponse);
                     
                     world.CreatePlayer(playerID, ev.PlayerOptions);
 
@@ -221,6 +222,8 @@ namespace Network {
                         Debug.Log($"Server: Accepting new admin user {playerID}");
                         adminClient = playerID;
                         
+                        var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
+                        SendToClient(srcConnection, handshakeResponse);
                         respond = true;
                         
                     } else {
@@ -235,10 +238,6 @@ namespace Network {
                     break;
                 }
             }
-
-            if (!respond) return;
-            var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
-            SendToClient(srcConnection, handshakeResponse);
         }
 
         public void Handle(ClientLocationUpdateEvent ev, NetworkConnection srcConnection) {

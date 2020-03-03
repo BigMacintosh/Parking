@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Game;
 using Game.Entity;
 using Unity.Networking.Transport;
@@ -24,7 +25,7 @@ namespace Network.Events {
             }
 
             Length = sizeof(byte) + sizeof(ushort) + sizeof(ushort) +
-                     world.GetNumPlayers() * (sizeof(ushort) + (3 + 4) * sizeof(float));
+                     PlayerPositions.Sum(kv => kv.Value.WriterLength() + sizeof(int));
         }
 
 
@@ -33,7 +34,7 @@ namespace Network.Events {
             writer.Write(FreeRoamLength);
             writer.Write((ushort) PlayerPositions.Count);
             foreach (var id in PlayerPositions.Keys) {
-                writer.Write((ushort) id);
+                writer.Write(id);
                 writer.WritePlayerPosition(PlayerPositions[id]);
             }
         }
@@ -42,16 +43,16 @@ namespace Network.Events {
             FreeRoamLength = reader.ReadUShort(ref context);
             var length = reader.ReadUShort(ref context);
             for (var i = 0; i < length; i++) {
-                var id = reader.ReadUShort(ref context);
+                var id = reader.ReadInt(ref context);
                 PlayerPositions[id] = reader.ReadPlayerPosition(ref context);
             }
 
-            Length = sizeof(byte) + sizeof(ushort) + length * (sizeof(ushort) + (3 + 4) * sizeof(float));
+            Length = sizeof(byte) + sizeof(ushort) + sizeof(ushort) +
+                     PlayerPositions.Sum(kv => kv.Value.WriterLength() + sizeof(int));
         }
 
         public void SpawnPlayers(ClientWorld world) {
             world.SpawnPlayers(PlayerPositions);
-            
         }
 
         public override void Handle(Server server, NetworkConnection connection) {

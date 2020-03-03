@@ -2,16 +2,19 @@
 
 namespace Network.Events {
     public class ServerDisconnectEvent : Event {
+        
+        public int PlayerID { get; private set; }
+        
         public ServerDisconnectEvent() {
             ID     = EventType.ServerDisconnectEvent;
-            Length = sizeof(ushort) + sizeof(byte);
+            Length = sizeof(int) + sizeof(byte);
         }
 
-        public ServerDisconnectEvent(ushort playerID) : this() {
+        public ServerDisconnectEvent(int playerID) : this() {
             PlayerID = playerID;
         }
 
-        public ushort PlayerID { get; private set; }
+        
 
         public override void Serialise(DataStreamWriter writer) {
             base.Serialise(writer);
@@ -19,7 +22,7 @@ namespace Network.Events {
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context) {
-            PlayerID = reader.ReadUShort(ref context);
+            PlayerID = reader.ReadInt(ref context);
         }
 
         public override void Handle(Server server, NetworkConnection connection) {

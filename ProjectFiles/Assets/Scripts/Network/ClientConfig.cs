@@ -15,7 +15,6 @@ namespace Network {
         public static GameMode    GameMode      = GameMode.PlayerMode;
         public static int         PlayerID  => Me.PlayerID;
         public static Player      Me;
-        public static bool InGame;
 
     #if UNITY_EDITOR
         public static string ServerIP = "127.0.0.1";

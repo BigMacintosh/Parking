@@ -89,9 +89,7 @@ namespace Game.Main {
         }
 
         public void FixedUpdate() {
-            if (ClientConfig.InGame) {
-                client.SendLocationUpdate();
-            }
+            client.SendLocationUpdate();
         }
 
         public void LateUpdate() {

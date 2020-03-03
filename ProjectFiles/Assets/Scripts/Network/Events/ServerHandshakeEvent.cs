@@ -14,8 +14,9 @@ namespace Network.Events {
 
         public ServerHandshakeEvent(int playerID, Dictionary<int, PlayerOptions> playerOptions) : this() {
             PlayerID = playerID;
+            PlayerOptions = playerOptions;
 
-            Length = sizeof(int) + sizeof(byte) + sizeof(int) + playerOptions.Sum(k => k.Value.Size + 4);
+            Length = sizeof(byte) + sizeof(int) + sizeof(int) + playerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
         }
 
 
@@ -40,7 +41,7 @@ namespace Network.Events {
                 PlayerOptions.Add(playerID, playerOptions);
             }
 
-            Length = sizeof(int) + sizeof(byte) + sizeof(int) + PlayerOptions.Sum(k => k.Value.Size + sizeof(int));
+            Length = sizeof(int) + sizeof(byte) + sizeof(int) + PlayerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
         }
 
         public override void Handle(Server server, NetworkConnection connection) {
@@ -60,7 +61,7 @@ namespace Network.Events {
 
 
             // Create all players who have already connected.
-            foreach (var kv in PlayerOptions) {
+            foreach (var kv in PlayerOptions.Where(kv => kv.Key != PlayerID)) {
                 world.CreatePlayer(kv.Key, kv.Value);
             }
         }

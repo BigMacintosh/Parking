@@ -9,11 +9,12 @@ namespace Network.Events {
         public PlayerPosition PlayerPosition { get; set; }
         public ClientLocationUpdateEvent() {
             ID     = EventType.ClientLocationUpdate;
-            Length = (3 + 3 + 3 + 4) * sizeof(float) + sizeof(byte);
+            
         }
 
         public ClientLocationUpdateEvent(ClientWorld world) : this() {
             PlayerPosition = world.GetMyPosition();
+            Length = PlayerPosition.WriterLength() + sizeof(byte);
         }
 
         
@@ -25,6 +26,7 @@ namespace Network.Events {
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context) {
             PlayerPosition = reader.ReadPlayerPosition(ref context);
+            Length = PlayerPosition.WriterLength() + sizeof(byte);
         }
 
         public void UpdateLocation(World world, int playerID) {

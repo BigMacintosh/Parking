@@ -13,7 +13,7 @@ namespace Network.Events {
         public ServerNewPlayerConnectedEvent(int playerID, PlayerOptions playerOptions) : this() {
             PlayerID = playerID;
             PlayerOptions = playerOptions;
-            Length = sizeof(byte) + sizeof(int) + playerOptions.Size;
+            Length = sizeof(byte) + sizeof(int) + playerOptions.WriterLength();
         }
 
         
