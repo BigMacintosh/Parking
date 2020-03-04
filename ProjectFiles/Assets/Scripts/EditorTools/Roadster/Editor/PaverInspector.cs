@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(Paver))]
-public class PaverInspector : Editor
-{
+public class PaverInspector : Editor {
     public override void OnInspectorGUI() {
         Paver paver = (Paver) target;
         DrawDefaultInspector();
