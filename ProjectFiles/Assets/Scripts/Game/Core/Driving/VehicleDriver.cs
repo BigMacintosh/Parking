@@ -18,7 +18,7 @@ namespace Game.Core.Driving {
         private float     turn;
         private float     maxTurn;
         private float     collisionAmplifier = 50f;
-        private float     collisionThresh    = 3000;
+        private float     collisionThresh;
         private float     collisionCooldown  = 0.5f;
         private float     timestamp          = 0f;
 
@@ -26,6 +26,7 @@ namespace Game.Core.Driving {
         private void Start() {
             body              = gameObject.GetComponent<Rigidbody>();
             body.centerOfMass = transform.Find("centreOfMass").transform.localPosition;
+            collisionThresh = body.mass / 2;
         }
 
         private void FixedUpdate() {
@@ -95,7 +96,7 @@ namespace Game.Core.Driving {
                 float otherMomentum = Mathf.Abs(Vector3.Dot(otherBody.velocity, colDir)) * otherBody.mass;
 
                 if (Mathf.Abs(myMomentum - otherMomentum) > collisionThresh) {
-                    if (myMomentum < otherMomentum || Mathf.Abs(myMomentum - otherMomentum) > collisionThresh * 2f) {
+                    if (myMomentum < otherMomentum) {
                         body.AddForce(colDir * otherMomentum * collisionAmplifier);
                     }
 
