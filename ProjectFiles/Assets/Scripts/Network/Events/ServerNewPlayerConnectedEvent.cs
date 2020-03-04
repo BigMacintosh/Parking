@@ -1,17 +1,19 @@
-﻿using Unity.Networking.Transport;
+using Game.Entity;
+using Unity.Networking.Transport;
 
 namespace Network.Events {
-    public class ServerDisconnectEvent : Event {
-        
+    public class ServerNewPlayerConnectedEvent : Event {
         public int PlayerID { get; private set; }
+        public PlayerOptions PlayerOptions { get; private set; }
         
-        public ServerDisconnectEvent() {
-            ID     = EventType.ServerDisconnectEvent;
-            Length = sizeof(int) + sizeof(byte);
+        public ServerNewPlayerConnectedEvent() {
+            ID     = EventType.ServerNewPlayerConnectedEvent;
         }
 
-        public ServerDisconnectEvent(int playerID) : this() {
+        public ServerNewPlayerConnectedEvent(int playerID, PlayerOptions playerOptions) : this() {
             PlayerID = playerID;
+            PlayerOptions = playerOptions;
+            Length = sizeof(byte) + sizeof(int) + playerOptions.WriterLength();
         }
 
         
@@ -19,10 +21,12 @@ namespace Network.Events {
         public override void Serialise(DataStreamWriter writer) {
             base.Serialise(writer);
             writer.Write(PlayerID);
+            writer.WritePlayerOptions(PlayerOptions);
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context) {
             PlayerID = reader.ReadInt(ref context);
+            PlayerOptions = reader.ReadPlayerOptions(ref context);
         }
 
         public override void Handle(Server server, NetworkConnection connection) {

@@ -3,12 +3,10 @@ using UnityEngine.UI;
 
 namespace UI.Minimap {
     public class RenderToMinimap : MonoBehaviour {
-        // Serializable Fields
-        [SerializeField] private Color   colour;
+        [SerializeField] private Color   colour = Color.white;
         [SerializeField] private Vector2 size = new Vector2(16, 16);
         [SerializeField] private Sprite  sprite;
 
-        // Private Fields
         private GameObject      indicator;
         private RectTransform   indicatorTransform;
         private MinimapScroller scroller;
@@ -29,6 +27,7 @@ namespace UI.Minimap {
                 indicator.AddComponent<Image>();
                 var image = indicator.GetComponent<Image>();
                 image.sprite = sprite;
+                image.color = colour;
                 indicator.transform.SetParent(mask.transform);
                 indicatorTransform           = (RectTransform) indicator.transform;
                 indicatorTransform.sizeDelta = size;
@@ -39,9 +38,13 @@ namespace UI.Minimap {
             var mapPosition = scroller.MapPosition;
             var trans       = transform;
             var position    = trans.position;
-            indicatorTransform.localPosition = new Vector2(mapPosition.x - position.x / scroller.MapScale.x,
-                                                           mapPosition.y - position.z / scroller.MapScale.y);
+            indicatorTransform.localPosition = new Vector2(mapPosition.x - position.x * scroller.UnitPixelScale.x,
+                                                           mapPosition.y - position.z * scroller.UnitPixelScale.y);
             indicatorTransform.localRotation = Quaternion.Euler(0, 0, -trans.rotation.eulerAngles.y);
+        }
+
+        public void OnDestroy() {
+            Destroy(indicator);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game;
 using Game.Entity;
 using Network.Events;
@@ -7,6 +8,7 @@ using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEngine;
+using UnityEngine.Playables;
 using Event = Network.Events.Event;
 using Timer = Utils.Timer;
 using UdpCNetworkDriver =
@@ -36,16 +38,18 @@ namespace Network {
         private readonly Timer           keepAliveTimer;
         private readonly NetworkPipeline pipeline;
         private readonly List<int>       playersToSpawn;
-        private readonly World           world;
+        private readonly ServerWorld     world;
         private readonly ServerConfig    config;
 
+        private readonly Dictionary<int, Queue<Event>> connectionEventQueues;
 
-        public Server(World world, ServerConfig config) {
-            this.world          = world;
-            this.config         = config;
-            connections         = new NativeList<NetworkConnection>(this.config.MaxPlayers, Allocator.Persistent);
-            playersToSpawn      = new List<int>();
-            acceptingNewPlayers = true;
+        public Server(ServerWorld world, ServerConfig config) {
+            this.world            = world;
+            this.config           = config;
+            connections           = new NativeList<NetworkConnection>(this.config.MaxPlayers, Allocator.Persistent);
+            playersToSpawn        = new List<int>();
+            acceptingNewPlayers   = true;
+            connectionEventQueues = new Dictionary<int, Queue<Event>>();
 
             // TODO: can simulate bad network conditions here by changing pipeline params
             // ReliableSequenced might not be the best choice 
@@ -81,10 +85,31 @@ namespace Network {
         }
 
         // Send Messages.
-        public void SendLocationUpdates() {
-            if (world.GetNumPlayers() == 0) return;
-            var locationUpdate = new ServerLocationUpdateEvent(world);
-            SendToAll(locationUpdate);
+        public void SendEvents() {
+            if (!acceptingNewPlayers) {
+                // generate location updates
+                var locationUpdate = new ServerLocationUpdateEvent(world);
+                SendToAll(locationUpdate);
+            }
+
+            // send all events in queue
+            
+            
+            foreach (var connection in connections) {
+                var queue = connectionEventQueues[connection.InternalId];
+
+                var totalLength = queue.Sum(ev => ev.Length);
+
+                using (var writer = new DataStreamWriter(totalLength, Allocator.Temp)) {
+                    while (queue.Count > 0) {
+                        var ev = queue.Dequeue();
+                        
+                        ev.Serialise(writer);
+                    }
+                    
+                    driver.Send(pipeline, connection, writer);
+                }
+            }
         }
 
         public void HandleNetworkEvents() {
@@ -107,6 +132,8 @@ namespace Network {
                     connections.Add(c);
                     var endpoint = driver.RemoteEndPoint(c);
                     Debug.Log($"Server: Accepted a connection from {endpoint.IpAddress()}:{endpoint.Port}.");
+                    
+                    connectionEventQueues.Add(c.InternalId, new Queue<Event>());
                 }
             } else {
                 while ((c = driver.Accept()) != default) {
@@ -122,42 +149,50 @@ namespace Network {
                     continue;
                 }
 
-                var               endpoint = driver.RemoteEndPoint(connection);
+                var endpoint = driver.RemoteEndPoint(connection);
+
                 NetworkEvent.Type command;
                 while ((command = driver.PopEventForConnection(connection, out var reader)) !=
                        NetworkEvent.Type.Empty) {
                     switch (command) {
                         case NetworkEvent.Type.Data: {
                             var readerContext = default(DataStreamReader.Context);
-                            var ev            = (EventType) reader.ReadByte(ref readerContext);
-                            HandleEvent(connections[i], endpoint, ev, reader, readerContext);
+
+                            while (reader.Length - reader.GetBytesRead(ref readerContext) > 0) {
+                                var ev = (EventType) reader.ReadByte(ref readerContext);
+                                HandleEvent(connections[i], endpoint, ev, reader, ref readerContext);
+                            }
+
                             break;
                         }
-                        case NetworkEvent.Type.Disconnect:
+                        case NetworkEvent.Type.Disconnect: {
                             var playerID = connections[i].InternalId;
                             // Remove this player from the world if they are spawned.
                             if (playerID != adminClient) {
-                                if (!acceptingNewPlayers) world.DestroyPlayer(playerID);
+                                world.DestroyPlayer(playerID);
 
                                 // Notify users of disconnect
                                 var disconnectEvent = new ServerDisconnectEvent((ushort) playerID);
                                 SendToAll(disconnectEvent);
+                            } else {
+                                // Remove the admin client
+                                adminClient = -1;
                             }
-
-                            // Remove the admin client
-                            if (playerID == adminClient) adminClient = -1;
-
+                            // Delete this player's event queue
+                            connectionEventQueues.Remove(playerID);
+                            
                             // Destroy the actual network connection
                             Debug.Log($"Server: Destroyed player {playerID} due to disconnect.");
                             connections[i] = default;
                             break;
+                        }
                     }
                 }
             }
         }
 
         private void HandleEvent(NetworkConnection connection, NetworkEndPoint          endpoint, EventType eventType,
-                                 DataStreamReader  reader,     DataStreamReader.Context readerContext) {
+                                 DataStreamReader  reader,     ref DataStreamReader.Context readerContext) {
             Event ev;
 
             switch (eventType) {
@@ -199,12 +234,19 @@ namespace Network {
 
         public void Handle(ClientHandshakeEvent ev, NetworkConnection srcConnection) {
             var playerID = srcConnection.InternalId;
+            var respond = false;
             switch (ev.GameMode) {
                 case GameMode.PlayerMode: {
                     Debug.Log($"Server: Received handshake from {playerID}.");
-                    playersToSpawn.Add(playerID);
-                    var handshakeResponse = new ServerHandshakeEvent(playerID);
+                    
+                    var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
                     SendToClient(srcConnection, handshakeResponse);
+                    
+                    world.CreatePlayer(playerID, ev.PlayerOptions);
+
+                    var newClient = new ServerNewPlayerConnectedEvent(playerID, ev.PlayerOptions);
+                    SendToAll(newClient);
+                    
                     break;
                 }
                 case GameMode.AdminMode: {
@@ -213,19 +255,22 @@ namespace Network {
                         // Accept the new admin
                         Debug.Log($"Server: Accepting new admin user {playerID}");
                         adminClient = playerID;
-                        var handshakeResponse = new ServerHandshakeEvent(playerID);
+                        
+                        var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
                         SendToClient(srcConnection, handshakeResponse);
+                        respond = true;
+                        
                     } else {
                         // Already have an admin client, drop connection.
                         Debug.Log("Server: Rejecting admin connection, already admin");
                         srcConnection.Disconnect(driver);
                     }
-
                     break;
                 }
-                default:
+                default: {
                     Debug.Log("Unknown GameMode");
                     break;
+                }
             }
         }
 
@@ -249,19 +294,13 @@ namespace Network {
 
         // Used to send a packet to all clients.
         private void SendToAll(Event ev) {
-            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
-                ev.Serialise(writer);
-                foreach (var connection in connections) {
-                    driver.Send(pipeline, connection, writer);
-                }
+            foreach (var connection in connections) {
+                connectionEventQueues[connection.InternalId].Enqueue(ev);
             }
         }
 
         private void SendToClient(NetworkConnection connection, Event ev) {
-            using (var writer = new DataStreamWriter(ev.Length, Allocator.Temp)) {
-                ev.Serialise(writer);
-                driver.Send(pipeline, connection, writer);
-            }
+            connectionEventQueues[connection.InternalId].Enqueue(ev);
         }
 
         public void OnStartGame(ushort freeRoamLength, ushort nPlayers) {
@@ -272,7 +311,7 @@ namespace Network {
             acceptingNewPlayers = false;
 
             // Spawn all the players in the server world
-            world.SpawnPlayers(playersToSpawn);
+            world.SpawnPlayers();
 
             var spawnPlayersEvent = new ServerGameStart(world, freeRoamLength);
             SendToAll(spawnPlayersEvent);

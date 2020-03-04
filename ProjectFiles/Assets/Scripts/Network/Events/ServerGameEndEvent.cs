@@ -27,13 +27,13 @@ namespace Network.Events {
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context) {
-            var playerCount = reader.ReadByte(ref context);
+            var playerCount = reader.ReadUShort(ref context);
             Winners = new List<int>();
             for (var i = 0; i < playerCount; i++) {
-                Winners.Add(reader.ReadByte(ref context));
+                Winners.Add(reader.ReadInt(ref context));
             }
 
-            Length = sizeof(ushort) * (Winners.Count + 2);
+            Length = sizeof(ushort) + Winners.Count * sizeof(int) + sizeof(byte);
         }
 
         public override void Handle(Server server, NetworkConnection connection) {

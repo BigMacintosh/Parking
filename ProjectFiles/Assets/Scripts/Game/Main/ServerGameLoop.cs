@@ -15,7 +15,7 @@ namespace Game.Main {
         private ServerParkingSpaceManager parkingSpaceManager;
         private RoundManager              roundManager;
         private Server                    server;
-        private World                     world;
+        private ServerWorld               world;
 
     #if UNITY_EDITOR
         private UIController uiController;
@@ -27,7 +27,7 @@ namespace Game.Main {
 
             // Initialise Gameplay components
             parkingSpaceManager = new ServerParkingSpaceManager();
-            world               = new World(parkingSpaceManager);
+            world               = new ServerWorld(parkingSpaceManager);
             roundManager        = new RoundManager(world, parkingSpaceManager);
 
             // Initialise network
@@ -73,13 +73,13 @@ namespace Game.Main {
 
         public void Update() {
             server.HandleNetworkEvents();
-            world.Update();
+            // world.Update();
             roundManager.Update();
         }
 
         public void FixedUpdate() {
             // Trigger network send.
-            server.SendLocationUpdates();
+            server.SendEvents();
         }
 
         public void LateUpdate() {

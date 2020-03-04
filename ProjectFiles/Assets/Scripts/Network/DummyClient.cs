@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using Game;
 using Game.Entity;
 using UnityEngine;
@@ -14,26 +16,36 @@ namespace Network {
         public event PlayerCountChangeDelegate PlayerCountChangeEvent;
         public event GameEndDelegate           GameEndEvent;
 
-        // Private Fields
-        private int playerID;
-
-        private readonly World world;
+        private readonly ClientWorld world;
 
 
-        public DummyClient(World world) {
+        public DummyClient(ClientWorld world) {
             this.world = world;
         }
 
+        
+
         public bool Start(ushort port = 25565) {
-            ClientConfig.PlayerID = 0;
-            world.SpawnPlayer(ClientConfig.PlayerID);
-            world.SetPlayerControllable(ClientConfig.PlayerID);
+            var playerID = 0;
+            world.CreatePlayer(playerID, new PlayerOptions {
+                CarType = CarType.Hatchback,
+            }, true);
+            var spawnPos = new PlayerPosition {
+                Pos = new Vector3 {
+                    x = -6.82f,
+                    y = 2.19f,
+                    z = -0.7f,
+                },
+                Rot = new Quaternion(),
+            };
+            var dict = new Dictionary<int, PlayerPosition> {{playerID, spawnPos}};
+            world.SpawnPlayers(dict);
             return true;
         }
 
         public void Shutdown() { }
 
-        public void SendLocationUpdate() { }
+        public void SendEvents() { }
 
         public void HandleNetworkEvents() { }
 

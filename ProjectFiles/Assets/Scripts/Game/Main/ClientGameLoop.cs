@@ -6,13 +6,12 @@ using UnityEngine;
 
 namespace Game.Main {
     public class ClientGameLoop : IGameLoop {
-        
         // Private Fields
         private IClient                   client;
         private bool                      isStandalone;
         private ClientParkingSpaceManager parkingSpaceManager;
         private UIController              uiController;
-        private World                     world;
+        private ClientWorld               world;
 
         public bool Init(string[] args) {
             // Determine if in standalone mode
@@ -20,7 +19,7 @@ namespace Game.Main {
 
             // Create gameplay components
             parkingSpaceManager = new ClientParkingSpaceManager();
-            world               = new World(parkingSpaceManager);
+            world               = new ClientWorld();
 
             // Create UI Controller
             if (ClientConfig.GameMode == GameMode.PlayerMode) {
@@ -86,13 +85,11 @@ namespace Game.Main {
 
         public void Update() {
             client.HandleNetworkEvents();
-            world.Update();
+            // world.Update();
         }
 
         public void FixedUpdate() {
-            if (ClientConfig.PlayerID >= 0) {
-                client.SendLocationUpdate();
-            }
+            client.SendEvents();
         }
 
         public void LateUpdate() {
