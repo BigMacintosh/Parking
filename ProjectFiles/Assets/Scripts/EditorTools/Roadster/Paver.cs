@@ -1,50 +1,60 @@
-﻿﻿using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Paver : MonoBehaviour {
-    [SerializeField] private float         divisions;
-    [SerializeField] private float         maxGroundDistance;
-    [SerializeField] private float         raiseAboveGround;
-    [SerializeField] private bool          signpost;
-    [SerializeField] private BezierSpline  spline;
-    [SerializeField] private Material      surface;
-    [SerializeField] private float         thickness;
-    private                  List<int>     triangles;
-    private                  List<Vector2> uv;
+    [SerializeField] private float        divisions;
+    [SerializeField] private float        maxGroundDistance;
+    [SerializeField] private float        raiseAboveGround;
+    [SerializeField] private bool         signpost;
+    [SerializeField] private BezierSpline spline;
+    [SerializeField] private Material     surface;
+    [SerializeField] private float        thickness;
+    [SerializeField] private float        width;
 
-    private                  List<Vector3> vertices;
-    [SerializeField] private float         width;
+    private List<int>     triangles;
+    private List<Vector2> uv;
+    private List<Vector3> vertices;
 
-    [ContextMenu("Pave Road")]
-    private void PaveRoad() {
-        Debug.Log("Paving Road");
-        Awake();
+    public void PaveRoad() {
+        Pave();
     }
 
-    private void Awake() {
+    private void Pave() {
         vertices  = new List<Vector3>();
         triangles = new List<int>();
         uv        = new List<Vector2>();
 
-        var mesh     = new Mesh();
-        var filter   = gameObject.AddComponent<MeshFilter>();
-        var renderer = gameObject.AddComponent<MeshRenderer>();
+        var mesh = new Mesh();
 
-        populateVertices();
-        populateTris();
+        if (!gameObject.TryGetComponent(out MeshRenderer roadRenderer)) {
+            roadRenderer = gameObject.AddComponent<MeshRenderer>();
+        }
+
+        if (!gameObject.TryGetComponent(out MeshFilter roadFilter)) {
+            roadFilter = gameObject.AddComponent<MeshFilter>();
+        }
+
+        if (!gameObject.TryGetComponent(out MeshCollider roadCollider)) {
+            roadCollider = gameObject.AddComponent<MeshCollider>();
+        }
+
+        // get rid of old mesh before recalculating so it doesn't see itself as the floor
+        roadCollider.sharedMesh = null;
+
+        PopulateVertices();
+        PopulateTris();
 
         mesh.Clear();
-        mesh.vertices     = vertices.ToArray();
-        mesh.triangles    = triangles.ToArray();
-        mesh.uv           = uv.ToArray();
-        filter.mesh       = mesh;
-        renderer.material = surface;
+        mesh.vertices         = vertices.ToArray();
+        mesh.triangles        = triangles.ToArray();
+        mesh.uv               = uv.ToArray();
+        roadFilter.mesh       = mesh;
+        roadRenderer.material = surface;
         mesh.RecalculateNormals();
-
-        var collider = gameObject.AddComponent<MeshCollider>();
+        roadCollider.sharedMesh = mesh;
     }
 
-    private void populateVertices() {
+    private void PopulateVertices() {
         var stepSize = 1f / divisions;
 
         for (var p = 0; p < divisions; p++) {
@@ -126,7 +136,7 @@ public class Paver : MonoBehaviour {
         }
     }
 
-    private void populateTris() {
+    private void PopulateTris() {
         //Front surface
         triangles.Add(0);
         triangles.Add(2);
