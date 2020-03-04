@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
+using Boo.Lang;
 using UnityEngine;
 
 namespace Game.Core.Driving {
     public class VehicleDriver : MonoBehaviour {
         // Public Fields
-        public float            maxSpeed;
-        public float            accel;
-        public float            maxSteer;
-        public float            driftFactor;
-        public List<DriveWheel> driveWheels;
-        public LayerMask        mask;
+        public float                                       maxSpeed;
+        public float                                       accel;
+        public float                                       maxSteer;
+        public float                                       driftFactor;
+        public System.Collections.Generic.List<DriveWheel> driveWheels;
+        public LayerMask                                   mask;
 
         // Private Fields
         private bool      acceptinput;
@@ -18,6 +18,7 @@ namespace Game.Core.Driving {
         private float     turn;
         private float     maxTurn;
         private float     collisionAmplifier = 50f;
+        private float     collisionThresh    = 3000;
         private float     collisionCooldown  = 0.5f;
         private float     timestamp          = 0f;
 
@@ -87,18 +88,19 @@ namespace Game.Core.Driving {
 
         private void OnCollisionEnter(Collision other) {
             if ((mask.value & 1 << other.gameObject.layer) != 0 && timestamp < Time.time) {
-
                 Rigidbody otherBody = other.gameObject.GetComponent<Rigidbody>();
+                Vector3   colDir    = Vector3.Normalize(transform.position - other.transform.position);
 
-                float myMomentum    = Vector3.Magnitude(body.velocity)      * body.mass;
-                float otherMomentum = Vector3.Magnitude(otherBody.velocity) * otherBody.mass;
+                float myMomentum    = Mathf.Abs(Vector3.Dot(body.velocity,      colDir)) * body.mass;
+                float otherMomentum = Mathf.Abs(Vector3.Dot(otherBody.velocity, colDir)) * otherBody.mass;
 
-                if (myMomentum < otherMomentum) {
-                    Vector3 colDir = Vector3.Normalize(transform.position - other.transform.position);
-                    body.AddForce(colDir * otherMomentum * collisionAmplifier);
+                if (Mathf.Abs(myMomentum - otherMomentum) > collisionThresh) {
+                    if (myMomentum < otherMomentum || Mathf.Abs(myMomentum - otherMomentum) > collisionThresh * 2f) {
+                        body.AddForce(colDir * otherMomentum * collisionAmplifier);
+                    }
+
+                    timestamp = Time.time + collisionCooldown;
                 }
-
-                timestamp = Time.time + collisionCooldown;
             }
         }
     }
