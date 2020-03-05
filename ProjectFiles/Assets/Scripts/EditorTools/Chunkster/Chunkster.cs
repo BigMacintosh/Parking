@@ -10,16 +10,13 @@ public class Chunkster : MonoBehaviour {
 
     // our base chunk
     public GameObject baseChunk;
-
+    
 
     void Awake() {
         // add centre chunk if it doesn't exist
         if (!this.chunkExists(0, 0, out _)) {
             createNewChunk(0, 0);
         }
-
-        createNewChunk(0, 1);
-        createNewChunk(1, 1);
     }
 
     [ContextMenu("Join Seams")]
@@ -38,6 +35,19 @@ public class Chunkster : MonoBehaviour {
         }
     }
 
+    private string getChunkId(int chunkX, int chunkY) {
+        return this.baseChunk.name + "_" + chunkX + "_" + chunkY;
+    }
+
+    public List<(int, int)> getAllChunks() {
+        List<(int, int)> chunks = new List<(int, int)>();
+        foreach (Transform child in this.gameObject.transform) {
+            var chunk = (Chunk) child.GetComponent<Chunk>();
+            chunks.Add((chunk.chunkX, chunk.chunkY));
+        }
+        return chunks;
+    }
+
     public List<(int, int)> getNeighbourChunks(int chunkX, int chunkY) {
         // foreach (Direction dir in Enum.GetValues(typeof(Direction))) {
         //     (neighChunkX, neighChunkY) = this.addDirection(chunkX, chunkY, dir);
@@ -48,10 +58,6 @@ public class Chunkster : MonoBehaviour {
                      .Select(x => this.addDirection(chunkX, chunkY, x))
                      .ToList();
         return xs;
-    }
-
-    private string getChunkId(int chunkX, int chunkY) {
-        return this.baseChunk.name + "_" + chunkX + "_" + chunkY;
     }
 
     // converts a chunkX, chunkY to Unity's world coordinates
@@ -83,7 +89,7 @@ public class Chunkster : MonoBehaviour {
         return false;
     }
 
-    GameObject createNewChunk(int chunkX, int chunkY) {
+    public GameObject createNewChunk(int chunkX, int chunkY) {
         if (this.chunkExists(chunkX, chunkY, out _)) {
             Debug.LogWarning("Tried to create new chunk at " + (chunkX, chunkY) + " but one already exists!");
             return null;
@@ -102,9 +108,9 @@ public class Chunkster : MonoBehaviour {
         }
     }
 
-    void deleteChunk(int chunkX, int chunkY) {
+    public void deleteChunk(int chunkX, int chunkY) {
         if (this.chunkExists(chunkX, chunkY, out GameObject chunk)) {
-            Destroy(chunk);
+            DestroyImmediate(chunk);
         } else {
             Debug.LogWarning("Tried to delete chunk at " + (chunkX, chunkY) + " but it doesn't exist!");
         }

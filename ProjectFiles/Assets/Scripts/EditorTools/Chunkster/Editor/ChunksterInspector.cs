@@ -1,8 +1,12 @@
 using UnityEditor;
 using UnityEngine;
+using System;
 
 [CustomEditor(typeof(Chunkster))]
 public class ChunksterInspector : Editor {
+    enum Tool { Build, Destroy }
+    private int selectedTool = 0;
+
     private void onEnable() {}
     private void OnSceneGUI() {
         // get chosen game object
@@ -11,31 +15,63 @@ public class ChunksterInspector : Editor {
         // this has O(n^2) and i am SORRY
         foreach (Transform child in t.transform) {
             var chunk = (Chunk) child.GetComponent<Chunk>();
-            var neighbours = t.getNeighbourChunks(chunk.chunkX, chunk.chunkY);
 
-            foreach (var n in neighbours) {
-                if (!t.chunkExists(n.Item1, n.Item2, out _)) {
-                    var verts = this.getVertsForChunk(t, n.Item1, n.Item2);
-                    Handles.DrawSolidRectangleWithOutline(verts, new Color(0.5f, 0.5f, 0.5f, 0.1f), new Color(0, 0, 0, 1)); 
+            switch((Tool) selectedTool) {
+                case Tool.Build:
+                        this.handleToolBuild(t, child, chunk);
+                        break;
+                    case Tool.Destroy:
+                        this.handleToolDestroy(t, child, chunk);
+                        break;
+                    default:
+                        break;
+            }
+        }
+    }
+
+    private void handleToolBuild(Chunkster t, Transform child, Chunk chunk) {
+        var neighbours = t.getNeighbourChunks(chunk.chunkX, chunk.chunkY);
+
+        foreach (var n in neighbours) {
+            if (!t.chunkExists(n.Item1, n.Item2, out _)) {
+                (int worldX, int worldZ) = t.chunkCoordToWorld(n.Item1, n.Item2);
+                var size                 = t.baseChunk.GetComponent<Renderer>().bounds.size * 0.5f;
+                var pos                  = new Vector3(worldX, 0, worldZ);
+
+                // handling button presses
+                if (Handles.Button(pos, child.transform.rotation, size.x,  size.x, Handles.RectangleHandleCap)) {
+                    t.createNewChunk(n.Item1, n.Item2);
                 }
             }
         }
     }
 
-    public override void OnInspectorGUI() {}
-
-    private Vector3[] getVertsForChunk(Chunkster t, int chunkX, int chunkY) {
+    private void handleToolDestroy(Chunkster t, Transform child, Chunk chunk) {
+        (int worldX, int worldZ) = t.chunkCoordToWorld(chunk.chunkX, chunk.chunkY);
         var size                 = t.baseChunk.GetComponent<Renderer>().bounds.size * 0.5f;
-        (int worldX, int worldY) = t.chunkCoordToWorld(chunkX, chunkY);
+        var pos                  = new Vector3(worldX, 0, worldZ);
 
-        Vector3[] verts = new Vector3[]
-        {
-            new Vector3(worldX - size.x, t.transform.position.y, worldY - size.z),
-            new Vector3(worldX - size.x, t.transform.position.y, worldY + size.z),
-            new Vector3(worldX + size.x, t.transform.position.y, worldY + size.z),
-            new Vector3(worldX + size.x, t.transform.position.y, worldY - size.z)
-        };
+        // handling button presses
+        if (Handles.Button(pos, child.transform.rotation, size.x,  size.x, Handles.RectangleHandleCap)) {
+            t.deleteChunk(chunk.chunkX, chunk.chunkY);
+        }
+    }
 
-        return verts;
+    public override void OnInspectorGUI() {
+        var ToggleButtonStyleNormal = "button";
+        var ToggleButtonStyleToggled = new GUIStyle("button");
+        ToggleButtonStyleToggled.normal.background = ToggleButtonStyleToggled.active.background;
+
+        DrawDefaultInspector();
+        Chunkster t = target as Chunkster;
+
+        EditorGUILayout.BeginVertical("box");
+
+        EditorGUILayout.LabelField("Edit Mode: ");
+        int selected = GUILayout.Toolbar(selectedTool, Enum.GetNames(typeof(Tool)));
+        selectedTool = selected;
+        EditorGUILayout.HelpBox("Destorying a chunk is permanent!", MessageType.Warning);
+
+        EditorGUILayout.EndVertical();
     }
 }
