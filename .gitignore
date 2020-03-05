@@ -3,3 +3,11 @@
 graphs/
 
 ProjectFiles/packages/NUnit.3.12.0/
+
+ProjectFiles/packages/Castle.Core.4.4.0/
+
+ProjectFiles/packages/Moq.4.13.1/
+
+ProjectFiles/packages/System.Runtime.CompilerServices.Unsafe.4.5.0/lib/netcoreapp2.0/
+
+ProjectFiles/packages/System.Runtime.CompilerServices.Unsafe.4.5.0/
