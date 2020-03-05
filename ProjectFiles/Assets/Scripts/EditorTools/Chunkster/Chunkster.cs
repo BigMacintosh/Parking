@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System;
 using UnityEngine;
 using UnityEditor;
 
@@ -8,7 +10,7 @@ public class Chunkster : MonoBehaviour {
 
     // our base chunk
     public GameObject baseChunk;
-    
+
 
     void Awake() {
         // add centre chunk if it doesn't exist
@@ -21,7 +23,9 @@ public class Chunkster : MonoBehaviour {
     }
 
     [ContextMenu("Join Seams")]
-    private void JoinSeams() {}
+    private void JoinSeams() {
+        Debug.Log("something");
+    }
 
 
     (int, int) addDirection(int chunkX, int chunkY, Direction dir) {
@@ -34,21 +38,32 @@ public class Chunkster : MonoBehaviour {
         }
     }
 
+    public List<(int, int)> getNeighbourChunks(int chunkX, int chunkY) {
+        // foreach (Direction dir in Enum.GetValues(typeof(Direction))) {
+        //     (neighChunkX, neighChunkY) = this.addDirection(chunkX, chunkY, dir);
+        // }
+        // return null;
+        var xs = Enum.GetValues(typeof(Direction))
+                     .Cast<Direction>()
+                     .Select(x => this.addDirection(chunkX, chunkY, x))
+                     .ToList();
+        return xs;
+    }
+
     private string getChunkId(int chunkX, int chunkY) {
         return this.baseChunk.name + "_" + chunkX + "_" + chunkY;
     }
 
     // converts a chunkX, chunkY to Unity's world coordinates
     // (note the worldY should actually be used in for the z in a transform)
-    (int, int) chunkCoordToWorld(int chunkX, int chunkY) {
+    public (int, int) chunkCoordToWorld(int chunkX, int chunkY) {
         var size = baseChunk.GetComponent<Renderer>().bounds.size;
-        Debug.Log(size);
         return ((int) (chunkX * size.x),
                 (int) (chunkY * size.z));
     }
     
     // get chunk child from chunk x, y
-    GameObject getChunk(int chunkX, int chunkY) {
+    public GameObject getChunk(int chunkX, int chunkY) {
         foreach (Transform child in this.gameObject.transform) {
             if (child.gameObject.name == this.getChunkId(chunkX, chunkY)) {
                 return child.gameObject;
@@ -57,7 +72,7 @@ public class Chunkster : MonoBehaviour {
         return null;
     }
 
-    bool chunkExists(int chunkX, int chunkY, out GameObject chunk) {
+    public bool chunkExists(int chunkX, int chunkY, out GameObject chunk) {
         foreach (Transform child in this.gameObject.transform) {
             if (child.gameObject.name == this.getChunkId(chunkX, chunkY)) {
                 chunk = child.gameObject;
@@ -79,6 +94,10 @@ public class Chunkster : MonoBehaviour {
                                                              this.baseChunk.transform.rotation) as GameObject;
             chunkInstantiated.name             = this.getChunkId(chunkX, chunkY);
             chunkInstantiated.transform.parent = gameObject.transform;
+            var chunk = (Chunk) chunkInstantiated.GetComponent<Chunk>();
+            chunk.chunkX = chunkX;
+            chunk.chunkY = chunkY;
+
             return chunkInstantiated;
         }
     }
