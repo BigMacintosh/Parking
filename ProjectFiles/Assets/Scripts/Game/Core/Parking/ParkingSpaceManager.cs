@@ -33,6 +33,11 @@ namespace Game.Core.Parking {
             DisableAllSpaces();
         }
 
+        public void TEST_ONLY_AddParkingSpace(ParkingSpace p) {
+            parkingSpacesBySpaceID.Add(p.SpaceID, p);
+            p.Disable();
+        }
+        
         /// <summary>
         /// Disables all parking spaces.
         /// Used at the end of a round.

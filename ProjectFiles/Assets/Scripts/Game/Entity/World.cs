@@ -7,7 +7,7 @@ using UnityEngine;
 using Random = System.Random;
 
 namespace Game.Entity {
-    public class World {
+    public abstract class World {
         // Private Fields
         
         public Dictionary<int, Player> Players { get; }
