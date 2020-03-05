@@ -50,10 +50,18 @@ namespace Game.Core.Parking {
         /// Used at the start of a round.
         /// </summary>
         /// <param name="spaces">The spaces to be activated.</param>
-        public void EnableSpaces(List<ushort> spaces) {
+        private void EnableSpaces(List<ushort> spaces) {
             foreach (var space in spaces) {
                 parkingSpacesBySpaceID[space].Enable();
             }
+        }
+
+        public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive) {
+            EnableSpaces(spacesActive);
+        }
+
+        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers) {
+            DisableAllSpaces();
         }
 
         /// <summary>

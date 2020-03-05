@@ -48,11 +48,8 @@ namespace Game.Main {
                 Debug.Log(
                     $"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
 
-            client.RoundStartEvent += (number, active) => {
-                Debug.Log($"Round start event received rN:{number}");
-                parkingSpaceManager.EnableSpaces(active);
-            };
-
+            client.RoundStartEvent += parkingSpaceManager.OnRoundStart;
+            
             client.RoundEndEvent += number => {
                 Debug.Log($"Round end event received rN:{number}");
                 parkingSpaceManager.DisableAllSpaces();
