@@ -7,7 +7,7 @@ using UnityEngine;
 using Utils;
 using Random = System.Random;
 
-namespace Game.Core {
+namespace Game.Core.Rounds {
     /// <summary>
     /// Stores key properties for rounds.
     /// </summary>
@@ -37,19 +37,19 @@ namespace Game.Core {
         private ushort roundNumber;
         private Timer  roundTimer; // Timer to countdown to the start of the round.
         private bool   gameInProgress;
-        
+
         public RoundManager(World world, ServerParkingSpaceManager spaceManager) {
             this.world        = world;
             this.spaceManager = spaceManager;
             random            = new Random();
         }
 
-        
+
         /// <summary>
         /// Spawn all the players that have connected. Allow free-roam for the players. Disallow new connections.
         /// </summary>
         public event GameStartDelegate GameStartEvent;
-        
+
         /// <summary>
         /// Start a countdown until the beginning of a new round. Provides all the initial info for a round.
         /// </summary>
@@ -94,7 +94,7 @@ namespace Game.Core {
             gameInProgress = true;
         }
 
-        
+
         /// <summary>
         /// Starts the freeroam period at the start of each game.
         /// </summary>
@@ -155,7 +155,7 @@ namespace Game.Core {
             RoundEndEvent?.Invoke(roundNumber);
 
             var eliminatedPlayers = GetEliminatedPlayers();
-            Debug.Log($"Eliminated {eliminatedPlayers}.");
+            Debug.Log($"Eliminated Players: {string.Join(", ", eliminatedPlayers)}");
 
             var nextNumPlayers = world.GetNumPlayers() - eliminatedPlayers.Count;
             Debug.Log($"Next num players {nextNumPlayers}.");
@@ -168,6 +168,7 @@ namespace Game.Core {
             } else {
                 Debug.Log("The game has finished...");
                 var winners = GetWinners();
+                Debug.Log($"Winners: {string.Join(", ", winners)}");
                 GameEndEvent?.Invoke(winners);
             }
         }
