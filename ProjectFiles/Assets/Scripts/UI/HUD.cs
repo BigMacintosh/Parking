@@ -1,4 +1,5 @@
-﻿using Network;
+﻿using System;
+using Network;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -82,6 +83,14 @@ namespace UI {
         private int    _roundCountdown;
         private string _roundTextPrefix;
 
+        // Get rid of all placeholders when 
+        private void Awake() {
+//            HasParkingSpace = false;
+            ClearRoundText();
+            ParkingSpaceText.text = "";
+            NetworkIP = "";
+            eventText.text = "";
+        }
 
         private void UpdateDebugText() {
             if (_networkIP == null || _networkIP == "Standalone" || _networkIP.Contains("Disconnected")) {
