@@ -8,9 +8,21 @@ public class Chunkster : MonoBehaviour {
 
     // our base chunk
     public GameObject baseChunk;
-    public Dictionary<(int, int), GameObject> chunks;
-    // folder in which to save chunk prefabs
-    public string chunkFolderPath;
+    
+
+    void Awake() {
+        // add centre chunk if it doesn't exist
+        if (!this.chunkExists(0, 0, out _)) {
+            createNewChunk(0, 0);
+        }
+
+        createNewChunk(0, 1);
+        createNewChunk(1, 1);
+    }
+
+    [ContextMenu("Join Seams")]
+    private void JoinSeams() {}
+
 
     (int, int) addDirection(int chunkX, int chunkY, Direction dir) {
         switch (dir) {
@@ -22,141 +34,60 @@ public class Chunkster : MonoBehaviour {
         }
     }
 
-    (int, int) chunkCoordToWorld(int chunkX, int chunkY) {
-        var size = baseChunk.GetComponent<Renderer>().bounds.size;
-        return ((int) (chunkX * size.x),
-                (int) (chunkY * size.y));
-    }
-
-
-    [ContextMenu("Join Seams")]
-    private void JoinSeams() {}
-
-
-    // private GameObject instantiateChunk(int chunkX, int chunkY) {
-    //     if (chunks.ContainsKey((chunkX, chunkY))) {
-    //         (int worldX, int worldY)  = chunkCoordToWorld(chunkX, chunkY);
-    //         GameObject chunkNew       = Instantiate(baseChunk,
-    //                                                 new Vector3(worldX, worldY, 0),
-    //                                                 baseChunk.transform.rotation) as GameObject;
-    //         chunkNew.name             = "baseChunk_(" + chunkX + chunkY + ")";
-    //         chunkNew.transform.parent = gameObject.transform;
-
-    //         return chunkNew;
-    //     } else {
-    //         Debug.Log("Tried to instantiate chunk which doesn't exist for coordinates (" + chunkX + ", " + chunkY + ")");
-    //         return null;
-    //     }
-    // }
-
-    // private void addNewChunk(int chunkX, int chunkY) {
-    //     if (chunks.ContainsKey((chunkX, chunkY))) {
-    //         Debug.Log("Tried to create new chunk at (" + chunkX + ", " + chunkY + ") but one already exists!");
-    //     } else {
-    //         var chunkNew = instantiateChunk(chunkX, chunkY);
-    //         chunks.Add((chunkX, chunkY), chunkNew);
-    //     }
-    // }
-
-    void Awake() {
-        // init. chunk dict.
-        chunks = new Dictionary<(int, int), GameObject>();        
-
-        // init. centre chunk
-        // addNewChunk(0, 0);
-        // addNewChunk(1, 0);
-        // addNewChunk(0, 0);
-        createNewChunk(0, 0);
-
-        Debug.Log("dog\n");
-    }
-
     private string getChunkId(int chunkX, int chunkY) {
         return this.baseChunk.name + "_" + chunkX + "_" + chunkY;
     }
 
-    private string getChunkPrefabPath(int chunkX, int chunkY) {
-        return this.chunkFolderPath + this.getChunkId(chunkX, chunkY);
+    // converts a chunkX, chunkY to Unity's world coordinates
+    // (note the worldY should actually be used in for the z in a transform)
+    (int, int) chunkCoordToWorld(int chunkX, int chunkY) {
+        var size = baseChunk.GetComponent<Renderer>().bounds.size;
+        Debug.Log(size);
+        return ((int) (chunkX * size.x),
+                (int) (chunkY * size.z));
     }
-
-    // create a new chunk at given coordinates
-    // we must instantiate the chunk when created; we cannot
-    // copy the base prefab without doing so
-    void createNewChunk(int chunkX, int chunkY) {
-        // check if chunk exists in dict or if chunk exists in files
-        GameObject chunkLoaded = this.loadChunk(chunkX, chunkY);
-        if (this.chunks.ContainsKey((chunkX, chunkY)) || chunkLoaded != null) {
-            Debug.LogWarning("Tried to create new chunk at " + (chunkX, chunkY) + ", but one already exists!");
-        } else {
-            // instantiate the object
-            var chunkInstantiated = this.instantiateChunk(this.baseChunk, chunkX, chunkY);
-            // add it to the dict
-            this.chunks.Add((chunkX, chunkY), chunkInstantiated);
-            // let's save it whilst we're at it
-            this.saveChunk(chunkX, chunkY);
-        }
-    }
-
-    // puts a loaded prefab chunk into the world
-    GameObject instantiateChunk(GameObject chunk, int chunkX, int chunkY) {
-        // the loaded prefab should have the correct values
-        // but let's not make any assumptions.
-        (int worldX, int worldY)           = this.chunkCoordToWorld(chunkX, chunkY);
-        GameObject chunkInstantiated       = Instantiate(chunk,
-                                                         new Vector3(worldX, worldY, 0),
-                                                         chunk.transform.rotation) as GameObject;
-        chunkInstantiated.name             = this.getChunkId(chunkX, chunkY);
-        chunkInstantiated.transform.parent = gameObject.transform;
-        return chunkInstantiated;
-    }
-
-    // loads a chunk prefab from resources and returns it
-    GameObject loadChunk(int chunkX, int chunkY) {
-        GameObject chunkLoaded = Resources.Load(this.getChunkPrefabPath(chunkX, chunkY)) as GameObject;
-        if (chunkLoaded == null)
-            Debug.LogWarning("Tried to load non-existing chunk at " + (chunkX, chunkY) + " from disk!");
-        return chunkLoaded;
-    }
-
-    void loadChunkIntoDict(int chunkX, int chunkY) {
-        GameObject chunkLoaded = loadChunk(chunkX, chunkY);
-        if (chunkLoaded != null) {
-            // TODO: what if chunk already (for some reason) exists?
-            this.chunks.Add((chunkX, chunkY), chunkLoaded);
-        }
-
-        // delete already instantiated chunk
-        foreach (Transform child in transform) {
-            if (child.name == getChunkId(chunkX, chunkY)) {
-                
+    
+    // get chunk child from chunk x, y
+    GameObject getChunk(int chunkX, int chunkY) {
+        foreach (Transform child in this.gameObject.transform) {
+            if (child.gameObject.name == this.getChunkId(chunkX, chunkY)) {
+                return child.gameObject;
             }
         }
+        return null;
     }
 
-    // saves a chunk instance from dict -> resources
-    void saveChunk(int chunkX, int chunkY) {
-        if (this.chunks.TryGetValue((chunkX, chunkY), out GameObject chunkToSave)) {
-            // TODO: what if we have the same pathname as another prefab?
-            PrefabUtility.SaveAsPrefabAssetAndConnect(chunkToSave,
-                                                      this.getChunkPrefabPath(chunkX, chunkY),
-                                                      InteractionMode.AutomatedAction);
+    bool chunkExists(int chunkX, int chunkY, out GameObject chunk) {
+        foreach (Transform child in this.gameObject.transform) {
+            if (child.gameObject.name == this.getChunkId(chunkX, chunkY)) {
+                chunk = child.gameObject;
+                return true;
+            }
+        }
+        chunk = null;
+        return false;
+    }
+
+    GameObject createNewChunk(int chunkX, int chunkY) {
+        if (this.chunkExists(chunkX, chunkY, out _)) {
+            Debug.LogWarning("Tried to create new chunk at " + (chunkX, chunkY) + " but one already exists!");
+            return null;
         } else {
-            Debug.LogWarning("Tried to save non-existing chunk at " + (chunkX, chunkY) + " to disk!");
+            (int worldX, int worldY)           = this.chunkCoordToWorld(chunkX, chunkY);
+            GameObject chunkInstantiated       = Instantiate(this.baseChunk,
+                                                             new Vector3(worldX, 0, worldY),
+                                                             this.baseChunk.transform.rotation) as GameObject;
+            chunkInstantiated.name             = this.getChunkId(chunkX, chunkY);
+            chunkInstantiated.transform.parent = gameObject.transform;
+            return chunkInstantiated;
         }
     }
 
-    void loadChunks() {
-        foreach ((int, int) loc in this.chunks.Keys) {
-            var loadedChunk = this.loadChunk(loc.Item1, loc.Item2);
-            this.instantiateChunk(loadedChunk, loc.Item1, loc.Item2);
+    void deleteChunk(int chunkX, int chunkY) {
+        if (this.chunkExists(chunkX, chunkY, out GameObject chunk)) {
+            Destroy(chunk);
+        } else {
+            Debug.LogWarning("Tried to delete chunk at " + (chunkX, chunkY) + " but it doesn't exist!");
         }
     }
-
-    void saveChunks() {
-        foreach ((int, int) loc in this.chunks.Keys) {
-            this.saveChunk(loc.Item1, loc.Item2);
-        }
-    }
-
-    void deleteChunk() {}
 }
