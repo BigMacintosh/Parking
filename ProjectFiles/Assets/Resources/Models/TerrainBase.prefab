@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 6486680914384382601}
   - component: {fileID: 2836800831160897727}
   - component: {fileID: 8386509788806851654}
+  - component: {fileID: 2480237052484231598}
   m_Layer: 0
-  m_Name: terrain
+  m_Name: TerrainBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,3 +80,17 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &2480237052484231598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7808687825867053210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5542b63776d93718a7c378048456a78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chunkX: 0
+  chunkY: 0
