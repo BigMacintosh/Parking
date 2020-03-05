@@ -3,8 +3,7 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "GameAssembly",
-        "Unity.Networking.Transport"
+        "GameAssembly"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
