@@ -22,10 +22,12 @@ mkdir -p $client_build_path
 
 if [ -z "$unity" ]; then
     echo "You need to set your UNITY_PATH it might be:"
-    echo "  - MacOS: /Applications/Unity/Hub/Editor/2019.3.0f3/Unity.app/Contents/MacOS/Unity"
-    echo "  - Linux: $HOME/Unity/Hub/Editor/2019.3.0f3/Editor/Unity"
+    echo "  - MacOS: /Applications/Unity/Hub/Editor/2019.3.3f1/Unity.app/Contents/MacOS/Unity"
+    echo "  - Linux: $HOME/Unity/Hub/Editor/2019.3.3f1/Editor/Unity"
     echo "  - Windows: ¯\\_(ツ)_/¯"
 else
+    echo "Using unity version $UNITY_PATH"
+    echo "Project uses unity version 2019.3.3f1, do they match?"
     echo "Starting Server build"
     echo "STARTING BUILD PROCESS" >> $log_file
     echo "----------------------" >> $log_file
