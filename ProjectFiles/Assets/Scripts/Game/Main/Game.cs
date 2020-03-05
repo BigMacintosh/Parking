@@ -62,10 +62,6 @@ namespace Game.Main {
 
         // Update Loops
         public void Update() {
-            // Quit the game if the escape key is pressed.
-            if (Input.GetKeyDown("escape")) {
-                Application.Quit();
-            }
 
             // Switch game loop if needed
             if (requestedGameLoopTypes.Count > 0) {
