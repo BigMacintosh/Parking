@@ -79,6 +79,7 @@ namespace Game.Core.Parking {
             var parkingSpace = parkingSpacesBySpaceID[spaceID];
             if (parkingSpace.Occupied()) {
                 Debug.Log(playerID + " stole a space from " + parkingSpace.OccupiedBy);
+                ParkingSpacesByPlayerID.Remove(parkingSpace.OccupiedBy);
             } else {
                 Debug.Log(playerID + " claimed an empty space " + parkingSpace.SpaceID);
             }
