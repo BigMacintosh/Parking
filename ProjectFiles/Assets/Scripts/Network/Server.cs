@@ -93,8 +93,8 @@ namespace Network {
             }
 
             // send all events in queue
-            
-            
+
+
             foreach (var connection in connections) {
                 var queue = connectionEventQueues[connection.InternalId];
 
@@ -103,10 +103,10 @@ namespace Network {
                 using (var writer = new DataStreamWriter(totalLength, Allocator.Temp)) {
                     while (queue.Count > 0) {
                         var ev = queue.Dequeue();
-                        
+
                         ev.Serialise(writer);
                     }
-                    
+
                     driver.Send(pipeline, connection, writer);
                 }
             }
@@ -132,7 +132,7 @@ namespace Network {
                     connections.Add(c);
                     var endpoint = driver.RemoteEndPoint(c);
                     Debug.Log($"Server: Accepted a connection from {endpoint.IpAddress()}:{endpoint.Port}.");
-                    
+
                     connectionEventQueues.Add(c.InternalId, new Queue<Event>());
                 }
             } else {
@@ -178,11 +178,12 @@ namespace Network {
                                 // Remove the admin client
                                 adminClient = -1;
                             }
+
                             // Delete this player's event queue
                             connectionEventQueues.Remove(playerID);
-                            
+
                             // Destroy the actual network connection
-                            Debug.Log($"Server: Destroyed player {playerID} due to disconnect.");
+                            Debug.Log($"Server: Destroyed player {playerID} due to disconnect (by the player).");
                             connections[i] = default;
                             break;
                         }
@@ -191,8 +192,9 @@ namespace Network {
             }
         }
 
-        private void HandleEvent(NetworkConnection connection, NetworkEndPoint          endpoint, EventType eventType,
-                                 DataStreamReader  reader,     ref DataStreamReader.Context readerContext) {
+        private void HandleEvent(NetworkConnection connection, NetworkEndPoint endpoint,
+                                 EventType         eventType,
+                                 DataStreamReader  reader, ref DataStreamReader.Context readerContext) {
             Event ev;
 
             switch (eventType) {
@@ -234,19 +236,19 @@ namespace Network {
 
         public void Handle(ClientHandshakeEvent ev, NetworkConnection srcConnection) {
             var playerID = srcConnection.InternalId;
-            var respond = false;
+            var respond  = false;
             switch (ev.GameMode) {
                 case GameMode.PlayerMode: {
                     Debug.Log($"Server: Received handshake from {playerID}.");
-                    
+
                     var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
                     SendToClient(srcConnection, handshakeResponse);
-                    
+
                     world.CreatePlayer(playerID, ev.PlayerOptions);
 
                     var newClient = new ServerNewPlayerConnectedEvent(playerID, ev.PlayerOptions);
                     SendToAll(newClient);
-                    
+
                     break;
                 }
                 case GameMode.AdminMode: {
@@ -255,16 +257,16 @@ namespace Network {
                         // Accept the new admin
                         Debug.Log($"Server: Accepting new admin user {playerID}");
                         adminClient = playerID;
-                        
+
                         var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
                         SendToClient(srcConnection, handshakeResponse);
                         respond = true;
-                        
                     } else {
                         // Already have an admin client, drop connection.
                         Debug.Log("Server: Rejecting admin connection, already admin");
                         srcConnection.Disconnect(driver);
                     }
+
                     break;
                 }
                 default: {
@@ -358,7 +360,7 @@ namespace Network {
                 var disconnectEvent = new ServerDisconnectEvent((ushort) player);
                 SendToAll(disconnectEvent);
 
-                Debug.Log($"Server: Destroyed player {player} due to disconnect.");
+                Debug.Log($"Server: Destroyed player {player} due to disconnect (via elimination).");
                 connections[index] = default;
             }
         }
