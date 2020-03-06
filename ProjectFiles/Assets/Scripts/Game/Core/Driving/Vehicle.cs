@@ -10,41 +10,27 @@ namespace Game.Core.Driving {
         // Public Fields
         public List<DriveWheel>  driveWheels;
         public VehicleProperties vehicleProperties;
-        public LayerMask collisionMask;
+        public LayerMask         collisionMask;
+
+        [SerializeField] private MeshRenderer bodyRenderer;
 
         // Private Fields
-        private Color colourToSet;
+        private Color         colourToSet;
         private UIController  uiController;
         private VehicleDriver driver;
-        private MaterialPropertyBlock bodyMaterialBlock;
-        
-        
+
+
         public void Start() {
-            bodyMaterialBlock = new MaterialPropertyBlock();
-            Debug.Log($"{colourToSet.ToString()}");
             _setBodyColour(colourToSet);
         }
 
         public void SetBodyColour(Color colour) {
             colourToSet = colour;
-            Debug.Log("test");
         }
-        
+
         private void _setBodyColour(Color colour) {
-            var renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-            foreach (var childRenderer in renderers) {
-                Debug.Log(childRenderer.name);
-                if (childRenderer.name.Equals("Car")) {
-                    Debug.Log("setting colour");
-                    // childRenderer.materials[0].color = colour; 
-                    childRenderer.materials[0].SetColor("_BaseColor", colour);
-                    childRenderer.materials[0].SetColor("Color_EF46C5D1", colour);
-                    
-                //     childRenderer.GetPropertyBlock(bodyMaterialBlock);
-                //     bodyMaterialBlock.SetColor("_BaseColor", colour);
-                //     childRenderer.SetPropertyBlock(bodyMaterialBlock);
-                }
-            }
+            bodyRenderer.materials[0].SetColor("_BaseColor",     colour);
+            bodyRenderer.materials[0].SetColor("Color_EF46C5D1", colour);
         }
 
         public void SetControllable() {
