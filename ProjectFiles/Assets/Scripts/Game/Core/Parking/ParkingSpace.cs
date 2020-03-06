@@ -1,4 +1,5 @@
 ﻿using Game.Core.Driving;
+using Game.Entity;
 using Network;
 using UnityEngine;
 using Utils;

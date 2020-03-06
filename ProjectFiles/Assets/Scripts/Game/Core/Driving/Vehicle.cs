@@ -13,9 +13,39 @@ namespace Game.Core.Driving {
         public LayerMask collisionMask;
 
         // Private Fields
-        private UIController  uicontroller;
+        private Color colourToSet;
+        private UIController  uiController;
         private VehicleDriver driver;
+        private MaterialPropertyBlock bodyMaterialBlock;
+        
+        
+        public void Start() {
+            bodyMaterialBlock = new MaterialPropertyBlock();
+            Debug.Log($"{colourToSet.ToString()}");
+            _setBodyColour(colourToSet);
+        }
 
+        public void SetBodyColour(Color colour) {
+            colourToSet = colour;
+            Debug.Log("test");
+        }
+        
+        private void _setBodyColour(Color colour) {
+            var renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+            foreach (var childRenderer in renderers) {
+                Debug.Log(childRenderer.name);
+                if (childRenderer.name.Equals("Car")) {
+                    Debug.Log("setting colour");
+                    // childRenderer.materials[0].color = colour; 
+                    childRenderer.materials[0].SetColor("_BaseColor", colour);
+                    childRenderer.materials[0].SetColor("Color_EF46C5D1", colour);
+                    
+                //     childRenderer.GetPropertyBlock(bodyMaterialBlock);
+                //     bodyMaterialBlock.SetColor("_BaseColor", colour);
+                //     childRenderer.SetPropertyBlock(bodyMaterialBlock);
+                }
+            }
+        }
 
         public void SetControllable() {
             // Add DriveController to car
@@ -37,8 +67,8 @@ namespace Game.Core.Driving {
             minimap.ObjectToFollow = transform;
 
             //Link with UIController
-            uicontroller         = FindObjectOfType<UIController>();
-            uicontroller.Vehicle = this;
+            uiController         = FindObjectOfType<UIController>();
+            uiController.Vehicle = this;
         }
     }
 
