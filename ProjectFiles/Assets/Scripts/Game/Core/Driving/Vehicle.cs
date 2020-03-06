@@ -10,6 +10,7 @@ namespace Game.Core.Driving {
         // Public Fields
         public List<DriveWheel>  driveWheels;
         public VehicleProperties vehicleProperties;
+        public LayerMask collisionMask;
 
         // Private Fields
         private UIController  uicontroller;
@@ -25,6 +26,7 @@ namespace Game.Core.Driving {
             driver.driveWheels = driveWheels;
             driver.maxSteer    = 30;
             driver.driftFactor = 3f;
+            driver.mask        = collisionMask;
             driver.setAcceptInput(true);
 
             // Set camera to follow car
