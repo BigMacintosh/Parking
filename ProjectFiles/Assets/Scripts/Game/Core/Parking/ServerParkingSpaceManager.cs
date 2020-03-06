@@ -106,27 +106,5 @@ namespace Game.Core.Parking {
             OnSpaceClaimed(playerID, spaceID);
             SpaceClaimedEvent?.Invoke(playerID, spaceID);
         }
-
-        /// <summary>
-        /// Calculates the nearest spaces to a point.
-        /// </summary>
-        /// <param name="position">Location to get spaces close to.</param>
-        /// <param name="amount">Number of spaces to return.</param>
-        /// <returns>List of parking spaceIDs</returns>
-        public List<ushort> GetNearestSpaces(Vector2 position, int amount) {
-            var spaces = parkingSpacesBySpaceID.Values
-                                               .OrderBy(space => {
-                                                    var spacePos = space.transform.position;
-
-                                                    return new Vector2(
-                                                            spacePos.x - position.x, spacePos.z - position.y)
-                                                       .magnitude;
-                                                })
-                                               .Take(amount)
-                                               .Select(space => space.SpaceID)
-                                               .ToList();
-
-            return spaces;
-        }
     }
 }
