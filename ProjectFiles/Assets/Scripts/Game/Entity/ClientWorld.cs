@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Network;
-using UnityEngine;
 
 namespace Game.Entity {
     public class ClientWorld : World {
@@ -21,7 +20,7 @@ namespace Game.Entity {
         /// </summary>
         /// <returns>Players Position</returns>
         public PlayerPosition GetMyPosition() {
-            return GetPlayerPositon(ClientConfig.PlayerID);
+            return GetPlayerPosition(ClientConfig.PlayerID);
         }
     }
 }

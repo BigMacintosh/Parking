@@ -49,7 +49,7 @@ namespace Game.Main {
                     $"PreRoundStart event received rN:{number} preLength:{length} roundLength:{roundLength} nP:{players}");
 
             client.RoundStartEvent += parkingSpaceManager.OnRoundStart;
-            
+
             client.RoundEndEvent += number => {
                 Debug.Log($"Round end event received rN:{number}");
                 parkingSpaceManager.DisableAllSpaces();
@@ -63,6 +63,7 @@ namespace Game.Main {
             client.GameEndEvent           += uiController.OnGameEnd;
             client.EliminatePlayersEvent  += uiController.OnEliminatePlayers;
             client.SpaceClaimedEvent      += parkingSpaceManager.OnSpaceClaimed;
+            client.EliminatePlayersEvent  += world.OnEliminatePlayers;
 
             // Game -> UI
             uiController.OnPlayerCountChange(world.GetNumPlayers());

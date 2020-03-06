@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Game.Entity;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Game.Main {
     public interface IGameLoop {

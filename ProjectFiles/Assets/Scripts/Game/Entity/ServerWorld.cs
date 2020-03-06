@@ -3,7 +3,7 @@ using System.Linq;
 using Game.Core.Parking;
 
 namespace Game.Entity {
-    public class ServerWorld : World{
+    public class ServerWorld : World {
         // Private Fields
         private readonly SpawnLocations spawner;
         
@@ -28,6 +28,11 @@ namespace Game.Entity {
             return Players.ToDictionary(
                 p => p.Key,
                 p => p.Value.PlayerOptions);
+        }
+
+        public new void Reset(){
+            base.Reset();
+            spawner.Reset();
         }
     }
 }
