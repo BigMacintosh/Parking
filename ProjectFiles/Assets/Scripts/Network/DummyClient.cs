@@ -28,7 +28,9 @@ namespace Network {
         public bool Start(ushort port = 25565) {
             var playerID = 0;
             world.CreatePlayer(playerID, new PlayerOptions {
-                CarType = CarType.Hatchback,
+                CarType = ClientConfig.VehicleType,
+                CarColour = ClientConfig.VehicleColour,
+                PlayerName = ClientConfig.PlayerName,
             }, true);
             var spawnPos = new PlayerPosition {
                 Pos = new Vector3 {

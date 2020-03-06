@@ -229,6 +229,7 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 512
+  bodyRenderer: {fileID: 9093843157691608768}
 --- !u!65 &1415444200866933380
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -970,6 +971,12 @@ PrefabInstance:
 --- !u!4 &3844623278733395450 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: d5581aef2c2e4458ea5564b66b892fdf,
+    type: 3}
+  m_PrefabInstance: {fileID: 8079576814193979104}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &9093843157691608768 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -8209008351933071328, guid: d5581aef2c2e4458ea5564b66b892fdf,
     type: 3}
   m_PrefabInstance: {fileID: 8079576814193979104}
   m_PrefabAsset: {fileID: 0}

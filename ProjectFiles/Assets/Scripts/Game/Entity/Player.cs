@@ -21,7 +21,7 @@ namespace Game.Entity {
         private Transform     carTrans;
         private bool          isSpawned;
         private PlayerOptions playerOptions;
-        
+
         private readonly bool isMe;
 
 
@@ -69,10 +69,16 @@ namespace Game.Entity {
             var prefab = PlayerOptions.CarType.GetPrefab();
             Debug.Log($"Spawning at {spawnPosition.Pos} with rot: {spawnPosition.Rot}");
             SetCar(Object.Instantiate(prefab, spawnPosition.Pos, spawnPosition.Rot));
+            
+            // Set car to controllable if spawning this players car
             if (isMe) {
                 car.GetComponent<Vehicle>().SetControllable();
             }
 
+            // Set the car colour
+            SetCarColour();
+            
+            // Set player to spawned
             isSpawned = true;
         }
 
@@ -111,6 +117,13 @@ namespace Game.Entity {
             var previousPosition = GetPosition();
             DestroyCar();
             Spawn(previousPosition);
+        }
+
+        /// <summary>
+        /// Sets the car colour to the value in playerOptions
+        /// </summary>
+        private void SetCarColour() {
+            car.GetComponent<Vehicle>().SetBodyColour(playerOptions.CarColour);
         }
 
         /// <summary>
