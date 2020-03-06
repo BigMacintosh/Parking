@@ -88,5 +88,32 @@ namespace Game.Core.Parking {
 
             return transforms;
         }
+
+        /// <summary>
+        /// Calculates the nearest spaces to a point.
+        /// </summary>
+        /// <param name="position">Location to get spaces close to.</param>
+        /// <param name="amount">Number of spaces to return.</param>
+        /// <param name="onlyEnabled">Look only for spaces that are enabled.</param>
+        /// <returns>List of parking spaceIDs</returns>
+        public List<ushort> GetNearestSpaces(Vector2 position, int amount, bool onlyEnabled = false) {
+            var spaces = parkingSpacesBySpaceID.Values
+                                               .OrderBy(space => {
+                                                    var spacePos = space.transform.position;
+                                                    return new Vector2(
+                                                            spacePos.x - position.x, spacePos.z - position.y)
+                                                       .magnitude;
+                                                })
+                                               .ToList();
+
+            if (onlyEnabled) {
+                spaces = spaces.FindAll(s => s.Enabled);
+            }
+
+            return spaces
+                  .Take(amount)
+                  .Select(space => space.SpaceID)
+                  .ToList();
+        }
     }
 }

@@ -221,13 +221,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8f351e96b44f0a86499de675baa951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  driveWheels:
+  - {fileID: 1125267357330619015}
+  - {fileID: 5845386942029754171}
   vehicleProperties:
     <SpeedRating>k__BackingField: 0
     <SteeringRating>k__BackingField: 0
     <WeightRating>k__BackingField: 0
-  driveWheels:
-  - {fileID: 1125267357330619015}
-  - {fileID: 5845386942029754171}
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  bodyRenderer: {fileID: 2746079336687633746}
 --- !u!65 &4422722180551571192
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1281,6 +1285,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 9392bd2c8dcde4f08a2a1bbafa261abe, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9bdb583a562a44eab9b734a80f7ae80b, type: 3}
+--- !u!23 &2746079336687633746 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -8209008351933071328, guid: 9bdb583a562a44eab9b734a80f7ae80b,
+    type: 3}
+  m_PrefabInstance: {fileID: 2886727091772851570}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7887212729017544296 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 9bdb583a562a44eab9b734a80f7ae80b,

@@ -10,11 +10,28 @@ namespace Game.Core.Driving {
         // Public Fields
         public List<DriveWheel>  driveWheels;
         public VehicleProperties vehicleProperties;
+        public LayerMask         collisionMask;
+
+        [SerializeField] private MeshRenderer bodyRenderer;
 
         // Private Fields
-        private UIController  uicontroller;
+        private Color         colourToSet;
+        private UIController  uiController;
         private VehicleDriver driver;
 
+
+        public void Start() {
+            _setBodyColour(colourToSet);
+        }
+
+        public void SetBodyColour(Color colour) {
+            colourToSet = colour;
+        }
+
+        private void _setBodyColour(Color colour) {
+            bodyRenderer.materials[0].SetColor("_BaseColor",     colour);
+            bodyRenderer.materials[0].SetColor("Color_EF46C5D1", colour);
+        }
 
         public void SetControllable() {
             // Add DriveController to car
@@ -25,6 +42,7 @@ namespace Game.Core.Driving {
             driver.driveWheels = driveWheels;
             driver.maxSteer    = 30;
             driver.driftFactor = 3f;
+            driver.mask        = collisionMask;
             driver.setAcceptInput(true);
 
             // Set camera to follow car
@@ -35,8 +53,8 @@ namespace Game.Core.Driving {
             minimap.ObjectToFollow = transform;
 
             //Link with UIController
-            uicontroller         = FindObjectOfType<UIController>();
-            uicontroller.Vehicle = this;
+            uiController         = FindObjectOfType<UIController>();
+            uiController.Vehicle = this;
         }
     }
 

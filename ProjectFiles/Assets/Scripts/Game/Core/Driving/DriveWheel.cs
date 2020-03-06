@@ -10,11 +10,6 @@ namespace Game.Core.Driving {
         private float      groundDist;
         private RaycastHit hit;
 
-
-        private void OnControllerColliderHit(ControllerColliderHit hit) {
-            throw new NotImplementedException();
-        }
-
         // Start is called before the first frame update
         private void Start() {
             groundDist = gameObject.GetComponent<Collider>().bounds.max.y -
