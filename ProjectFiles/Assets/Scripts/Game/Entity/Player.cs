@@ -12,7 +12,7 @@ namespace Game.Entity {
     public class Player {
         // Public Fields
         public int           PlayerID      { get; }
-        public bool          IsEliminated  { get; set; }
+        public bool          IsEliminated  { get; private set; }
         public PlayerOptions PlayerOptions => playerOptions;
 
         // Private Fields
@@ -43,7 +43,7 @@ namespace Game.Entity {
         /// <summary>
         /// Used to set the car object for a player.
         ///
-        /// Used rather than setting to car directly to allow for the rigidbody to be extracted.
+        /// Used rather than setting to car directly to allow for the rigid body to be extracted.
         /// </summary>
         /// <param name="newCar"></param>
         private void SetCar(GameObject newCar) {
@@ -104,13 +104,13 @@ namespace Game.Entity {
         /// Usually used when swapping player to police car.
         /// </summary>
         /// <param name="newCarType"></param>
-        public void SwapCar(CarType newCarType) {
-            if (isSpawned) {
-                // TODO: swap the car prefab.
-            }
-
-
+        private void SwapCar(CarType newCarType) {
             playerOptions.CarType = newCarType;
+
+            if (!isSpawned) return;
+            var previousPosition = GetPosition();
+            DestroyCar();
+            Spawn(previousPosition);
         }
 
         /// <summary>
@@ -124,6 +124,14 @@ namespace Game.Entity {
                 Vel  = carRb.velocity,
                 AVel = carRb.angularVelocity
             };
+        }
+
+        /// <summary>
+        /// Eliminates a player from a game and changes their car to a police car.
+        /// </summary>
+        public void Eliminate() {
+            IsEliminated = true;
+            SwapCar(CarType.PoliceCar);
         }
     }
 

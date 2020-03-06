@@ -1,5 +1,4 @@
-﻿using Game.Core;
-using Game.Core.Parking;
+﻿using Game.Core.Parking;
 using Game.Core.Rounds;
 using Game.Entity;
 using Network;
@@ -47,9 +46,9 @@ namespace Game.Main {
             roundManager.RoundEndEvent         += server.OnRoundEnd;
             roundManager.EliminatePlayersEvent += server.OnEliminatePlayers;
             roundManager.GameEndEvent          += server.OnGameEnd;
-
-            roundManager.RoundStartEvent    += parkingSpaceManager.OnRoundStart;
-            roundManager.PreRoundStartEvent += parkingSpaceManager.OnPreRoundStart;
+            roundManager.RoundStartEvent       += parkingSpaceManager.OnRoundStart;
+            roundManager.PreRoundStartEvent    += parkingSpaceManager.OnPreRoundStart;
+            roundManager.EliminatePlayersEvent += world.OnEliminatePlayers;
 
             parkingSpaceManager.SpaceClaimedEvent += server.OnSpaceClaimed;
 
@@ -85,6 +84,14 @@ namespace Game.Main {
 
         public void LateUpdate() {
             // Nothing required here yet.
+        }
+
+        /// <summary>
+        /// Resets the game when it has finished.
+        /// </summary>
+        public void Reset() {
+            world.Reset();
+            // TODO: Add other game components here.
         }
     }
 }

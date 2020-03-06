@@ -10,11 +10,13 @@ namespace Game.Entity {
     /// Responsible for calculating all the players initial spawn locations.
     /// </summary>
     public class SpawnLocations {
-        private readonly List<Transform> availableSpawnLocations;
-        private readonly Random          rand = new Random();
+        private          List<Transform>     availableSpawnLocations;
+        private readonly ParkingSpaceManager spaceManager;
+        private readonly Random              rand = new Random();
 
         public SpawnLocations(ParkingSpaceManager parkingSpaceManager) {
-            availableSpawnLocations = parkingSpaceManager.GetSpaceTransforms();
+            spaceManager = parkingSpaceManager;
+            Reset();
         }
 
         /// <summary>
@@ -25,7 +27,7 @@ namespace Game.Entity {
         public PlayerPosition GetSpawnPosition() {
             if (availableSpawnLocations.Count > 0) {
                 var randomSpace = rand.Next(0, availableSpawnLocations.Count - 1);
-                var transform    = availableSpawnLocations[randomSpace];
+                var transform   = availableSpawnLocations[randomSpace];
                 availableSpawnLocations.Remove(transform);
                 return new PlayerPosition {
                     Pos = transform.position,
@@ -34,6 +36,10 @@ namespace Game.Entity {
             }
 
             throw new NotEnoughSpacesException();
+        }
+
+        public void Reset() {
+            availableSpawnLocations = spaceManager.GetSpaceTransforms();
         }
     }
 
