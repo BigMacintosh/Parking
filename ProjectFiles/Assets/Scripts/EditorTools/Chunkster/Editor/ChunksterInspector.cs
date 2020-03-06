@@ -4,7 +4,7 @@ using System;
 
 [CustomEditor(typeof(Chunkster))]
 public class ChunksterInspector : Editor {
-    enum Tool { Build, Destroy }
+    enum Tool { None, Build, Destroy }
     private int selectedTool = 0;
 
     private void onEnable() {}
