@@ -3,6 +3,7 @@ using Network;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Utils;
 
 namespace UI {
     public class HUD : MonoBehaviour {
@@ -22,14 +23,6 @@ namespace UI {
             set => parkingSpaceText = value;
         }
 
-        public int RoundCountdown {
-            get => _roundCountdown;
-            set {
-                _roundCountdown = value;
-                UpdateRoundText();
-            }
-        }
-
         public string NetworkIP {
             get => _networkIP;
             set {
@@ -46,12 +39,18 @@ namespace UI {
             }
         }
 
-        public string RoundTextPrefix {
-            get => _roundTextPrefix;
+        public string EventText {
+            get => eventText.text;
             set {
-                _roundTextPrefix = value;
-                UpdateRoundText();
+                eventText.text = value;
+                timer = new Timer(5.0f);
+                timer.Elapsed += () => eventText.text = "";
             }
+        }
+
+        public string RoundText {
+            get => roundText.text;
+            set => roundText.text = value;
         }
 
         // Serializable Fields
@@ -59,7 +58,7 @@ namespace UI {
         [SerializeField] private Text  debugText;
 
         [FormerlySerializedAs("eventtext")] [SerializeField]
-        public Text eventText;
+        private Text eventText;
 
         [FormerlySerializedAs("exitbutton")] [SerializeField]
         public Button exitButton;
@@ -80,13 +79,21 @@ namespace UI {
         private bool   _hasParkingSpace;
         private string _networkIP;
         private int    _numberOfPlayers;
-        private int    _roundCountdown;
-        private string _roundTextPrefix;
+
+        private Timer timer;
+
+        public HUD() {
+            timer = new Timer(0);
+        }
+
+        private void Update() {
+            timer.Update();
+        }
 
         // Get rid of all placeholders when 
         private void Awake() {
 //            HasParkingSpace = false;
-            ClearRoundText();
+            roundText.text = "";
             ParkingSpaceText.text = "";
             NetworkIP = "";
             eventText.text = "";
@@ -106,15 +113,6 @@ namespace UI {
             }
 
             debugText.text = $"{_networkIP}";
-        }
-
-        private void UpdateRoundText() {
-            roundText.text = RoundTextPrefix + _roundCountdown + " seconds";
-        }
-
-        public void ClearRoundText() {
-            RoundTextPrefix = "";
-            roundText.text  = "";
         }
     }
 }

@@ -23,17 +23,18 @@ namespace Utils {
 
         public Timer(float length) {
             SetTime(length);
+            
             Set = false;
         }
 
-        public Timer(float length, bool repeat) : this(length) {
+        public Timer(float tickLength, bool repeat) : this(tickLength) {
             this.repeat = repeat;
 
             // Repeat 'infinitely'
             SetTicks(int.MaxValue);
         }
 
-        public Timer(float length, int nTicks) : this(length) {
+        public Timer(float tickLength, int nTicks) : this(tickLength) {
             repeat = true;
 
             // Repeat nTicks times.

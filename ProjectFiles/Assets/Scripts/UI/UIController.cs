@@ -83,16 +83,14 @@ namespace UI {
             // Store the round length to be used later.
             this.roundLength = roundLength;
 
-            // Display countdown on the hud that is preRoundLength seconds long.
-            Hud.RoundTextPrefix = "Round " + roundNumber + " starting in ";
-            Hud.RoundCountdown  = preRoundLength;
+            Hud.RoundText = $"Round { roundNumber } starting in { preRoundLength }.";
 
             // Create a new timer otherwise we will subscribe the same method many many times over a whole game.
             timer = new Timer(1, preRoundLength);
 
             // TODO: Do they need clearing after the timer elapsed?
-            timer.Tick    += left => Hud.RoundCountdown = left;
-            timer.Elapsed += () => Hud.ClearRoundText();
+            timer.Tick    += left => Hud.RoundText = $"Round { roundNumber } starting in { left }.";
+            timer.Elapsed += () => Hud.RoundText = "";
 
             Hud.ParkingSpaceText.text = "No active spaces";
 
@@ -101,14 +99,13 @@ namespace UI {
 
         public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive) {
             // Display message on HUD to say that round is in progress.
-            Hud.eventText.text  = "Round Started!";
-            Hud.RoundTextPrefix = "Round " + roundNumber + " ending in ";
-            Hud.RoundCountdown  = roundLength;
+            Hud.EventText  = "Round Started!";
+            Hud.RoundText = $"Round { roundNumber } ending in { roundLength }";
 
             // Create a new timer otherwise we will subscribe the same method many many times over a whole game.
             timer         =  new Timer(1, roundLength);
-            timer.Tick    += left => Hud.RoundCountdown = left;
-            timer.Elapsed += () => Hud.ClearRoundText();
+            timer.Tick    += left => Hud.RoundText = $"Round { roundNumber } ending in { left }";
+            timer.Elapsed += () => Hud.RoundText = "";
 
             Hud.ParkingSpaceText.text = $"{spacesActive.Count} active spaces";
 
@@ -117,7 +114,7 @@ namespace UI {
 
         public void OnRoundEnd(ushort roundNumber) {
             // Display message on HUD to say that round has ended.
-            Hud.eventText.text = "Round " + roundNumber + " has ended!";
+            Hud.EventText = "Round " + roundNumber + " has ended!";
 
             Hud.HasParkingSpace       = false;
             Hud.ParkingSpaceText.text = "No active spaces";
@@ -148,18 +145,18 @@ namespace UI {
         public void OnGameEnd(List<int> winners) {
             foreach (var player in winners) {
                 if (player == ClientConfig.PlayerID) {
-                    Hud.eventText.text = "YOU WON !!!";
+                    Hud.EventText = "YOU WON !!!";
                     return;
                 }
             }
 
-            Hud.eventText.text = "You lost ...";
+            Hud.EventText = "You lost ...";
         }
 
         public void OnEliminatePlayers(ushort roundNumber, List<int> eliminated) {
             foreach (var player in eliminated) {
                 if (player == ClientConfig.PlayerID) {
-                    Hud.eventText.text = "You lost ...";
+                    Hud.EventText = "You lost ...";
                     return;
                 }
             }
