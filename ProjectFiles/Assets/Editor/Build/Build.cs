@@ -53,4 +53,35 @@ public class ServerBuild {
             Debug.Log("Build failed");
         }
     }
+
+    [MenuItem("Build/Build Super Soaker")]
+    public static void BuildSoaker() {
+
+        var oldSettings = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone);
+        
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "UNITY_SOAKER");
+        
+        var buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.scenes = new[] {"Assets/Scenes/ModelShowcase.unity"};
+        
+        const string buildFolder = "../builds/soaker/soaker";
+
+        buildPlayerOptions.locationPathName = buildFolder;
+
+        buildPlayerOptions.target  = BuildTarget.StandaloneLinux64;
+        buildPlayerOptions.options = BuildOptions.EnableHeadlessMode;
+
+        var report  = BuildPipeline.BuildPlayer(buildPlayerOptions);
+        var summary = report.summary;
+
+        if (summary.result == BuildResult.Succeeded) {
+            Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
+        }
+
+        if (summary.result == BuildResult.Failed) {
+            Debug.Log("Build failed");
+        }
+        
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, oldSettings);
+    }
 }

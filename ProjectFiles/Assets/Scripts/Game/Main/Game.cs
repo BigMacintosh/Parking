@@ -20,7 +20,7 @@ namespace Game.Main {
     [DefaultExecutionOrder(-1000)]
     public class Game : MonoBehaviour {
         // Serialized Fields
-        [SerializeField] private ServerClientSetting gameMode       = ServerClientSetting.Standalone;
+        [SerializeField] private ServerClientSetting gameMode = ServerClientSetting.Standalone;
 
         // Private Fields
         private readonly List<IGameLoop> gameLoops                  = new List<IGameLoop>();
@@ -50,17 +50,24 @@ namespace Game.Main {
             } else if (gameMode == ServerClientSetting.Client) {
                 RequestGameLoop(typeof(ClientGameLoop), new string[0]);
             }
-        #elif UNITY_STANDALONE_LINUX && UNITY_SERVER
+        #elif UNITY_STANDALONE && UNITY_SERVER
+#if UNITY_SOAKER
+            RequestGameLoop(typeof(ClientGameLoop), new string[0]);
+#else
             RequestGameLoop(typeof(ServerGameLoop), new string[0]);
+#endif
         #elif UNITY_STANDALONE && !UNITY_SERVER
             RequestGameLoop(typeof(ClientGameLoop), new string[0]);
+        #endif
+
+        #if UNITY_SOAKER
+            Debug.Log("soaker test");
         #endif
         }
 
 
         // Update Loops
         public void Update() {
-
             // Switch game loop if needed
             if (requestedGameLoopTypes.Count > 0) {
                 var initSucceeded = false;

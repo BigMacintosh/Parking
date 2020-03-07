@@ -101,6 +101,7 @@ namespace Network {
                 using (var writer = new DataStreamWriter(totalLength, Allocator.Temp)) {
                     while (queue.Count > 0) {
                         var ev = queue.Dequeue();
+                        Debug.Log($"{connection.InternalId} - {ev.ID}");
 
                         ev.Serialise(writer);
                     }

@@ -106,7 +106,7 @@ namespace Network {
             using (var writer = new DataStreamWriter(totalLength, Allocator.Temp)) {
                 while (eventQueue.Count > 0) {
                     var ev = eventQueue.Dequeue();
-                    
+                    Debug.Log($"client: recieved {ev.ID}");
                     ev.Serialise(writer);
                 }
                 
@@ -144,6 +144,7 @@ namespace Network {
                         
                         while (reader.Length - reader.GetBytesRead(ref readerContext) > 0) {
                             var ev = (EventType) reader.ReadByte(ref readerContext);
+                            Debug.Log($"Handling {ev}");
                             HandleEvent(ev, reader, ref readerContext);
                         }
 
@@ -272,7 +273,7 @@ namespace Network {
         }
 
         public void Handle(ServerGameStart ev, NetworkConnection conn) {
-            Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
+            Debug.Log($"Client: Start Game Event.");
 
             ev.SpawnPlayers(world);
             inGame = true;
