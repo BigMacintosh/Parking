@@ -49,8 +49,8 @@ namespace UI {
             settingsmenu.SetActive(false);
             adminMenu.SetServerMode(IsServerMode);
 
-            Hud.HasParkingSpace       = false;
-            Hud.ParkingSpaceText.text = "No active spaces.";
+            Hud.HasParkingSpace = false;
+            Hud.NumActiveSpaces = 0;
         }
 
         // Update is called once per frame
@@ -83,31 +83,31 @@ namespace UI {
             // Store the round length to be used later.
             this.roundLength = roundLength;
 
-            Hud.RoundText = $"Round { roundNumber } starting in { preRoundLength }.";
+            Hud.RoundText = $"Round {roundNumber} starting in {preRoundLength}.";
 
             // Create a new timer otherwise we will subscribe the same method many many times over a whole game.
             timer = new Timer(1, preRoundLength);
 
             // TODO: Do they need clearing after the timer elapsed?
-            timer.Tick    += left => Hud.RoundText = $"Round { roundNumber } starting in { left }.";
-            timer.Elapsed += () => Hud.RoundText = "";
+            timer.Tick    += left => Hud.RoundText = $"Round {roundNumber} starting in {left}.";
+            timer.Elapsed += () => Hud.RoundText   = "";
 
-            Hud.ParkingSpaceText.text = "No active spaces";
+            Hud.NumActiveSpaces = 0;
 
             timer.Start();
         }
 
         public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive) {
             // Display message on HUD to say that round is in progress.
-            Hud.EventText  = "Round Started!";
-            Hud.RoundText = $"Round { roundNumber } ending in { roundLength }";
+            Hud.EventText = "Round Started!";
+            Hud.RoundText = $"Round {roundNumber} ending in {roundLength}";
 
             // Create a new timer otherwise we will subscribe the same method many many times over a whole game.
             timer         =  new Timer(1, roundLength);
-            timer.Tick    += left => Hud.RoundText = $"Round { roundNumber } ending in { left }";
-            timer.Elapsed += () => Hud.RoundText = "";
+            timer.Tick    += left => Hud.RoundText = $"Round {roundNumber} ending in {left}";
+            timer.Elapsed += () => Hud.RoundText   = "";
 
-            Hud.ParkingSpaceText.text = $"{spacesActive.Count} active spaces";
+            Hud.NumActiveSpaces = spacesActive.Count;
 
             timer.Start();
         }
@@ -116,8 +116,8 @@ namespace UI {
             // Display message on HUD to say that round has ended.
             Hud.EventText = "Round " + roundNumber + " has ended!";
 
-            Hud.HasParkingSpace       = false;
-            Hud.ParkingSpaceText.text = "No active spaces";
+            Hud.HasParkingSpace = false;
+            Hud.NumActiveSpaces = 0;
         }
 
         public void OnPlayerCountChange(ushort nPlayers) {
@@ -128,16 +128,15 @@ namespace UI {
         public void OnSpaceStateChange(SpaceState state, ushort spaceID) {
             switch (state) {
                 case SpaceState.EmptyGained:
-                    Hud.ParkingSpaceText.text = "You claimed an empty space!";
-                    Hud.HasParkingSpace       = true;
+                    Hud.EventText       = "You claimed an empty space!";
+                    Hud.HasParkingSpace = true;
                     break;
                 case SpaceState.StolenGained:
-                    Hud.ParkingSpaceText.text = "You stole someone's space!";
-                    Hud.HasParkingSpace       = true;
+                    Hud.EventText       = "You stole someone's space!";
+                    Hud.HasParkingSpace = true;
                     break;
                 case SpaceState.StolenLost:
-                    Hud.ParkingSpaceText.text = "Your space was stolen ...";
-                    Hud.HasParkingSpace       = false;
+                    Hud.HasParkingSpace = false;
                     break;
             }
         }

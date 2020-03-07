@@ -13,14 +13,10 @@ namespace UI {
             get => _hasParkingSpace;
             set {
                 _hasParkingSpace       = value;
-                parkingIcon.color      = HasParkingSpace ? goodThingsGreen : badThingsRed;
-                parkingSpaceText.color = HasParkingSpace ? goodThingsGreen : badThingsRed;
+                parkingIcon.color      = value ? goodThingsGreen : badThingsRed;
+                parkingSpaceText.color = value ? goodThingsGreen : badThingsRed;
+                UpdateParkingSpaceText();
             }
-        }
-
-        public Text ParkingSpaceText {
-            get => parkingSpaceText;
-            set => parkingSpaceText = value;
         }
 
         public string NetworkIP {
@@ -42,15 +38,23 @@ namespace UI {
         public string EventText {
             get => eventText.text;
             set {
-                eventText.text = value;
-                timer = new Timer(5.0f);
-                timer.Elapsed += () => eventText.text = "";
+                eventText.text =  value;
+                timer          =  new Timer(5.0f);
+                timer.Elapsed  += () => eventText.text = "";
             }
         }
 
         public string RoundText {
             get => roundText.text;
             set => roundText.text = value;
+        }
+
+        public int NumActiveSpaces {
+            get => _numActiveSpaces;
+            set {
+                _numActiveSpaces = value;
+                UpdateParkingSpaceText();
+            }
         }
 
         // Serializable Fields
@@ -79,6 +83,7 @@ namespace UI {
         private bool   _hasParkingSpace;
         private string _networkIP;
         private int    _numberOfPlayers;
+        private int    _numActiveSpaces;
 
         private Timer timer;
 
@@ -94,8 +99,7 @@ namespace UI {
         private void Awake() {
 //            HasParkingSpace = false;
             roundText.text = "";
-            ParkingSpaceText.text = "";
-            NetworkIP = "";
+            NetworkIP      = "";
             eventText.text = "";
         }
 
@@ -113,6 +117,11 @@ namespace UI {
             }
 
             debugText.text = $"{_networkIP}";
+        }
+
+        private void UpdateParkingSpaceText() {
+            parkingSpaceText.text =
+                $"You {(_hasParkingSpace ? "" : "do not ")}have a space ({_numActiveSpaces} active space{(_numActiveSpaces == 1 ? "" : "s")}";
         }
     }
 }
