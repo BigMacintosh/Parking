@@ -64,9 +64,20 @@ namespace Game.Core.Driving {
             foreach (WheelTransformPair wheel in driveWheels) {
                 UpdateWheel(wheel.wheel, wheel.graphics);
             }
+            
+            foreach (WheelTransformPair wheel in otherWheels) {
+                UpdateWheel(wheel.wheel, wheel.graphics);
+            }
         }
 
-        private void UpdateWheel(WheelCollider wheel, Transform graphics) { }
+        private void UpdateWheel(WheelCollider wheel, Transform graphics) {
+            Vector3 pos = graphics.position;
+            Quaternion rot = graphics.rotation;
+            
+            wheel.GetWorldPose(out pos, out rot);
+            graphics.position = pos;
+            graphics.rotation = rot;
+        }
 
         private void SelfRight() {
             if (Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315 ||
