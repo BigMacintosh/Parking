@@ -5,24 +5,24 @@ namespace Game.Core.Driving {
     public class VehicleDriver : MonoBehaviour {
         // Public Fields
         public List<WheelCollider> frontWheels;
-        public List<WheelCollider> rearWheesl;
+        public List<WheelCollider> rearWheels;
         public List<Transform>     frontWheelGraphics;
         public List<Transform>     rearWheelGraphics;
-        public LayerMask                                      mask;
-        
-        public float                                          maxSteerAngle;
-        public float                                          motorForce;
+        public LayerMask           mask;
+
+        public float maxSteerAngle;
+        public float motorForce;
 
         // Private Fields
         private bool      acceptinput;
         private Rigidbody body;
-        
-        private float     horizontalInput;
-        private float     verticalInput;
-        
-        private float     collisionAmplifier = 50f;
-        private float     collisionCooldown  = 0.5f;
-        private float     timestamp          = 0f;
+
+        private float horizontalInput;
+        private float verticalInput;
+
+        private float collisionAmplifier = 50f;
+        private float collisionCooldown  = 0.5f;
+        private float timestamp          = 0f;
 
         // Start is called before the first frame update
         private void Start() {
