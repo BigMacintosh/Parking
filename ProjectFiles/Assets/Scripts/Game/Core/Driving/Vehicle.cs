@@ -46,7 +46,7 @@ namespace Game.Core.Driving {
             driver.driveWheels   = driveWheels;
             driver.otherWheels   = otherWheels;
             driver.maxSteerAngle = 30f;
-            driver.motorForce    = 50f;
+            driver.motorForce    = 500f;
             driver.setAcceptInput(true);
 
             // Set camera to follow car
