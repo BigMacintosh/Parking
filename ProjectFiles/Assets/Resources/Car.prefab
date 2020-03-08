@@ -127,14 +127,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8f351e96b44f0a86499de675baa951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frontWheels:
-  - {fileID: 4378614828008301188}
-  - {fileID: 3126804013429294304}
-  rearWheels:
-  - {fileID: 1693675600991530472}
-  - {fileID: 2697487803775096246}
-  frontWheelGraphics: []
-  rearWheelGraphics: []
+  driveWheels:
+  - wheel: {fileID: 4378614828008301188}
+    graphics: {fileID: 380456273380016663}
+  - wheel: {fileID: 3126804013429294304}
+    graphics: {fileID: 2181479732188383239}
+  otherWheels:
+  - wheel: {fileID: 1693675600991530472}
+    graphics: {fileID: 8534966229020072333}
+  - wheel: {fileID: 2697487803775096246}
+    graphics: {fileID: 4816445820330047682}
   vehicleProperties:
     <SpeedRating>k__BackingField: 0
     <SteeringRating>k__BackingField: 0

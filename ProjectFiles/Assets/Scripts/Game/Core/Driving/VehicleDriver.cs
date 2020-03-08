@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Net.Sockets;
 
 namespace Game.Core.Driving {
     public class VehicleDriver : MonoBehaviour {
         // Public Fields
-        public List<WheelCollider> frontWheels;
-        public List<WheelCollider> rearWheels;
-        public List<Transform>     frontWheelGraphics;
-        public List<Transform>     rearWheelGraphics;
-        public LayerMask           mask;
+        public List<WheelTransformPair> driveWheels;
+        public List<WheelTransformPair> otherWheels;
+        public LayerMask                                    mask;
 
         public float maxSteerAngle;
         public float motorForce;
@@ -19,6 +18,7 @@ namespace Game.Core.Driving {
 
         private float horizontalInput;
         private float verticalInput;
+        private float steeringAngle;
 
         private float collisionAmplifier = 50f;
         private float collisionCooldown  = 0.5f;
@@ -31,7 +31,44 @@ namespace Game.Core.Driving {
         }
 
         private void FixedUpdate() {
-            //Self-Righting
+            GetInput();
+            Steer();
+            Accelerate();
+            UpdateWheels();
+
+            SelfRight();
+        }
+
+        public void setAcceptInput(bool option) {
+            acceptinput = option;
+        }
+
+        private void GetInput() {
+            horizontalInput = Input.GetAxis("Horizontal");
+            verticalInput   = Input.GetAxis("Vertical");
+        }
+
+        private void Steer() {
+            foreach (WheelTransformPair wheel in driveWheels) {
+                wheel.wheel.steerAngle = maxSteerAngle * horizontalInput;
+            }
+        }
+
+        private void Accelerate() {
+            foreach (WheelTransformPair wheel in driveWheels) {
+                wheel.wheel.motorTorque = motorForce * verticalInput;
+            }
+        }
+
+        private void UpdateWheels() {
+            foreach (WheelTransformPair wheel in driveWheels) {
+                UpdateWheel(wheel.wheel, wheel.graphics);
+            }
+        }
+
+        private void UpdateWheel(WheelCollider wheel, Transform graphics) { }
+
+        private void SelfRight() {
             if (Mathf.Abs(body.rotation.eulerAngles.z) > 45 && Mathf.Abs(body.rotation.eulerAngles.z) < 315 ||
                 Mathf.Abs(body.rotation.eulerAngles.x) > 60 && Mathf.Abs(body.rotation.eulerAngles.x) < 300) {
                 var targetRotation = Quaternion.LookRotation(
@@ -41,10 +78,6 @@ namespace Game.Core.Driving {
                 body.MoveRotation(Quaternion.RotateTowards(
                                       body.rotation, targetRotation, Time.fixedDeltaTime * 90f));
             }
-        }
-
-        public void setAcceptInput(bool option) {
-            acceptinput = option;
         }
 
         private void OnCollisionEnter(Collision other) {
