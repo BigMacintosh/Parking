@@ -127,7 +127,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8f351e96b44f0a86499de675baa951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  driveWheels: []
+  frontWheels:
+  - {fileID: 4378614828008301188}
+  - {fileID: 3126804013429294304}
+  rearWheels:
+  - {fileID: 1693675600991530472}
+  - {fileID: 2697487803775096246}
+  frontWheelGraphics: []
+  rearWheelGraphics: []
   vehicleProperties:
     <SpeedRating>k__BackingField: 0
     <SteeringRating>k__BackingField: 0
@@ -193,8 +200,8 @@ Transform:
   m_Children:
   - {fileID: 380456273380016663}
   - {fileID: 2181479732188383239}
-  - {fileID: 4816445820330047682}
   - {fileID: 8534966229020072333}
+  - {fileID: 4816445820330047682}
   m_Father: {fileID: 2754571377349320128}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -257,7 +264,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7926610325514883567}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!146 &2697487803775096246
 WheelCollider:
@@ -318,8 +325,8 @@ Transform:
   m_Children:
   - {fileID: 3031752033089741735}
   - {fileID: 8874007441459273555}
-  - {fileID: 813321012376990761}
   - {fileID: 6207618523701388386}
+  - {fileID: 813321012376990761}
   m_Father: {fileID: 2754571377349320128}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -413,7 +420,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7926610325514883567}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!146 &1693675600991530472
 WheelCollider:
@@ -495,7 +502,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 812c0899cb2ff42f88a26b7188a61b5f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 812c0899cb2ff42f88a26b7188a61b5f,
         type: 3}
@@ -610,7 +617,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 812c0899cb2ff42f88a26b7188a61b5f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 812c0899cb2ff42f88a26b7188a61b5f,
         type: 3}

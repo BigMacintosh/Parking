@@ -8,9 +8,12 @@ using UnityEngine;
 namespace Game.Core.Driving {
     public class Vehicle : MonoBehaviour {
         // Public Fields
-        public List<DriveWheel>  driveWheels;
-        public VehicleProperties vehicleProperties;
-        public LayerMask         collisionMask;
+        public List<WheelCollider> frontWheels;
+        public List<WheelCollider> rearWheels;
+        public List<Transform>     frontWheelGraphics;
+        public List<Transform>     rearWheelGraphics;
+        public VehicleProperties   vehicleProperties;
+        public LayerMask           collisionMask;
 
         [SerializeField] private MeshRenderer bodyRenderer;
 
@@ -37,12 +40,12 @@ namespace Game.Core.Driving {
             // Add DriveController to car
             driver = gameObject.AddComponent<VehicleDriver>();
 
-            driver.accel       = 20;
-            driver.maxSpeed    = 50;
-            driver.driveWheels = driveWheels;
-            driver.maxSteer    = 30;
-            driver.driftFactor = 3f;
-            driver.mask        = collisionMask;
+            driver.frontWheels        = frontWheels;
+            driver.rearWheels         = rearWheels;
+            driver.frontWheelGraphics = frontWheelGraphics;
+            driver.rearWheelGraphics  = rearWheelGraphics;
+            driver.maxSteerAngle      = 30f;
+            driver.motorForce         = 50f;
             driver.setAcceptInput(true);
 
             // Set camera to follow car
