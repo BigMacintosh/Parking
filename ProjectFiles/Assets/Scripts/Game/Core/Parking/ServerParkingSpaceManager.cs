@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using Network;
 using UI;
 using UnityEngine;
@@ -24,6 +25,13 @@ namespace Game.Core.Parking {
             }
         }
 
+        public override void OnRoundEnd(ushort roundNumber) {
+            base.OnRoundEnd(roundNumber);
+            foreach (var space in parkingSpacesBySpaceID.Values) {
+                space.Timer.Reset();
+            }
+        }
+        
         /// <summary>
         /// Event handler for when a player enters a space.
         /// </summary>
@@ -46,7 +54,6 @@ namespace Game.Core.Parking {
             } else if (!parkingSpace.Occupied()) {
                 if (parkingSpace.Timer.Set) {
                     parkingSpace.Timer.Reset();
-                    // Inform clients that the attempt to claim the space has failed.
                 } else {
                     parkingSpace.Timer         =  new Timer(1);
                     parkingSpace.Timer.Elapsed += SpaceEnterTimerHandler(playerID, spaceID);
@@ -112,6 +119,12 @@ namespace Game.Core.Parking {
         /// <param name="spaceID"></param>
         private void SpaceTimerOnElapsed(int playerID, ushort spaceID) {
             Debug.Log("Timer has elapsed");
+
+            var parkingSpace = parkingSpacesBySpaceID[spaceID];
+            if (!parkingSpace.Enabled) {
+                return;
+            }
+
             // Space timer has elapsed.
             OnSpaceClaimed(playerID, spaceID);
             SpaceClaimedEvent?.Invoke(playerID, spaceID);

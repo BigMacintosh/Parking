@@ -46,8 +46,9 @@ namespace Game.Main {
             roundManager.RoundEndEvent         += server.OnRoundEnd;
             roundManager.EliminatePlayersEvent += server.OnEliminatePlayers;
             roundManager.GameEndEvent          += server.OnGameEnd;
+
             roundManager.RoundStartEvent       += parkingSpaceManager.OnRoundStart;
-            roundManager.PreRoundStartEvent    += parkingSpaceManager.OnPreRoundStart;
+            roundManager.RoundEndEvent         += parkingSpaceManager.OnRoundEnd;
             roundManager.EliminatePlayersEvent += world.OnEliminatePlayers;
 
             parkingSpaceManager.SpaceClaimedEvent += server.OnSpaceClaimed;
