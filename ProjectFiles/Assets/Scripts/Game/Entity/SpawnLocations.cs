@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Game.Core.Parking;
 using UnityEngine;
+using Utils;
 using Random = System.Random;
 
 namespace Game.Entity {
@@ -30,8 +31,10 @@ namespace Game.Entity {
                 var transform   = availableSpawnLocations[randomSpace];
                 availableSpawnLocations.Remove(transform);
                 return new PlayerPosition {
-                    Pos = transform.position,
-                    Rot = transform.rotation,
+                    Transform = new ObjectTransform {
+                        Position = transform.position,
+                        Rotation = transform.rotation,
+                    },
                 };
             }
 
