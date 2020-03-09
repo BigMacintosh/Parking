@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Game.Core.Rounds;
 using Game.Main;
+using NSubstitute;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -17,6 +18,7 @@ namespace Tests {
         }
 
         private void Awake() {
+        
             RoundProperties.MaxRounds      = 1;
             RoundProperties.FreeroamLength = 1;
             RoundProperties.PreRoundLength = 2;

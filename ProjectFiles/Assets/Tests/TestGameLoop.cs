@@ -3,11 +3,11 @@ using Game.Core.Rounds;
 using Game.Entity;
 using Game.Main;
 using Network;
+using NSubstitute;
 using NUnit.Framework;
 using UI;
 using UnityEngine;
 using Utils;
-using Moq;
 
 namespace Tests {
     public class TestGameLoop : IGameLoop {
@@ -27,8 +27,10 @@ namespace Tests {
             // Initialise Gameplay components
             parkingSpaceManager = new ServerParkingSpaceManager();
             
-//            parkingSpaceManager.TEST_ONLY_AddParkingSpace(new Mock);
-            
+            for (int i = 0; i < 10; i++) {
+                parkingSpaceManager.TEST_ONLY_AddParkingSpace(NewMockParkingSpace(i));
+            }
+
             world               = new ServerWorld(parkingSpaceManager);
             roundManager        = new RoundManager(world, parkingSpaceManager);
 
@@ -59,6 +61,15 @@ namespace Tests {
 
             roundManager.StartGame();
             return true;
+        }
+
+        private static ParkingSpace NewMockParkingSpace(int n) {
+            var parkingSpace = Substitute.For<ParkingSpace>();
+            var transform    = Substitute.ForPartsOf<Transform>();
+            transform.rotation.Returns(new Quaternion(n, n, n, n));
+            transform.position.Returns(new Vector3(n, n, n));
+            parkingSpace.transform.Returns(transform);
+            return parkingSpace;
         }
 
         public void Shutdown() { }
