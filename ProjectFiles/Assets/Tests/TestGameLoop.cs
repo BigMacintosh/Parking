@@ -72,8 +72,10 @@ namespace Tests {
 
             var colourController = Substitute.For<ISpaceColourController>();
             var parkingSpace = Substitute.For<ParkingSpaceController>();
+            parkingSpace.SpaceID = (ushort) n;
             parkingSpace.TransformController = transformController;
             parkingSpace.ColourController = colourController;
+            parkingSpace.Disable();
             return parkingSpace;
         }
 
