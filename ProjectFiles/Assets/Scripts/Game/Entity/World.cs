@@ -27,6 +27,10 @@ namespace Game.Entity {
             Players.Add(playerID, new Player(playerID, playerOptions, isControlledPlayer));
         }
 
+        public void TEST_ONLY_AddPlayer(Player player) {
+            Players.Add(player.PlayerID, player);
+        }
+        
         /// <summary>
         /// Destroys a players car.
         /// </summary>
