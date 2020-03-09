@@ -1,19 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
-using Game.Core.Driving;
-using Game.Core.Parking;
-using Network;
-using UnityEngine;
-using Random = System.Random;
 
 namespace Game.Entity {
     public abstract class World {
         // Private Fields
-        
+
         public Dictionary<int, Player> Players { get; }
 
         protected World() {
-            Players   = new Dictionary<int, Player>();
+            Players = new Dictionary<int, Player>();
         }
 
         /// <summary>
@@ -47,7 +42,7 @@ namespace Game.Entity {
         /// </summary>
         /// <returns>List of playerIDs.</returns>
         public List<int> GetPlayersInGame() {
-            return Players.Where(k=> !k.Value.IsEliminated)
+            return Players.Where(k => !k.Value.IsEliminated)
                           .Select(k => k.Value.PlayerID)
                           .ToList();
         }
