@@ -11,8 +11,18 @@ namespace Game.Core.Parking {
     /// </summary>
     public class ServerParkingSpaceManager : ParkingSpaceManager {
         // Delegates
+
         public event SpaceClaimedDelegate SpaceClaimedEvent;
 
+        /// <summary>
+        /// Update all the timers
+        /// Must be called in the Game Loop 
+        /// </summary>
+        public void Update() {
+            foreach (var space in parkingSpacesBySpaceID.Values) {
+                space.Timer.Update();
+            }
+        }
 
         /// <summary>
         /// Event handler for when a player enters a space.
