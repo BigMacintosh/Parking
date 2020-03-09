@@ -110,6 +110,22 @@ public class Chunkster : MonoBehaviour {
         }
     }
 
+    // stitches together seams between chunks
+    // (takes average of touching vertices)
+    public void stitchChunks() {
+        // foreach (Transform child in this.gameObject.transform) {
+        //     var chunk = (Chunk) child.GetComponent<Chunk>();
+            
+        //     var bottomX, bottomY = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Down );
+        //     var rightX,  rightY  = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Right);
+
+        //     if (child.gameObject.name == this.getChunkId(chunkX, chunkY)) {
+        //         chunk = child.gameObject;
+        //         return true;
+        //     }
+        // }
+    }
+
     public void stitchChunks(int chunkX1, int chunkY1, int chunkX2, int chunkY2) {
         var chunk1 = (Chunk) this.getChunk(chunkX1, chunkY1).GetComponent<Chunk>();
         var chunk2 = (Chunk) this.getChunk(chunkX2, chunkY2).GetComponent<Chunk>();
