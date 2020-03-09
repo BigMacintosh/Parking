@@ -57,7 +57,7 @@ namespace Game.Entity {
         /// The spawn method used by the server. 
         /// </summary>
         /// <param name="spawner">Allows the player to get a new spawn location</param>
-        public void Spawn(SpawnLocations spawner) {
+        public virtual void Spawn(SpawnLocations spawner) {
             var spawnPosition = spawner.GetSpawnPosition();
             Spawn(spawnPosition);
         }
@@ -65,7 +65,7 @@ namespace Game.Entity {
         /// <summary>
         /// The spawn method used to spawn a player in a certain position
         /// </summary>
-        public void Spawn(PlayerPosition spawnPosition) {
+        public virtual void Spawn(PlayerPosition spawnPosition) {
             if (isSpawned) throw new PlayerAlreadySpawnedException();
             var prefab = PlayerOptions.CarType.GetPrefab();
             Debug.Log($"Spawning at {spawnPosition.Transform.Position} with rot: {spawnPosition.Transform.Rotation}");
@@ -88,7 +88,7 @@ namespace Game.Entity {
         /// </summary>
         /// <param name="playerPosition">The position to move a player to</param>
         /// <exception cref="PlayerNotSpawnedException">Thrown if you try to move a player who hasn't been spawned</exception>
-        public void Move(PlayerPosition playerPosition) {
+        public virtual void Move(PlayerPosition playerPosition) {
             if (!isSpawned) throw new PlayerNotSpawnedException();
             carTrans.position     = playerPosition.Transform.Position;
             carTrans.rotation     = playerPosition.Transform.Rotation;
@@ -100,7 +100,7 @@ namespace Game.Entity {
         /// Destroys a player's car
         /// </summary>
         /// <exception cref="PlayerNotSpawnedException">Throws if the car wasn't already created.</exception>
-        public void DestroyCar() {
+        public virtual void DestroyCar() {
             if (!isSpawned) throw new PlayerNotSpawnedException();
             Object.Destroy(car);
         }
@@ -131,7 +131,7 @@ namespace Game.Entity {
         /// Gets the position of this player.
         /// </summary>
         /// <returns>The position</returns>
-        public PlayerPosition GetPosition() {
+        public virtual PlayerPosition GetPosition() {
             return new PlayerPosition {
                 Transform = new ObjectTransform {
                     Position = carTrans.position,
