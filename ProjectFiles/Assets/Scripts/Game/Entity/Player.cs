@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using Game.Core.Driving;
 using Network;
 using UnityEngine;
+using Utils;
 using Object = UnityEngine.Object;
 
 namespace Game.Entity {
@@ -67,9 +68,9 @@ namespace Game.Entity {
         public void Spawn(PlayerPosition spawnPosition) {
             if (isSpawned) throw new PlayerAlreadySpawnedException();
             var prefab = PlayerOptions.CarType.GetPrefab();
-            Debug.Log($"Spawning at {spawnPosition.Pos} with rot: {spawnPosition.Rot}");
-            SetCar(Object.Instantiate(prefab, spawnPosition.Pos, spawnPosition.Rot));
-            
+            Debug.Log($"Spawning at {spawnPosition.Transform.Position} with rot: {spawnPosition.Transform.Rotation}");
+            SetCar(Object.Instantiate(prefab, spawnPosition.Transform.Position, spawnPosition.Transform.Rotation));
+
             // Set car to controllable if spawning this players car
             if (isMe) {
                 car.GetComponent<Vehicle>().SetControllable();
@@ -77,7 +78,7 @@ namespace Game.Entity {
 
             // Set the car colour
             SetCarColour();
-            
+
             // Set player to spawned
             isSpawned = true;
         }
@@ -89,10 +90,10 @@ namespace Game.Entity {
         /// <exception cref="PlayerNotSpawnedException">Thrown if you try to move a player who hasn't been spawned</exception>
         public void Move(PlayerPosition playerPosition) {
             if (!isSpawned) throw new PlayerNotSpawnedException();
-            carTrans.position     = playerPosition.Pos;
-            carTrans.rotation     = playerPosition.Rot;
-            carRb.velocity        = playerPosition.Vel;
-            carRb.angularVelocity = playerPosition.AVel;
+            carTrans.position     = playerPosition.Transform.Position;
+            carTrans.rotation     = playerPosition.Transform.Rotation;
+            carRb.velocity        = playerPosition.Velocity;
+            carRb.angularVelocity = playerPosition.AngularVelocity;
         }
 
         /// <summary>
@@ -132,10 +133,12 @@ namespace Game.Entity {
         /// <returns>The position</returns>
         public PlayerPosition GetPosition() {
             return new PlayerPosition {
-                Pos  = carTrans.position,
-                Rot  = carTrans.rotation,
-                Vel  = carRb.velocity,
-                AVel = carRb.angularVelocity
+                Transform = new ObjectTransform {
+                    Position = carTrans.position,
+                    Rotation = carTrans.rotation
+                },
+                Velocity        = carRb.velocity,
+                AngularVelocity = carRb.angularVelocity
             };
         }
 

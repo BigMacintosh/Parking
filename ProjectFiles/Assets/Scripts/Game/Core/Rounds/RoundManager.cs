@@ -11,18 +11,17 @@ namespace Game.Core.Rounds {
     /// <summary>
     /// Stores key properties for rounds.
     /// </summary>
-    internal static class RoundProperties {
+    public static class RoundProperties {
         // All times in seconds
-        public const ushort FreeroamLength = 30;
-        public const ushort PreRoundLength = 5;
-        public const ushort RoundLength    = 30;
-        public const ushort MaxRounds      = 5;
+        public static ushort FreeroamLength = 30;
+        public static ushort PreRoundLength = 5;
+        public static ushort RoundLength    = 30;
+        public static ushort MaxRounds      = 5;
 
         // 0 means no parking spaces would activate, 1 means there would be 1 space per player
         public const float SpacesToPlayersRatio = 0.8f;
     }
-
-
+    
     /// <summary>
     /// The main component for controlling the game logic.
     ///  - Times the rounds
