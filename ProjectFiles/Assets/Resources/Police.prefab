@@ -221,9 +221,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8f351e96b44f0a86499de675baa951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  carType: 16
   driveWheels:
-  - {fileID: 1125267357330619015}
-  - {fileID: 5845386942029754171}
+  - wheel: {fileID: 0}
+    graphics: {fileID: 0}
+  - wheel: {fileID: 0}
+    graphics: {fileID: 0}
+  otherWheels: []
   vehicleProperties:
     <SpeedRating>k__BackingField: 0
     <SteeringRating>k__BackingField: 0
