@@ -64,7 +64,7 @@ namespace Network.Events {
 
             // Create all players who have already connected.
             foreach (var kv in PlayerOptions.Where(kv => kv.Key != PlayerID)) {
-                world.AddPlayer(kv.Key, kv.Value);
+                world.AddPlayer(new Player(kv.Key, kv.Value));
             }
         }
     }
