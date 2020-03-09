@@ -20,11 +20,9 @@ namespace Game.Entity {
         /// Creates a player, but does not spawn them
         /// Should be used when a new player connects
         /// </summary>
-        /// <param name="playerID">The id of a player</param>
-        /// <param name="playerOptions">The options set by a player</param>
-        /// <param name="isControlledPlayer">Is the player belonging to the client creating it.</param>
-        public void CreatePlayer(int playerID, PlayerOptions playerOptions, bool isControlledPlayer = false) {
-            Players.Add(playerID, new Player(playerID, playerOptions, isControlledPlayer));
+        /// <param name="player">The player to add</param>
+        public void AddPlayer(Player player) {
+            Players.Add(player.PlayerID, player);
         }
 
         /// <summary>
