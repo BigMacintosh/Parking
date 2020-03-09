@@ -41,7 +41,6 @@ namespace Game.Core.Rounds {
             this.world        = world;
             this.spaceManager = spaceManager;
             random            = new Random();
-            Debug.Log("HERE");
         }
 
 
