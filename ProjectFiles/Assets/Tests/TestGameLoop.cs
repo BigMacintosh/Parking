@@ -18,22 +18,22 @@ namespace Tests {
         private ServerWorld               world;
 
         private Timer timer;
-        public bool TestFinished;
+        public  bool  TestFinished;
 
         public bool Init(string[] args) {
             timer = new Timer(0);
-            
+
             TestFinished = false;
 
             // Initialise Gameplay components
             parkingSpaceManager = new ServerParkingSpaceManager();
-            
+
             for (int i = 0; i < 10; i++) {
                 parkingSpaceManager.TEST_ONLY_AddParkingSpace(NewMockParkingSpaceController(i));
             }
 
-            world               = new ServerWorld(parkingSpaceManager);
-            roundManager        = new RoundManager(world, parkingSpaceManager);
+            world        = new ServerWorld(parkingSpaceManager);
+            roundManager = new RoundManager(world, parkingSpaceManager);
 
             world.CreatePlayer(0, new PlayerOptions());
             world.CreatePlayer(1, new PlayerOptions());
@@ -41,11 +41,10 @@ namespace Tests {
 
             roundManager.GameStartEvent += (length, players) => world.SpawnPlayers();
             roundManager.GameEndEvent += winners => {
-                
                 Assert.True(winners.Count == 2);
                 Assert.True(winners.Contains(1));
                 Assert.True(winners.Contains(2));
-                
+
                 winners.ForEach(world.DestroyPlayer);
                 TestFinished = true;
             };
@@ -65,14 +64,16 @@ namespace Tests {
         }
 
         private static ParkingSpaceController NewMockParkingSpaceController(int n) {
-            var parkingSpace = Substitute.For<ParkingSpaceController>();
             var transformController = Substitute.For<ISpaceTransformController>();
-//            transformController.GetTransform().Returns(Transform.)
-            
-            var transform    = Substitute.ForPartsOf<Transform>();
-            transform.rotation.Returns(new Quaternion(n, n, n, n));
-            transform.position.Returns(new Vector3(n, n, n));
-            
+            transformController.GetTransform().Returns(new ObjectTransform {
+                Position = new Vector3(n, n),
+                Rotation = new Quaternion(n, n, n, n),
+            });
+
+            var colourController = Substitute.For<ISpaceColourController>();
+            var parkingSpace = Substitute.For<ParkingSpaceController>();
+            parkingSpace.TransformController = transformController;
+            parkingSpace.ColourController = colourController;
             return parkingSpace;
         }
 
@@ -80,6 +81,7 @@ namespace Tests {
 
         public void Update() {
             roundManager.Update();
+            parkingSpaceManager.Update();
             timer.Update();
         }
 
