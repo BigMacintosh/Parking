@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Core.Camera;
+using Game.Entity;
 using UI;
 using UI.Minimap;
 using UnityEngine;
@@ -14,10 +15,11 @@ namespace Game.Core.Driving {
 
     public class Vehicle : MonoBehaviour {
         // Public Fields
+        public CarType                  carType;
         public List<WheelTransformPair> driveWheels;
         public List<WheelTransformPair> otherWheels;
-        public VehicleProperties                            vehicleProperties;
-        public LayerMask                                    collisionMask;
+        public VehicleProperties        vehicleProperties;
+        public LayerMask                collisionMask;
 
         [SerializeField] private MeshRenderer bodyRenderer;
 
