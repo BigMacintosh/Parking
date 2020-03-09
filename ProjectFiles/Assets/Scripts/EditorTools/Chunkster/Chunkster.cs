@@ -19,12 +19,6 @@ public class Chunkster : MonoBehaviour {
         }
     }
 
-    [ContextMenu("Join Seams")]
-    private void JoinSeams() {
-        Debug.Log("something");
-    }
-
-
     (int, int) addDirection(int chunkX, int chunkY, Direction dir) {
         switch (dir) {
             case Direction.Up:    return (chunkX,     chunkY + 1);
@@ -114,5 +108,12 @@ public class Chunkster : MonoBehaviour {
         } else {
             Debug.LogWarning("Tried to delete chunk at " + (chunkX, chunkY) + " but it doesn't exist!");
         }
+    }
+
+    public void stitchChunks(int chunkX1, int chunkY1, int chunkX2, int chunkY2) {
+        var chunk1 = (Chunk) this.getChunk(chunkX1, chunkY1).GetComponent<Chunk>();
+        var chunk2 = (Chunk) this.getChunk(chunkX2, chunkY2).GetComponent<Chunk>();
+
+        
     }
 }

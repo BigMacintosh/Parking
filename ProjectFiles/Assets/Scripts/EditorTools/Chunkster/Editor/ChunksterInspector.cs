@@ -73,5 +73,9 @@ public class ChunksterInspector : Editor {
         EditorGUILayout.HelpBox("Destorying a chunk is permanent!", MessageType.Warning);
 
         EditorGUILayout.EndVertical();
+        
+        if (GUILayout.Button("Stitch Seams")) {
+
+        }
     }
 }
