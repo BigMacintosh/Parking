@@ -16,7 +16,7 @@ namespace Game.Core.Parking {
         public bool   Enabled    { get; private set; }
         public Timer  Timer      { get; set; }
 
-        public Transform Transform => TransformController.GetTransform();
+        public ObjectTransform Transform => TransformController.GetTransform();
         
         public ISpaceColourController    ColourController    { private get; set; }
         public ISpaceTransformController TransformController { private get; set; }

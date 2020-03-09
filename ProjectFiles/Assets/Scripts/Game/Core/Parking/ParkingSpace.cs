@@ -1,5 +1,6 @@
 ﻿using Game.Core.Driving;
 using UnityEngine;
+using Utils;
 using Transform = UnityEngine.Transform;
 
 namespace Game.Core.Parking {
@@ -64,8 +65,12 @@ namespace Game.Core.Parking {
 
         #region ISpaceTransformController implementation
 
-        public Transform GetTransform() {
-            return transform;
+        public ObjectTransform GetTransform() {
+            var t = transform;
+            return new ObjectTransform {
+                Position = t.position,
+                Rotation = t.rotation,
+            };
         }
 
         #endregion

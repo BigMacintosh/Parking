@@ -11,7 +11,7 @@ namespace Game.Entity {
     /// Responsible for calculating all the players initial spawn locations.
     /// </summary>
     public class SpawnLocations {
-        private          List<Transform>     availableSpawnLocations;
+        private          List<ObjectTransform>     availableSpawnLocations;
         private readonly ParkingSpaceManager spaceManager;
         private readonly Random              rand = new Random();
 
@@ -31,10 +31,7 @@ namespace Game.Entity {
                 var transform   = availableSpawnLocations[randomSpace];
                 availableSpawnLocations.Remove(transform);
                 return new PlayerPosition {
-                    Transform = new ObjectTransform {
-                        Position = transform.position,
-                        Rotation = transform.rotation,
-                    },
+                    Transform = transform
                 };
             }
 

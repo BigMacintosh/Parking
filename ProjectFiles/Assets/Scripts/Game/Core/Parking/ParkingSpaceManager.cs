@@ -81,8 +81,8 @@ namespace Game.Core.Parking {
         /// Gets the transforms for all spaces.
         /// </summary>
         /// <returns>A list containing all space transforms</returns>
-        public List<Transform> GetSpaceTransforms() {
-            var transforms = new List<Transform>();
+        public List<ObjectTransform> GetSpaceTransforms() {
+            var transforms = new List<ObjectTransform>();
             foreach (var space in parkingSpacesBySpaceID) {
                 transforms.Add(space.Value.Transform);
             }
@@ -100,7 +100,7 @@ namespace Game.Core.Parking {
         public List<ushort> GetNearestSpaces(Vector2 position, int amount, bool onlyEnabled = false) {
             var spaces = parkingSpacesBySpaceID.Values
                                                .OrderBy(space => {
-                                                    var spacePos = space.Transform.position;
+                                                    var spacePos = space.Transform.Position;
                                                     return new Vector2(
                                                             spacePos.x - position.x, spacePos.z - position.y)
                                                        .magnitude;
