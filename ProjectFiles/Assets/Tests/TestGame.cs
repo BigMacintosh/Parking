@@ -18,10 +18,9 @@ namespace Tests {
         }
 
         private void Awake() {
-        
             RoundProperties.MaxRounds      = 1;
             RoundProperties.FreeroamLength = 1;
-            RoundProperties.PreRoundLength = 2;
+            RoundProperties.PreRoundLength = 1;
             RoundProperties.RoundLength    = 3;
 
             try {

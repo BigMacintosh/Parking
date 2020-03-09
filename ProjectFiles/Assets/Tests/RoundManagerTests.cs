@@ -9,11 +9,6 @@ using Utils;
 
 namespace Tests {
     public class RoundManagerTests {
-        [Test]
-        public void RoundManagerTestsSimplePasses() {
-            
-        }
-
         // A UnityTest behaves like a coroutine in PlayMode
         // and allows you to yield null to skip a frame in EditMode
         [UnityTest]

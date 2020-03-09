@@ -1,14 +1,11 @@
+using System;
 using Game.Core.Parking;
 using Game.Core.Rounds;
 using Game.Entity;
 using Game.Main;
-using Network;
-using NSubstitute;
 using NUnit.Framework;
-using UI;
-using UnityEngine;
 using Utils;
-using Transform = UnityEngine.Transform;
+
 
 namespace Tests {
     public class TestGameLoop : IGameLoop {
@@ -29,21 +26,20 @@ namespace Tests {
             parkingSpaceManager = new ServerParkingSpaceManager();
 
             for (int i = 0; i < 10; i++) {
-                parkingSpaceManager.TEST_ONLY_AddParkingSpace(NewMockParkingSpaceController(i));
+                parkingSpaceManager.TEST_ONLY_AddParkingSpace(TestUtils.NewMockParkingSpaceController(i));
             }
 
             world        = new ServerWorld(parkingSpaceManager);
             roundManager = new RoundManager(world, parkingSpaceManager);
 
-            world.CreatePlayer(0, new PlayerOptions());
-            world.CreatePlayer(1, new PlayerOptions());
-            world.CreatePlayer(2, new PlayerOptions());
+            for (int i = 0; i < 3; i++) {
+                world.TEST_ONLY_AddPlayer(TestUtils.NewMockPlayer(i));
+            }
 
             roundManager.GameStartEvent += (length, players) => world.SpawnPlayers();
             roundManager.GameEndEvent += winners => {
-                Assert.True(winners.Count == 2);
+                Assert.True(winners.Count == 1);
                 Assert.True(winners.Contains(1));
-                Assert.True(winners.Contains(2));
 
                 winners.ForEach(world.DestroyPlayer);
                 TestFinished = true;
@@ -54,29 +50,13 @@ namespace Tests {
             roundManager.PreRoundStartEvent += parkingSpaceManager.OnPreRoundStart;
 
             roundManager.RoundStartEvent += (number, active) => {
-                var t = new Timer(1);
-                t.Elapsed += () => parkingSpaceManager.OnSpaceEnter(0, active[0]);
-                t.Start();
+                timer         =  new Timer(1);
+                timer.Elapsed += () => parkingSpaceManager.OnSpaceEnter(1, active[0]);
+                timer.Start();
             };
 
             roundManager.StartGame();
             return true;
-        }
-
-        private static ParkingSpaceController NewMockParkingSpaceController(int n) {
-            var transformController = Substitute.For<ISpaceTransformController>();
-            transformController.GetTransform().Returns(new ObjectTransform {
-                Position = new Vector3(n, n),
-                Rotation = new Quaternion(n, n, n, n),
-            });
-
-            var colourController = Substitute.For<ISpaceColourController>();
-            var parkingSpace = Substitute.For<ParkingSpaceController>();
-            parkingSpace.SpaceID = (ushort) n;
-            parkingSpace.TransformController = transformController;
-            parkingSpace.ColourController = colourController;
-            parkingSpace.Disable();
-            return parkingSpace;
         }
 
         public void Shutdown() { }
