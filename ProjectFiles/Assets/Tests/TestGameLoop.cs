@@ -8,6 +8,7 @@ using NUnit.Framework;
 using UI;
 using UnityEngine;
 using Utils;
+using Transform = UnityEngine.Transform;
 
 namespace Tests {
     public class TestGameLoop : IGameLoop {
@@ -28,7 +29,7 @@ namespace Tests {
             parkingSpaceManager = new ServerParkingSpaceManager();
             
             for (int i = 0; i < 10; i++) {
-                parkingSpaceManager.TEST_ONLY_AddParkingSpace(NewMockParkingSpace(i));
+                parkingSpaceManager.TEST_ONLY_AddParkingSpace(NewMockParkingSpaceController(i));
             }
 
             world               = new ServerWorld(parkingSpaceManager);
@@ -63,12 +64,15 @@ namespace Tests {
             return true;
         }
 
-        private static ParkingSpace NewMockParkingSpace(int n) {
-            var parkingSpace = Substitute.For<ParkingSpace>();
+        private static ParkingSpaceController NewMockParkingSpaceController(int n) {
+            var parkingSpace = Substitute.For<ParkingSpaceController>();
+            var transformController = Substitute.For<ISpaceTransformController>();
+//            transformController.GetTransform().Returns(Transform.)
+            
             var transform    = Substitute.ForPartsOf<Transform>();
             transform.rotation.Returns(new Quaternion(n, n, n, n));
             transform.position.Returns(new Vector3(n, n, n));
-            parkingSpace.transform.Returns(transform);
+            
             return parkingSpace;
         }
 
