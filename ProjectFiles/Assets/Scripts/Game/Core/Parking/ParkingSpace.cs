@@ -38,9 +38,11 @@ namespace Game.Core.Parking {
                 return;
             }
 
-            if (other.TryGetComponent(out VehicleDriver driver)) {
-                Controller.OnSpaceEnteredByPlayer();
-            } else if (other.TryGetComponent(out Vehicle v)) { }
+            if (other.TryGetComponent(out Vehicle v)) {
+                if (v.IsPlayer) {
+                    Controller.OnSpaceEnteredByPlayer();
+                }
+            }
         }
 
         private void OnTriggerExit(Collider other) {
@@ -48,9 +50,11 @@ namespace Game.Core.Parking {
                 return;
             }
 
-            if (other.TryGetComponent(out VehicleDriver driver)) {
-                Controller.OnSpaceLeftByPlayer();
-            } else if (other.TryGetComponent(out Vehicle v)) { }
+            if (other.TryGetComponent(out Vehicle v)) {
+                if (v.IsPlayer) {
+                    Controller.OnSpaceLeftByPlayer();
+                }
+            }
         }
 
         #region ISpaceColourController implementation
