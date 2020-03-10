@@ -75,7 +75,7 @@ public class ChunksterInspector : Editor {
         EditorGUILayout.EndVertical();
         
         if (GUILayout.Button("Stitch Seams")) {
-
+            t.stitchChunks();
         }
     }
 }

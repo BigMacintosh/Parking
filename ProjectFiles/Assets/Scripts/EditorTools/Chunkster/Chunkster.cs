@@ -6,7 +6,8 @@ using UnityEditor;
 
 [ExecuteInEditMode]
 public class Chunkster : MonoBehaviour {
-    enum Direction { Up, Down, Left, Right }
+    // TODO: remove this cus unity has this in Vector3 oops
+    public enum Direction { Up, Down, Left, Right }
 
     // our base chunk
     public GameObject baseChunk;
@@ -113,23 +114,58 @@ public class Chunkster : MonoBehaviour {
     // stitches together seams between chunks
     // (takes average of touching vertices)
     public void stitchChunks() {
-        // foreach (Transform child in this.gameObject.transform) {
-        //     var chunk = (Chunk) child.GetComponent<Chunk>();
+        foreach (Transform child in this.gameObject.transform) {
+            var chunk = (Chunk) child.GetComponent<Chunk>();
             
-        //     var bottomX, bottomY = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Down );
-        //     var rightX,  rightY  = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Right);
+            var (bottomX, bottomY) = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Down );
+            var (rightX,   rightY) = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Right);
 
-        //     if (child.gameObject.name == this.getChunkId(chunkX, chunkY)) {
-        //         chunk = child.gameObject;
-        //         return true;
-        //     }
-        // }
+            if (!chunk.edgedRecently)          chunk.RefreshEdges();
+
+            if (this.chunkExists(bottomX, bottomY, out GameObject chunkBot)) {
+                var chunkBotData = (Chunk) chunkBot.GetComponent<Chunk>();
+                if (!chunkBotData.edgedRecently)   chunkBotData.RefreshEdges();
+                stitchChunkPair(chunk, Vector3.down, chunkBotData, Vector3.up);
+            }
+            if (this.chunkExists(rightX, rightY, out GameObject chunkRight)) {
+                var chunkRightData = (Chunk) chunkRight.GetComponent<Chunk>();
+                if (!chunkRightData.edgedRecently) chunkRightData.RefreshEdges();
+                stitchChunkPair(chunk, Vector3.right, chunkRightData, Vector3.left);
+            }
+
+            chunk.edgedRecently = false;
+        }
     }
 
-    public void stitchChunks(int chunkX1, int chunkY1, int chunkX2, int chunkY2) {
-        var chunk1 = (Chunk) this.getChunk(chunkX1, chunkY1).GetComponent<Chunk>();
-        var chunk2 = (Chunk) this.getChunk(chunkX2, chunkY2).GetComponent<Chunk>();
+    public void stitchChunkPair(Chunk chunk1, Vector3 chunkEdge1, Chunk chunk2, Vector3 chunkEdge2) {
+        // TODO: corners repeated twice?
 
-        
+        chunk1.RefreshEdges();
+        chunk2.RefreshEdges();
+
+        var edge1 = chunk1.GetMeshEdge(chunkEdge1);
+        var edge2 = chunk2.GetMeshEdge(chunkEdge2);
+
+        //edge1 = edge1.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
+        Debug.Log("ugh");
+        //edge2 = edge2.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
+
+        var edgeShared = new Dictionary<int, Vector3>();
+
+        foreach (var edge1Vtx in edge1){
+            var edge2Vtx = edge1[edge1Vtx.Key];
+
+            // take average of vals
+            var avgVtx = (edge1Vtx.Value + edge1Vtx.Value) / 2;
+
+            edgeShared[edge1Vtx.Key] = avgVtx;
+        }
+
+        Debug.Log("ugh2");
+
+        Debug.Log("ugh");
+
+        chunk1.UpdateEdge(edgeShared);
+        chunk2.UpdateEdge(edgeShared);
     }
 }

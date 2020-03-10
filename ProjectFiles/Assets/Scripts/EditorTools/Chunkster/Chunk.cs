@@ -4,20 +4,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
+[ExecuteInEditMode]
 public class Chunk : MonoBehaviour {
     // data stored in chunk instantiated by chunkster
     public int chunkX, chunkY;
 
     private Mesh mesh;
     private Dictionary<int, Vector3> left, right, top, bottom;
+    public bool edgedRecently = false;
 
-    void Start() {
-        mesh = this.GetComponent<MeshFilter>().mesh;
+    void Awake() {
+        mesh = this.GetComponent<MeshFilter>().sharedMesh;
+    }
+
+    public void RefreshEdges() {
+        this.edgedRecently = true;
 
         // find occurances of vertex number paired w/ coordinate
         var counts = mesh.triangles.GroupBy(x => x)
-                         .OrderBy(x => x.Key)
-                         .ToDictionary(x => x.Key, x => x.Count());
+                         .OrderBy          (x => x.Key)
+                         .ToDictionary     (x => x.Key, x => x.Count());
 
         var edgeVertexIdxs = mesh.triangles.GroupBy     (x => x)
                                            .OrderBy     (x => x.Key)
@@ -25,10 +31,10 @@ public class Chunk : MonoBehaviour {
         // find edges
         // we know a vertex which is an edge will only
         // be used in two triangles
-        var edgeVertices   = edgeVertexIdxs.Where (x => x.Value < 4)
+        var edgeVertices   = edgeVertexIdxs.Where       (x => x.Value < 4)
                                            .ToDictionary(x => x.Key, x => this.mesh.vertices[x.Key]);
         // find corners
-        var corners = counts.Where(x => x.Value < 3)
+        var corners = counts.Where       (x => x.Value < 3)
                             .ToDictionary(x => x.Key, x => this.mesh.vertices[x.Key]);
 
         // put all edges in a dict
@@ -44,14 +50,42 @@ public class Chunk : MonoBehaviour {
         this.top    = edgeVertices.Where(v => v.Value.y == topMost  ).ToDictionary(x => x.Key, x => x.Value);
     }
 
-    void Update() {
+    // will only be accurate if the edges have been refreshed
+    public Dictionary<int, Vector3> GetMeshEdge(Vector3 direction) {
+        if       (direction == Vector3.up) {
+            if(this.top == null)
+                Debug.Log("nulll");
+            Debug.Log("umm" + direction + top);
+            return this.top;
+        } else if(direction == Vector3.left) {
+            return this.left;
+        } else if(direction == Vector3.right) {
+            return this.right;
+        } else if(direction == Vector3.down) {
+            return this.bottom;
+        } else {
+            return null;
+        }
+    }
+
+    // updates mesh with edge
+    public void UpdateEdge(Dictionary<int, Vector3> edge) {
         var vertices = new Vector3[this.mesh.vertices.Length];
         Array.Copy(this.mesh.vertices, vertices, this.mesh.vertices.Length);
-        foreach (var item in this.left) {
-            if (item.Key < vertices.Length) {
-                vertices[item.Key] += new Vector3(0, 0, 1);
-            }
+        foreach (var item in edge){
+            vertices[item.Key] = item.Value;
         }
         this.mesh.vertices = vertices;
+    }
+
+    void Update() {
+        // var vertices = new Vector3[this.mesh.vertices.Length];
+        // Array.Copy(this.mesh.vertices, vertices, this.mesh.vertices.Length);
+        // foreach (var item in this.left) {
+        //     if (item.Key < vertices.Length) {
+        //         vertices[item.Key] += new Vector3(0, 0, 1);
+        //     }
+        // }
+        // this.mesh.vertices = vertices;
     }
 }
