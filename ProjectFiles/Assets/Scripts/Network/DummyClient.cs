@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Game;
+using Game.Core.Driving;
 using Game.Entity;
 using UnityEngine;
 using Utils;
@@ -49,7 +50,7 @@ namespace Network {
 
         public void Shutdown() { }
 
-        public void SendEvents() { }
+        public void SendEvents(VehicleInputState inputs) { }
 
         public void HandleNetworkEvents() { }
 

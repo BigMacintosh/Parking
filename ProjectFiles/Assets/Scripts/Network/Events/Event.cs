@@ -4,7 +4,7 @@ namespace Network.Events {
     public abstract class Event {
         protected EventType ID = EventType.Undefined;
         public    int       Length { get; protected set; }
-
+        
         public virtual void Serialise(DataStreamWriter writer) {
             writer.Write((byte) ID);
         }

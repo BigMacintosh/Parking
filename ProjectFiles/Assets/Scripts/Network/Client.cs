@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Game;
+using Game.Core.Driving;
 using Game.Entity;
 using Network.Events;
 using Unity.Collections;
@@ -31,7 +32,7 @@ namespace Network {
 
         bool   Start(ushort port = 25565);
         void   Shutdown();
-        void   SendEvents();
+        void   SendEvents(VehicleInputState inputs);
         void   HandleNetworkEvents();
         string GetServerIP();
         void   OnSpaceEnter(int playerID, ushort spaceID);
@@ -94,10 +95,10 @@ namespace Network {
             driver.Dispose();
         }
 
-        public void SendEvents() {
+        public void SendEvents(VehicleInputState inputs) {
             // Only send location if in game and in player mode
             if (inGame && ClientConfig.GameMode == GameMode.PlayerMode) {
-                var locationUpdate = new ClientLocationUpdateEvent(world);
+                var locationUpdate = new ClientInputStateEvent(inputs);
                 SendEventToServer(locationUpdate);
             }
 

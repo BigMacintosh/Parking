@@ -79,11 +79,11 @@ namespace Game.Entity {
 
             // Set all cars to controllable (they all accept VehicleInputState)
             car.GetComponent<Vehicle>().SetControllable();
+            vehicleDriver = car.GetComponent<VehicleDriver>();
             
             if (isMe) {
                 // Set the player's cars to playable
                 car.GetComponent<Vehicle>().SetPlayable();
-                vehicleDriver = car.GetComponent<VehicleDriver>();
             }
 
             // Set the car colour

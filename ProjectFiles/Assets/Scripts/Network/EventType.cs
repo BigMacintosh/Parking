@@ -9,7 +9,8 @@ namespace Network {
         ClientLocationUpdate  = 0x82,
         ClientSpaceEnterEvent = 0x83,
         ClientSpaceExitEvent  = 0x84,
-
+        ClientInputStateEvent = 0x85,
+        
         AdminClientStartGameEvent = 0xA0,
 
         ServerHandshake               = 0x01,

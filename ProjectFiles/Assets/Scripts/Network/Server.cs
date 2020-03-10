@@ -216,6 +216,10 @@ namespace Network {
                     ev = new AdminClientStartGameEvent();
                     break;
                 }
+                case EventType.ClientInputStateEvent: {
+                    ev = new ClientInputStateEvent();
+                    break;
+                }
                 default: {
                     Debug.Log($"Server: Received unexpected event {eventType}.");
                     return;
@@ -290,6 +294,10 @@ namespace Network {
             if (srcConnection.InternalId == adminClient) {
                 TriggerGameStartEvent?.Invoke();
             }
+        }
+
+        public void Handle(ClientInputStateEvent ev, NetworkConnection srcConnection) {
+            world.ApplyInputs(srcConnection.InternalId, ev.Inputs);
         }
 
         // Used to send a packet to all clients.
