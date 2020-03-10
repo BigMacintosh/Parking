@@ -40,7 +40,7 @@ namespace Tests {
 
             TestFinished = false;
 
-            // Initialise Gameplay components
+            // Initialise Test components
             parkingSpaceManager = new ServerParkingSpaceManager();
 
             for (int i = 0; i < 10; i++) {
@@ -54,10 +54,12 @@ namespace Tests {
                 world.TEST_ONLY_AddPlayer(TestUtils.NewMockPlayer(i));
             }
 
+            // Set up some standard event listeners (as in the ServerGameLoop)
             roundManager.GameStartEvent     += (length, players) => world.SpawnPlayers();
             roundManager.PreRoundStartEvent += parkingSpaceManager.OnPreRoundStart;
             roundManager.RoundStartEvent    += parkingSpaceManager.OnRoundStart;
             
+            // Schedule a SpaceEnter event
             roundManager.RoundStartEvent += (number, active) => {
                 timer         =  new Timer(1);
                 timer.Elapsed += () => parkingSpaceManager.OnSpaceEnter(1, active[0]);
