@@ -1,4 +1,5 @@
-﻿using Game.Core.Parking;
+﻿using Game.Core.Driving;
+using Game.Core.Parking;
 using Game.Entity;
 using Network;
 using UI;
@@ -87,6 +88,11 @@ namespace Game.Main {
         }
 
         public void FixedUpdate() {
+            if (ClientConfig.PlayerID != -1) {
+                var inputs = VehicleInputState.GetInputs();
+                world.ApplyInputs(ClientConfig.PlayerID, inputs);
+            }
+
             client.SendEvents();
         }
 

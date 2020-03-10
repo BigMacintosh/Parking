@@ -16,6 +16,10 @@ namespace Game.Entity {
             Players   = new Dictionary<int, Player>();
         }
 
+        public void ApplyInputs(int playerID, VehicleInputState inputs) {
+            Players[playerID].ApplyInputs(inputs);
+        }
+        
         /// <summary>
         /// Creates a player, but does not spawn them
         /// Should be used when a new player connects

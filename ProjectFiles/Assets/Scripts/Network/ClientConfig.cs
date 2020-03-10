@@ -12,7 +12,7 @@ namespace Network {
         public static CarType  VehicleType   = CarType.Hatchback;
         public static Color    VehicleColour = Color.red;
         public static GameMode GameMode      = GameMode.PlayerMode;
-        public static int      PlayerID => Me.PlayerID;
+        public static int      PlayerID => Me?.PlayerID ?? -1;
         public static Player   Me;
 
     #if UNITY_EDITOR

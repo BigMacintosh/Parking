@@ -15,12 +15,13 @@ namespace Game.Entity {
         public int           PlayerID      { get; }
         public bool          IsEliminated  { get; private set; }
         public PlayerOptions PlayerOptions => playerOptions;
+        public bool          isSpawned     { get; private set; }
 
         // Private Fields
         private GameObject    car; // Do not directly set this. Use SetCar method
+        private VehicleDriver vehicleDriver;
         private Rigidbody     carRb;
         private Transform     carTrans;
-        private bool          isSpawned;
         private PlayerOptions playerOptions;
 
         private readonly bool isMe;
@@ -41,6 +42,11 @@ namespace Game.Entity {
             }
         }
 
+        public void ApplyInputs(VehicleInputState inputs) {
+            if (!isSpawned) return;
+            vehicleDriver.ApplyInputs(inputs);
+        }
+
         /// <summary>
         /// Used to set the car object for a player.
         ///
@@ -48,9 +54,9 @@ namespace Game.Entity {
         /// </summary>
         /// <param name="newCar"></param>
         private void SetCar(GameObject newCar) {
-            car      = newCar;
-            carRb    = newCar.GetComponent<Rigidbody>();
-            carTrans = newCar.transform;
+            car           = newCar;
+            carRb         = newCar.GetComponent<Rigidbody>();
+            carTrans      = newCar.transform;
         }
 
         /// <summary>
@@ -74,6 +80,7 @@ namespace Game.Entity {
             // Set car to controllable if spawning this players car
             if (isMe) {
                 car.GetComponent<Vehicle>().SetControllable();
+                vehicleDriver = car.GetComponent<VehicleDriver>();
             }
 
             // Set the car colour
