@@ -16,7 +16,6 @@ namespace Game.Core.Driving {
 
         // Private Fields
         private Color         colourToSet;
-        private UIController  uiController;
         private VehicleDriver driver;
 
 
@@ -43,8 +42,10 @@ namespace Game.Core.Driving {
             driver.maxSteer    = 30;
             driver.driftFactor = 3f;
             driver.mask        = collisionMask;
-            driver.setAcceptInput(true);
+            driver.SetAcceptInput(true);
+        }
 
+        public void SetPlayable() {
             // Set camera to follow car
             var camera = FindObjectOfType<CameraFollowController>();
             camera.ObjectToFollow = transform;
@@ -53,7 +54,7 @@ namespace Game.Core.Driving {
             minimap.ObjectToFollow = transform;
 
             //Link with UIController
-            uiController         = FindObjectOfType<UIController>();
+            var uiController = FindObjectOfType<UIController>();
             uiController.Vehicle = this;
         }
     }

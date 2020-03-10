@@ -77,9 +77,12 @@ namespace Game.Entity {
             Debug.Log($"Spawning at {spawnPosition.Transform.Position} with rot: {spawnPosition.Transform.Rotation}");
             SetCar(Object.Instantiate(prefab, spawnPosition.Transform.Position, spawnPosition.Transform.Rotation));
 
-            // Set car to controllable if spawning this players car
+            // Set all cars to controllable (they all accept VehicleInputState)
+            car.GetComponent<Vehicle>().SetControllable();
+            
             if (isMe) {
-                car.GetComponent<Vehicle>().SetControllable();
+                // Set the player's cars to playable
+                car.GetComponent<Vehicle>().SetPlayable();
                 vehicleDriver = car.GetComponent<VehicleDriver>();
             }
 
