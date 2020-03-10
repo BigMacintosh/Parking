@@ -11,6 +11,8 @@ namespace Game.Core.Driving {
         public List<DriveWheel>  driveWheels;
         public VehicleProperties vehicleProperties;
         public LayerMask         collisionMask;
+        
+        public bool IsPlayer { get; private set; }
 
         [SerializeField] private MeshRenderer bodyRenderer;
 
@@ -56,6 +58,8 @@ namespace Game.Core.Driving {
             //Link with UIController
             var uiController = FindObjectOfType<UIController>();
             uiController.Vehicle = this;
+
+            IsPlayer = true;
         }
     }
 
