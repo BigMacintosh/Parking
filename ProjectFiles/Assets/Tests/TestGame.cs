@@ -13,10 +13,6 @@ namespace Tests {
         // Private Fields
         private TestGameLoop gameLoop;
 
-        private void ShutdownGameLoops() {
-            gameLoop.Shutdown();
-        }
-
         private void Awake() {
             RoundProperties.MaxRounds      = 1;
             RoundProperties.FreeroamLength = 1;
@@ -37,18 +33,6 @@ namespace Tests {
         // Update Loops
         public void Update() {
             gameLoop.Update();
-        }
-
-        private void FixedUpdate() {
-            gameLoop.FixedUpdate();
-        }
-
-        private void LateUpdate() {
-            gameLoop.LateUpdate();
-        }
-
-        private void OnApplicationQuit() {
-            ShutdownGameLoops();
         }
     }
 }
