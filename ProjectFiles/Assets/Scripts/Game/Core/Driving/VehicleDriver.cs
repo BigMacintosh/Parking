@@ -10,8 +10,8 @@ namespace Game.Core.Driving {
         public List<WheelTransformPair> otherWheels;
         public LayerMask                mask;
 
-        public float maxSteerAngle;
-        public float motorForce;
+        public  float maxSteerAngle;
+        public  float motorForce;
 
         // Private Fields
         private bool      acceptinput;
@@ -19,8 +19,9 @@ namespace Game.Core.Driving {
 
         private float horizontalInput;
         private float verticalInput;
-        private float steeringAngle;
+        private float drift;
         private bool  jump;
+
 
         private float collisionAmplifier = 50f;
         private float collisionCooldown  = 0.5f;
@@ -34,9 +35,9 @@ namespace Game.Core.Driving {
 
         private void FixedUpdate() {
             bool isGrounded = CheckGrounded();
-            
+
             GetInput();
-            if(jump && isGrounded) Jump();
+            if (jump && isGrounded) Jump();
             Steer();
             Accelerate();
             UpdateWheels();
@@ -62,19 +63,21 @@ namespace Game.Core.Driving {
         private void GetInput() {
             horizontalInput = Input.GetAxis("Horizontal");
             verticalInput   = Input.GetAxis("Vertical");
+            drift           = Input.GetAxis("Drift");
             if (Input.GetAxis("Jump") != 0) {
                 jump = true;
             }
         }
 
         private void Jump() {
-            body.AddForce(body.mass * motorForce/3f * transform.up);
+            body.AddForce(body.mass * motorForce / 3f * transform.up);
             jump = false;
         }
 
         private void Steer() {
             foreach (WheelTransformPair wheel in driveWheels) {
-                wheel.wheel.steerAngle = maxSteerAngle * horizontalInput;
+                wheel.wheel.steerAngle = (maxSteerAngle              * horizontalInput) +
+                                         (maxSteerAngle / 2f * drift * (horizontalInput / Mathf.Abs(horizontalInput)));
             }
         }
 
