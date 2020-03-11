@@ -14,7 +14,7 @@ namespace Game.Main {
     public enum ServerClientSetting {
         Client,
         Server,
-        Standalone
+        Standalone,
     }
 
     [DefaultExecutionOrder(-1000)]

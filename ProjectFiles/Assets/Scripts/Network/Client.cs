@@ -219,7 +219,7 @@ namespace Network {
                     break;
                 }
                 case EventType.ServerKeepAliveEvent: {
-                    ev = new ServerKeepAlive();
+                    ev = new ServerPing();
                     break;
                 }
                 case EventType.ServerGameStartEvent: {
@@ -318,7 +318,7 @@ namespace Network {
             GameEndEvent?.Invoke(ev.Winners);
         }
 
-        public void Handle(ServerKeepAlive ev, NetworkConnection conn) {
+        public void Handle(ServerPing ev, NetworkConnection conn) {
             // Don't really need to do anything... Maybe a packet is needed to be sent back.
         }
 

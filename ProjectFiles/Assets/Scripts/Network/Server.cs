@@ -318,7 +318,7 @@ namespace Network {
 
 
         private void OnKeepAlive(int ticksLeft) {
-            var keepAlive = new ServerKeepAlive();
+            var keepAlive = new ServerPing();
             SendToAll(keepAlive);
         }
 

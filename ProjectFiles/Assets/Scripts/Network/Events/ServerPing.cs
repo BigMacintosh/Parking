@@ -1,8 +1,8 @@
 using Unity.Networking.Transport;
 
 namespace Network.Events {
-    public class ServerKeepAlive : Event {
-        public ServerKeepAlive() {
+    public class ServerPing : Event {
+        public ServerPing() {
             ID     = EventType.ServerKeepAliveEvent;
             Length = 1;
         }
