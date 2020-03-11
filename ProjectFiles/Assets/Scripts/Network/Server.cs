@@ -14,12 +14,17 @@ using UdpCNetworkDriver =
         Unity.Networking.Transport.DefaultPipelineStageCollection>;
 
 namespace Network {
+    internal struct PendingPing {
+        public int   id;
+        public float time;
+    }
+
     public class Server {
         // Delegates
         public event SpaceEnterDelegate       SpaceEnterEvent;
         public event SpaceExitDelegate        SpaceExitEvent;
         public event TriggerGameStartDelegate TriggerGameStartEvent;
-        
+
         // Private Fields
         private bool acceptingNewPlayers;
         private int  adminClient = -1;
@@ -27,8 +32,11 @@ namespace Network {
         private string IP   => config.IpAddress;
         private ushort Port => config.Port;
 
-        private NativeList<NetworkConnection> connections;
-        private UdpCNetworkDriver             driver;
+        private NativeList<NetworkConnection>       connections;
+        private UdpCNetworkDriver                   driver;
+        private Dictionary<int, PendingPing> pendingClientPings;
+        private Dictionary<int, int> pingCounts;
+        private Dictionary<int, ulong> pingTimeSum;
 
         private readonly Timer           keepAliveTimer;
         private readonly NetworkPipeline pipeline;
@@ -43,6 +51,7 @@ namespace Network {
             this.config           = config;
             connections           = new NativeList<NetworkConnection>(this.config.MaxPlayers, Allocator.Persistent);
             playersToSpawn        = new List<int>();
+            pendingClientPings    = new Dictionary<int, PendingPing>();
             acceptingNewPlayers   = true;
             connectionEventQueues = new Dictionary<int, Queue<Event>>();
 
@@ -51,8 +60,8 @@ namespace Network {
             driver   = new UdpCNetworkDriver(new ReliableUtility.Parameters {WindowSize = 32});
             pipeline = driver.CreatePipeline(typeof(ReliableSequencedPipelineStage));
 
-            keepAliveTimer      =  new Timer(10, true);
-            keepAliveTimer.Tick += OnKeepAlive;
+            keepAliveTimer      =  new Timer(2, true);
+            keepAliveTimer.Tick += OnPing;
         }
 
 
@@ -130,6 +139,7 @@ namespace Network {
                     Debug.Log($"Server: Accepted a connection from {endpoint.IpAddress()}:{endpoint.Port}.");
 
                     connectionEventQueues.Add(c.InternalId, new Queue<Event>());
+                    pendingClientPings.Add(c.InternalId, new PendingPing { });
                 }
             } else {
                 while ((c = driver.Accept()) != default) {
@@ -214,8 +224,8 @@ namespace Network {
                     ev = new AdminClientStartGameEvent();
                     break;
                 }
-                case EventType.ClientPingEvent: {
-                    ev = new ClientPing();
+                case EventType.ClientPongEvent: {
+                    ev = new ClientPong();
                     break;
                 }
                 default: {
@@ -294,8 +304,9 @@ namespace Network {
             }
         }
 
-        public void Handle(ClientPing ev, NetworkConnection srcConnection) {
-            
+        public void Handle(ClientPong ev, NetworkConnection srcConnection) {
+            pingTimeSum[srcConnection.InternalId] +=
+                (ulong) ((Time.fixedTime - pendingClientPings[srcConnection.InternalId].time) * 1000);
         }
 
         // Used to send a packet to all clients.
@@ -325,9 +336,15 @@ namespace Network {
         }
 
 
-        private void OnKeepAlive(int ticksLeft) {
-            var keepAlive = new ServerPing();
-            SendToAll(keepAlive);
+        private void OnPing(int ticksLeft) {
+            var ping = new ServerPing();
+            foreach (var connection in connections) {
+                pendingClientPings[connection.InternalId] = new PendingPing {
+                    id = pingCounts[connection.InternalId], time = Time.fixedTime
+                };
+                pingCounts[connection.InternalId]++;
+            }
+            SendToAll(ping);
         }
 
         public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers) {

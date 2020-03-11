@@ -1,25 +1,26 @@
 using Unity.Networking.Transport;
 
 namespace Network.Events {
-    public class ServerPing : Event {
-        public int PingID { get; private set; }
+    public class ClientPong : Event {
         
-        public ServerPing() {
-            ID     = EventType.ServerPingEvent;
+        public int PongID { get; private set; }
+        
+        public ClientPong() {
+            ID     = EventType.ClientPongEvent;
             Length = sizeof(byte) + sizeof(int);
         }
-
-        public ServerPing(int pingID) {
-            PingID = pingID;
+        
+        public ClientPong(int pongID) {
+            PongID = pongID;
         }
 
         public override void Serialise(DataStreamWriter writer) {
             base.Serialise(writer);
-            writer.Write(PingID);
+            writer.Write(PongID);
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context) {
-            PingID = reader.ReadInt(ref context);
+            PongID = reader.ReadInt(ref context);
         }
 
         public override void Handle(Server server, NetworkConnection connection) {

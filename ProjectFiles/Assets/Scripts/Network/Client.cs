@@ -319,8 +319,8 @@ namespace Network {
         }
 
         public void Handle(ServerPing ev, NetworkConnection conn) {
-            SendEventToServer(new ClientPing());
-            // Don't really need to do anything... Maybe a packet is needed to be sent back.
+            // Pong it back
+            SendEventToServer(new ClientPong(ev.PingID));
         }
 
         public void Handle(ServerSpaceClaimedEvent ev, NetworkConnection conn) {
