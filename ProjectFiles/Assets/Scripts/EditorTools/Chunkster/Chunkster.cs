@@ -120,16 +120,16 @@ public class Chunkster : MonoBehaviour {
             var (bottomX, bottomY) = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Down );
             var (rightX,   rightY) = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Right);
 
-            if (!chunk.edgedRecently)          chunk.RefreshEdges();
+            /*if (!chunk.edgedRecently)*/          chunk.RefreshEdges();
 
             if (this.chunkExists(bottomX, bottomY, out GameObject chunkBot)) {
                 var chunkBotData = (Chunk) chunkBot.GetComponent<Chunk>();
-                if (!chunkBotData.edgedRecently)   chunkBotData.RefreshEdges();
+                /*if (!chunkBotData.edgedRecently)*/   chunkBotData.RefreshEdges();
                 stitchChunkPair(chunk, Vector3.down, chunkBotData, Vector3.up);
             }
             if (this.chunkExists(rightX, rightY, out GameObject chunkRight)) {
                 var chunkRightData = (Chunk) chunkRight.GetComponent<Chunk>();
-                if (!chunkRightData.edgedRecently) chunkRightData.RefreshEdges();
+                /*if (!chunkRightData.edgedRecently)*/ chunkRightData.RefreshEdges();
                 stitchChunkPair(chunk, Vector3.right, chunkRightData, Vector3.left);
             }
 
@@ -138,34 +138,66 @@ public class Chunkster : MonoBehaviour {
     }
 
     public void stitchChunkPair(Chunk chunk1, Vector3 chunkEdge1, Chunk chunk2, Vector3 chunkEdge2) {
-        // TODO: corners repeated twice?
+        if (chunk1.HasPolybrushMesh() && chunk2.HasPolybrushMesh()) {
 
-        chunk1.RefreshEdges();
-        chunk2.RefreshEdges();
+            // TODO: corners repeated twice?
 
-        var edge1 = chunk1.GetMeshEdge(chunkEdge1);
-        var edge2 = chunk2.GetMeshEdge(chunkEdge2);
+            // chunk1.RefreshEdges();
+            // chunk2.RefreshEdges();
 
-        //edge1 = edge1.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
-        Debug.Log("ugh");
-        //edge2 = edge2.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
+            var edge1 = chunk1.GetMeshEdge(chunkEdge1);
+            var edge2 = chunk2.GetMeshEdge(chunkEdge2);
 
-        var edgeShared = new Dictionary<int, Vector3>();
+            //edge1 = edge1.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
+            //edge2 = edge2.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
 
-        foreach (var edge1Vtx in edge1){
-            var edge2Vtx = edge1[edge1Vtx.Key];
+            var edgeShared = new Dictionary<int, Vector3>();
+            var edge1New = new Dictionary<int, Vector3>();
+            var edge2New = new Dictionary<int, Vector3>();
 
-            // take average of vals
-            var avgVtx = (edge1Vtx.Value + edge1Vtx.Value) / 2;
+            // is there any guarantee the vertices are ordered in the same way??
 
-            edgeShared[edge1Vtx.Key] = avgVtx;
+            foreach (var edge1Vtx in edge1){
+                var edge2Vtx = edge1[edge1Vtx.Key];
+
+                // take average of vals
+                //var avgVtx = (edge1Vtx.Value + edge1Vtx.Value) / 2;
+                var avgVtx = new Vector3(0, 2, 0);
+
+                edgeShared[edge1Vtx.Key] = avgVtx;
+            }
+
+            // go through values in edge1 & edge2
+            // sequentially by key val.
+            // probs. not the best way to do this...
+            int lastEdge2Idx = 0;
+            for (int i = 0; i <= edge1.Keys.Max(); i++) {
+                // find next key in edge1
+                if (edge1.ContainsKey(i)) {
+                    // find next key in edge2
+                    while (!edge2.ContainsKey(lastEdge2Idx)) {
+                        lastEdge2Idx++;
+                    }
+
+                    // these two should be matched?
+                    edge1New[i] = edge1[i] + new Vector3(0, 0, 2);
+                    edge2New[lastEdge2Idx] = edge2[lastEdge2Idx] + new Vector3(0, 0, 2);
+
+                    lastEdge2Idx++;
+                }
+
+            }
+
+            // foreach (var item in edge1){
+            //     edge1New[item.Key] = item.Value + new Vector3(0, 0, 2);
+            // }
+
+            chunk1.UpdateEdge(edge1New);
+            chunk2.UpdateEdge(edge2New);
+        } else {
+            Debug.LogWarning("Tried to stitch mesh of "
+                           + chunk1.gameObject.name + " & " + chunk2.gameObject.name
+                           + " but couldn't as it is not a Polybrush mesh instance!");
         }
-
-        Debug.Log("ugh2");
-
-        Debug.Log("ugh");
-
-        chunk1.UpdateEdge(edgeShared);
-        chunk2.UpdateEdge(edgeShared);
     }
 }
