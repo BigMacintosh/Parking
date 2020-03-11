@@ -5,6 +5,7 @@ using Network;
 using UI;
 using UnityEngine;
 using Utils;
+using Transform = UnityEngine.Transform;
 
 namespace Game.Core.Parking {
     /// <summary>
@@ -13,26 +14,31 @@ namespace Game.Core.Parking {
     /// </summary>
     public abstract class ParkingSpaceManager {
         // Public fields
-        public Dictionary<int, ParkingSpace> ParkingSpacesByPlayerID { get; private set; }
+        public Dictionary<int, ParkingSpaceController> ParkingSpacesByPlayerID { get; private set; }
 
         // Protected fields
-        protected Dictionary<ushort, ParkingSpace> parkingSpacesBySpaceID;
+        protected Dictionary<ushort, ParkingSpaceController> parkingSpacesBySpaceID;
 
         /// <summary>
         ///  Constructor for ParkingSpaceManager
         /// </summary>
         protected ParkingSpaceManager() {
-            parkingSpacesBySpaceID  = new Dictionary<ushort, ParkingSpace>();
-            ParkingSpacesByPlayerID = new Dictionary<int, ParkingSpace>();
+            parkingSpacesBySpaceID  = new Dictionary<ushort, ParkingSpaceController>();
+            ParkingSpacesByPlayerID = new Dictionary<int, ParkingSpaceController>();
 
             var parkingSpaceList = Object.FindObjectsOfType<ParkingSpace>();
             foreach (var parkingSpace in parkingSpaceList) {
-                parkingSpacesBySpaceID.Add(parkingSpace.SpaceID, parkingSpace);
+                parkingSpacesBySpaceID.Add(parkingSpace.Controller.SpaceID, parkingSpace.Controller);
             }
 
             DisableAllSpaces();
         }
 
+        public void TEST_ONLY_AddParkingSpace(ParkingSpaceController p) {
+            parkingSpacesBySpaceID.Add(p.SpaceID, p);
+            p.Disable();
+        }
+        
         /// <summary>
         /// Disables all parking spaces.
         /// Used at the end of a round.
@@ -75,10 +81,10 @@ namespace Game.Core.Parking {
         /// Gets the transforms for all spaces.
         /// </summary>
         /// <returns>A list containing all space transforms</returns>
-        public List<Transform> GetSpaceTransforms() {
-            var transforms = new List<Transform>();
+        public List<ObjectTransform> GetSpaceTransforms() {
+            var transforms = new List<ObjectTransform>();
             foreach (var space in parkingSpacesBySpaceID) {
-                transforms.Add(space.Value.transform);
+                transforms.Add(space.Value.Transform);
             }
 
             return transforms;
@@ -94,7 +100,7 @@ namespace Game.Core.Parking {
         public List<ushort> GetNearestSpaces(Vector2 position, int amount, bool onlyEnabled = false) {
             var spaces = parkingSpacesBySpaceID.Values
                                                .OrderBy(space => {
-                                                    var spacePos = space.transform.position;
+                                                    var spacePos = space.Transform.Position;
                                                     return new Vector2(
                                                             spacePos.x - position.x, spacePos.z - position.y)
                                                        .magnitude;

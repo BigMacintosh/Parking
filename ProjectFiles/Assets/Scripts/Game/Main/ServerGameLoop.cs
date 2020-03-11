@@ -75,6 +75,7 @@ namespace Game.Main {
             server.HandleNetworkEvents();
             // world.Update();
             roundManager.Update();
+            parkingSpaceManager.Update();
         }
 
         public void FixedUpdate() {

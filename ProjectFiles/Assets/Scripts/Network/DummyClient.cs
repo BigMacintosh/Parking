@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game;
 using Game.Entity;
 using UnityEngine;
+using Utils;
 
 namespace Network {
     internal class DummyClient : IClient {
@@ -23,22 +24,23 @@ namespace Network {
             this.world = world;
         }
 
-        
 
         public bool Start(ushort port = 25565) {
             var playerID = 0;
             world.CreatePlayer(playerID, new PlayerOptions {
-                CarType = ClientConfig.VehicleType,
-                CarColour = ClientConfig.VehicleColour,
+                CarType    = ClientConfig.VehicleType,
+                CarColour  = ClientConfig.VehicleColour,
                 PlayerName = ClientConfig.PlayerName,
             }, true);
             var spawnPos = new PlayerPosition {
-                Pos = new Vector3 {
-                    x = -6.82f,
-                    y = 2.19f,
-                    z = -0.7f,
+                Transform = new ObjectTransform {
+                    Position = new Vector3 {
+                        x = -6.82f,
+                        y = 2.19f,
+                        z = -0.7f,
+                    },
+                    Rotation = new Quaternion(),
                 },
-                Rot = new Quaternion(),
             };
             var dict = new Dictionary<int, PlayerPosition> {{playerID, spawnPos}};
             world.SpawnPlayers(dict);
