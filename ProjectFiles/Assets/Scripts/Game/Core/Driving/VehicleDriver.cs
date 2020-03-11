@@ -26,6 +26,8 @@ namespace Game.Core.Driving {
         private float collisionAmplifier = 50f;
         private float collisionCooldown  = 0.5f;
         private float timestamp          = 0f;
+        
+        private WheelFrictionCurve fricCurve = new WheelFrictionCurve();
 
         // Start is called before the first frame update
         private void Start() {
