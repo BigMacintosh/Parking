@@ -218,7 +218,7 @@ namespace Network {
                     ev = new ServerDisconnectEvent();
                     break;
                 }
-                case EventType.ServerKeepAliveEvent: {
+                case EventType.ServerPingEvent: {
                     ev = new ServerPing();
                     break;
                 }
@@ -319,6 +319,7 @@ namespace Network {
         }
 
         public void Handle(ServerPing ev, NetworkConnection conn) {
+            SendEventToServer(new ClientPing());
             // Don't really need to do anything... Maybe a packet is needed to be sent back.
         }
 

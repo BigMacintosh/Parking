@@ -1,14 +1,13 @@
 using Unity.Networking.Transport;
 
 namespace Network.Events {
-    public class ServerPing : Event {
-        public ServerPing() {
+    public class ClientPing : Event {
+        public ClientPing() {
             ID     = EventType.ServerPingEvent;
             Length = 1;
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context) {
-            // ServerKeepAlive is empty, no need to deserialise
         }
 
         public override void Handle(Server server, NetworkConnection connection) {

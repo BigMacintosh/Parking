@@ -214,6 +214,10 @@ namespace Network {
                     ev = new AdminClientStartGameEvent();
                     break;
                 }
+                case EventType.ClientPingEvent: {
+                    ev = new ClientPing();
+                    break;
+                }
                 default: {
                     Debug.Log($"Server: Received unexpected event {eventType}.");
                     return;
@@ -288,6 +292,10 @@ namespace Network {
             if (srcConnection.InternalId == adminClient) {
                 TriggerGameStartEvent?.Invoke();
             }
+        }
+
+        public void Handle(ClientPing ev, NetworkConnection srcConnection) {
+            
         }
 
         // Used to send a packet to all clients.

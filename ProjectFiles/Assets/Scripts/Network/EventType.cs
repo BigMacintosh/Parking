@@ -9,6 +9,7 @@ namespace Network {
         ClientLocationUpdate  = 0x82,
         ClientSpaceEnterEvent = 0x83,
         ClientSpaceExitEvent  = 0x84,
+        ClientPingEvent       = 0x86,
 
         AdminClientStartGameEvent = 0xA0,
 
@@ -22,7 +23,7 @@ namespace Network {
         ServerDisconnectEvent         = 0x08,
         ServerGameEndEvent            = 0x09,
         ServerGameStartEvent          = 0x0B,
-        ServerKeepAliveEvent          = 0x0A,
+        ServerPingEvent               = 0x0A,
         ServerSpaceClaimedEvent       = 0x0C,
         ServerNewPlayerConnectedEvent = 0x0D,
     }
