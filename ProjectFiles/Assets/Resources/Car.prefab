@@ -49,16 +49,16 @@ WheelCollider:
   m_Mass: 100
   m_WheelDampingRate: 1
   m_ForwardFriction:
-    m_ExtremumSlip: 0.001
+    m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 1
-    m_AsymptoteValue: 1
+    m_AsymptoteValue: 0.8
     m_Stiffness: 1
   m_SidewaysFriction:
-    m_ExtremumSlip: 0.001
+    m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
-    m_AsymptoteSlip: 1
-    m_AsymptoteValue: 1
+    m_AsymptoteSlip: 0.5
+    m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
 --- !u!1 &2754571377349320158
@@ -287,16 +287,16 @@ WheelCollider:
   m_Mass: 100
   m_WheelDampingRate: 1
   m_ForwardFriction:
-    m_ExtremumSlip: 0.001
+    m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 1
-    m_AsymptoteValue: 1
+    m_AsymptoteValue: 0.8
     m_Stiffness: 1
   m_SidewaysFriction:
-    m_ExtremumSlip: 0.001
+    m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
-    m_AsymptoteSlip: 1
-    m_AsymptoteValue: 1
+    m_AsymptoteSlip: 0.5
+    m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
 --- !u!1 &4575223889393697400
@@ -382,16 +382,16 @@ WheelCollider:
   m_Mass: 100
   m_WheelDampingRate: 1
   m_ForwardFriction:
-    m_ExtremumSlip: 0.001
+    m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 1
-    m_AsymptoteValue: 1
+    m_AsymptoteValue: 0.8
     m_Stiffness: 1
   m_SidewaysFriction:
-    m_ExtremumSlip: 0.001
+    m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
-    m_AsymptoteSlip: 1
-    m_AsymptoteValue: 1
+    m_AsymptoteSlip: 0.5
+    m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
 --- !u!1 &6953203715374175857
@@ -443,16 +443,16 @@ WheelCollider:
   m_Mass: 100
   m_WheelDampingRate: 1
   m_ForwardFriction:
-    m_ExtremumSlip: 0.001
+    m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 1
-    m_AsymptoteValue: 1
+    m_AsymptoteValue: 0.8
     m_Stiffness: 1
   m_SidewaysFriction:
-    m_ExtremumSlip: 0.001
+    m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
-    m_AsymptoteSlip: 1
-    m_AsymptoteValue: 1
+    m_AsymptoteSlip: 0.5
+    m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
 --- !u!1001 &553317385339556824
