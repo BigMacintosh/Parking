@@ -1,5 +1,6 @@
 using Game.Entity;
 using Unity.Networking.Transport;
+using UnityEngine;
 
 namespace Network.Events {
     public class ServerNewPlayerConnectedEvent : Event {
@@ -14,10 +15,9 @@ namespace Network.Events {
             PlayerID = playerID;
             PlayerOptions = playerOptions;
             Length = sizeof(byte) + sizeof(int) + playerOptions.WriterLength();
+            Debug.Log(Length);
         }
-
         
-
         public override void Serialise(DataStreamWriter writer) {
             base.Serialise(writer);
             writer.Write(PlayerID);

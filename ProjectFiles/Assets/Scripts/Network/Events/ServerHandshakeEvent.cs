@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Entity;
@@ -5,6 +6,8 @@ using Unity.Networking.Transport;
 
 namespace Network.Events {
     public class ServerHandshakeEvent : Event {
+        public ulong                          BaseTick      { get; private set; }
+        public ulong                          Timestamp     { get; private set; }
         public int                            PlayerID      { get; private set; }
         public Dictionary<int, PlayerOptions> PlayerOptions { get; private set; }
 
@@ -12,16 +15,23 @@ namespace Network.Events {
             ID = EventType.ServerHandshake;
         }
 
-        public ServerHandshakeEvent(int playerID, Dictionary<int, PlayerOptions> playerOptions) : this() {
-            PlayerID = playerID;
+        public ServerHandshakeEvent(ulong                          baseTick, ulong timestamp, int playerID,
+                                    Dictionary<int, PlayerOptions> playerOptions) :
+            this() {
+            BaseTick      = baseTick;
+            Timestamp     = timestamp;
+            PlayerID      = playerID;
             PlayerOptions = playerOptions;
 
-            Length = sizeof(byte) + sizeof(int) + sizeof(int) + playerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
+            Length = sizeof(byte) + sizeof(ulong) + sizeof(ulong) + sizeof(int) + sizeof(int) +
+                     playerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
         }
 
 
         public override void Serialise(DataStreamWriter writer) {
             base.Serialise(writer);
+            writer.Write(BaseTick);
+            writer.Write(Timestamp);
             writer.Write(PlayerID);
             writer.Write(PlayerOptions.Count);
             foreach (var kv in PlayerOptions) {
@@ -31,6 +41,8 @@ namespace Network.Events {
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context) {
+            BaseTick      = reader.ReadULong(ref context);
+            Timestamp     = reader.ReadULong(ref context);
             PlayerID      = reader.ReadInt(ref context);
             PlayerOptions = new Dictionary<int, PlayerOptions>();
 
@@ -41,7 +53,8 @@ namespace Network.Events {
                 PlayerOptions.Add(playerID, playerOptions);
             }
 
-            Length = sizeof(int) + sizeof(byte) + sizeof(int) + PlayerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
+            Length = sizeof(int) + sizeof(byte) + sizeof(int) +
+                     PlayerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
         }
 
         public override void Handle(Server server, NetworkConnection connection) {

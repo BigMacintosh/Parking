@@ -26,5 +26,6 @@ namespace Network {
         ServerKeepAliveEvent          = 0x0A,
         ServerSpaceClaimedEvent       = 0x0C,
         ServerNewPlayerConnectedEvent = 0x0D,
+        ServerSnapshotEvent           = 0x0E,
     }
 }

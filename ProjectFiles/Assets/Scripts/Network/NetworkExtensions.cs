@@ -3,6 +3,7 @@ using Game.Entity;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.UIElements;
 using Utils;
 
@@ -89,7 +90,7 @@ namespace Network {
         }
 
         public static int WriterLength(this Color col) {
-            return sizeof(float) * 3;
+            return sizeof(float) * 4;
         }
 
         public static void WriteColor(this DataStreamWriter writer, Color colour) {
@@ -109,7 +110,7 @@ namespace Network {
         }
 
         public static int WriterLength(this PlayerOptions playerOptions) {
-            return sizeof(float) * 4 + sizeof(byte) + new NativeString64(playerOptions.PlayerName).LengthInBytes + 2;
+            return playerOptions.CarColour.WriterLength() + sizeof(byte) + new NativeString64(playerOptions.PlayerName).LengthInBytes + 2;
         }
 
         public static void WritePlayerOptions(this DataStreamWriter writer, PlayerOptions playerOptions) {

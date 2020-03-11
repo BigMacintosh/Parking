@@ -51,6 +51,9 @@ namespace Network {
         public event GameEndDelegate           GameEndEvent;
         public event SpaceClaimedDelegate      SpaceClaimedEvent;
 
+        private ulong tick;
+        private const ulong TickDuration = 1000 / 50;
+        private const ulong UpdateDuration = 1000 / 50;
 
         // Private Fields
         private bool              inGame;
@@ -96,9 +99,11 @@ namespace Network {
         }
 
         public void SendEvents(VehicleInputState inputs) {
+            tick++;
+            Debug.Log($"Client: tick = {tick}, timestamp = {DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
             // Only send location if in game and in player mode
             if (inGame && ClientConfig.GameMode == GameMode.PlayerMode) {
-                var locationUpdate = new ClientInputStateEvent(inputs);
+                var locationUpdate = new ClientInputStateEvent(tick, inputs);
                 SendEventToServer(locationUpdate);
             }
 
@@ -257,6 +262,10 @@ namespace Network {
 
         public void Handle(ServerHandshakeEvent ev, NetworkConnection conn) {
             Debug.Log($"Client: Received handshake back from {serverIP}:{serverPort}.");
+            var timestamp = (ulong) DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var tickDelta = (timestamp - ev.Timestamp) / TickDuration; 
+            tick = ev.BaseTick + tickDelta;
+//            Debug.Log($"t = {tick}, timestamp = {ev.Timestamp}");
             var playerID = ev.PlayerID;
 
             ev.Apply(world);

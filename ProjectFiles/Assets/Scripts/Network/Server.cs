@@ -20,10 +20,10 @@ namespace Network {
         public event SpaceExitDelegate        SpaceExitEvent;
         public event TriggerGameStartDelegate TriggerGameStartEvent;
 
-        // Public Fields
+        private       ulong tick;
+        private const ulong TickRate     = 50;
+        private const ulong SnapshotRate = 25;
 
-
-        // Private Fields
         private bool acceptingNewPlayers;
         private int  adminClient = -1;
 
@@ -84,6 +84,8 @@ namespace Network {
 
         // Send Messages.
         public void SendEvents() {
+            tick++;
+//            Debug.Log($"Client: tick = {tick}, timestamp = {DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
             if (!acceptingNewPlayers) {
                 // generate location updates
                 var locationUpdate = new ServerLocationUpdateEvent(world);
@@ -97,7 +99,6 @@ namespace Network {
                 var queue = connectionEventQueues[connection.InternalId];
 
                 var totalLength = queue.Sum(ev => ev.Length);
-
                 using (var writer = new DataStreamWriter(totalLength, Allocator.Temp)) {
                     while (queue.Count > 0) {
                         var ev = queue.Dequeue();
@@ -243,7 +244,9 @@ namespace Network {
                 case GameMode.PlayerMode: {
                     Debug.Log($"Server: Received handshake from {playerID}.");
 
-                    var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
+                    var handshakeResponse = new ServerHandshakeEvent(
+                        tick, (ulong) DateTimeOffset.Now.ToUnixTimeMilliseconds(), playerID,
+                        world.GetAllPlayerOptions());
                     SendToClient(srcConnection, handshakeResponse);
 
                     world.CreatePlayer(playerID, ev.PlayerOptions);
@@ -260,7 +263,12 @@ namespace Network {
                         Debug.Log($"Server: Accepting new admin user {playerID}");
                         adminClient = playerID;
 
-                        var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
+                        var handshakeResponse = new ServerHandshakeEvent(
+                            tick, 
+                            (ulong) DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                            playerID,
+                            world.GetAllPlayerOptions()
+                        );
                         SendToClient(srcConnection, handshakeResponse);
                         respond = true;
                     } else {
