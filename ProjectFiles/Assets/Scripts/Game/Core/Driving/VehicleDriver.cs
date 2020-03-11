@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using UnityEngine.UIElements;
 
 namespace Game.Core.Driving {
     public class VehicleDriver : MonoBehaviour {
         // Public Fields
         public List<WheelTransformPair> driveWheels;
         public List<WheelTransformPair> otherWheels;
-        public LayerMask                                    mask;
+        public LayerMask                mask;
 
         public float maxSteerAngle;
         public float motorForce;
@@ -19,6 +20,7 @@ namespace Game.Core.Driving {
         private float horizontalInput;
         private float verticalInput;
         private float steeringAngle;
+        private bool  jump;
 
         private float collisionAmplifier = 50f;
         private float collisionCooldown  = 0.5f;
@@ -31,7 +33,10 @@ namespace Game.Core.Driving {
         }
 
         private void FixedUpdate() {
+            bool isGrounded = CheckGrounded();
+            
             GetInput();
+            if(jump && isGrounded) Jump();
             Steer();
             Accelerate();
             UpdateWheels();
@@ -43,9 +48,28 @@ namespace Game.Core.Driving {
             acceptinput = option;
         }
 
+        bool CheckGrounded() {
+            bool isGrounded = false;
+            foreach (WheelTransformPair wheel in driveWheels) {
+                if (wheel.wheel.isGrounded) {
+                    isGrounded = true;
+                }
+            }
+
+            return isGrounded;
+        }
+
         private void GetInput() {
             horizontalInput = Input.GetAxis("Horizontal");
             verticalInput   = Input.GetAxis("Vertical");
+            if (Input.GetAxis("Jump") != 0) {
+                jump = true;
+            }
+        }
+
+        private void Jump() {
+            body.AddForce(body.mass * motorForce/3f * transform.up);
+            jump = false;
         }
 
         private void Steer() {
@@ -64,16 +88,16 @@ namespace Game.Core.Driving {
             foreach (WheelTransformPair wheel in driveWheels) {
                 UpdateWheel(wheel.wheel, wheel.graphics);
             }
-            
+
             foreach (WheelTransformPair wheel in otherWheels) {
                 UpdateWheel(wheel.wheel, wheel.graphics);
             }
         }
 
         private void UpdateWheel(WheelCollider wheel, Transform graphics) {
-            Vector3 pos = graphics.position;
+            Vector3    pos = graphics.position;
             Quaternion rot = graphics.rotation;
-            
+
             wheel.GetWorldPose(out pos, out rot);
             graphics.position = pos;
             graphics.rotation = rot;
