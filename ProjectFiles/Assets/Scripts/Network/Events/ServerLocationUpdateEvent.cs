@@ -7,8 +7,9 @@ using UnityEngine;
 
 namespace Network.Events {
     public class ServerLocationUpdateEvent : Event {
+        public ulong                           Tick            { get; private set; }
         public Dictionary<int, PlayerPosition> PlayerPositions { get; } = new Dictionary<int, PlayerPosition>();
-        
+
         private int count;
 
         public ServerLocationUpdateEvent() {
@@ -16,20 +17,22 @@ namespace Network.Events {
             Length = 1;
         }
 
-        public ServerLocationUpdateEvent(World world) : this() {
+        public ServerLocationUpdateEvent(ulong tick, World world) : this() {
+            Tick = tick;
             foreach (var pair in world.Players) {
-                var id  = pair.Key;
+                var id             = pair.Key;
                 var playerPosition = pair.Value.GetPosition();
                 PlayerPositions.Add(id, playerPosition);
             }
 
-            Length = sizeof(byte) + sizeof(ushort) + PlayerPositions.Sum(kv => kv.Value.WriterLength() + sizeof(int));
+            Length = sizeof(byte) + sizeof(ulong) + sizeof(ushort) +
+                     PlayerPositions.Sum(kv => kv.Value.WriterLength() + sizeof(int));
         }
 
-        
 
         public override void Serialise(DataStreamWriter writer) {
             base.Serialise(writer);
+            writer.Write(Tick);
             writer.Write((ushort) PlayerPositions.Count);
             foreach (var kv in PlayerPositions) {
                 writer.Write(kv.Key);
@@ -38,17 +41,19 @@ namespace Network.Events {
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context) {
+            Tick = reader.ReadULong(ref context);
             var length = reader.ReadUShort(ref context);
             for (var i = 0; i < length; i++) {
-                var id = reader.ReadInt(ref context); 
+                var id = reader.ReadInt(ref context);
                 PlayerPositions[id] = reader.ReadPlayerPosition(ref context);
             }
 
-            Length = sizeof(byte) + sizeof(ushort) + length * (sizeof(ushort) + (3 + 4 + 3 + 3) * sizeof(float));
+            Length = sizeof(byte) + sizeof(ulong) + sizeof(ushort) + length * (sizeof(ushort) + (3 + 4 + 3 + 3) * sizeof(float));
         }
 
         public void UpdateLocations(World world) {
-            foreach (var playerID in PlayerPositions.Keys.Where(k => ClientConfig.PlayerID != k && world.Players.Keys.Contains(k))) {
+            foreach (var playerID in PlayerPositions.Keys.Where(k => ClientConfig.PlayerID != k &&
+                                                                     world.Players.Keys.Contains(k))) {
                 world.MovePlayer(playerID, PlayerPositions[playerID]);
             }
         }

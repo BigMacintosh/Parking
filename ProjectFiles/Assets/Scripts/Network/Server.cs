@@ -88,7 +88,7 @@ namespace Network {
 //            Debug.Log($"Client: tick = {tick}, timestamp = {DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
             if (!acceptingNewPlayers) {
                 // generate location updates
-                var locationUpdate = new ServerLocationUpdateEvent(world);
+                var locationUpdate = new ServerLocationUpdateEvent(tick, world);
                 SendToAll(locationUpdate);
             }
 

@@ -53,7 +53,7 @@ namespace Network {
 
         private ulong tick;
         private const ulong TickDuration = 1000 / 50;
-        private const ulong UpdateDuration = 1000 / 50;
+        private const ulong SnapshotDuration = 1000 / 50;
 
         // Private Fields
         private bool              inGame;
