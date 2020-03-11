@@ -19,10 +19,7 @@ namespace Network {
         public event SpaceEnterDelegate       SpaceEnterEvent;
         public event SpaceExitDelegate        SpaceExitEvent;
         public event TriggerGameStartDelegate TriggerGameStartEvent;
-
-        // Public Fields
-
-
+        
         // Private Fields
         private bool acceptingNewPlayers;
         private int  adminClient = -1;

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Network {
     public enum GameMode {
         PlayerMode = 0x01,
-        AdminMode  = 0x02
+        AdminMode  = 0x02,
     }
 
     public static class ClientConfig {

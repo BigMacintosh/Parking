@@ -54,17 +54,48 @@ public class ServerBuild {
         }
     }
 
-    [MenuItem("Build/Build Super Soaker")]
-    public static void BuildSoaker() {
+    [MenuItem("Build/Build Super Soaker Client")]
+    public static void BuildSoakerClient() {
 
         var oldSettings = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone);
         
-        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "UNITY_SOAKER");
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "UNITY_SOAKER_CLIENT");
         
         var buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = new[] {"Assets/Scenes/ModelShowcase.unity"};
         
-        const string buildFolder = "../builds/soaker/soaker";
+        const string buildFolder = "../builds/soaker-client/soaker-client";
+
+        buildPlayerOptions.locationPathName = buildFolder;
+
+        buildPlayerOptions.target  = BuildTarget.StandaloneLinux64;
+        buildPlayerOptions.options = BuildOptions.EnableHeadlessMode;
+
+        var report  = BuildPipeline.BuildPlayer(buildPlayerOptions);
+        var summary = report.summary;
+
+        if (summary.result == BuildResult.Succeeded) {
+            Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
+        }
+
+        if (summary.result == BuildResult.Failed) {
+            Debug.Log("Build failed");
+        }
+        
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, oldSettings);
+    }
+    
+    [MenuItem("Build/Build Super Soaker Server")]
+    public static void BuildSoakerServer() {
+
+        var oldSettings = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone);
+        
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "UNITY_SOAKER_SERVER");
+        
+        var buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.scenes = new[] {"Assets/Scenes/ModelShowcase.unity"};
+        
+        const string buildFolder = "../builds/soaker-server/soaker-server";
 
         buildPlayerOptions.locationPathName = buildFolder;
 

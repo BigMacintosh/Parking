@@ -42,7 +42,8 @@ namespace Game.Main {
         }
 
         private void Awake() {
-        #if UNITY_EDITOR
+            
+        #if UNITY_EDITOR && !UNITY_SOAKER_SERVER && !UNITY_SOAKER_CLIENT
             if (gameMode == ServerClientSetting.Standalone) {
                 RequestGameLoop(typeof(ClientGameLoop), new[] {"standalone"});
             } else if (gameMode == ServerClientSetting.Server) {
@@ -50,19 +51,18 @@ namespace Game.Main {
             } else if (gameMode == ServerClientSetting.Client) {
                 RequestGameLoop(typeof(ClientGameLoop), new string[0]);
             }
-        #elif UNITY_STANDALONE && UNITY_SERVER
-#if UNITY_SOAKER
-            RequestGameLoop(typeof(ClientGameLoop), new string[0]);
-#else
+        #elif UNITY_STANDALONE && UNITY_SERVER && !UNITY_SOAKER_SERVER && !UNITY_SOAKER_CLIENT
             RequestGameLoop(typeof(ServerGameLoop), new string[0]);
-#endif
-        #elif UNITY_STANDALONE && !UNITY_SERVER
+        #elif UNITY_STANDALONE && !UNITY_SERVER && !UNITY_SOAKER_CLIENT && !UNITY_SOAKER_SERVER
             RequestGameLoop(typeof(ClientGameLoop), new string[0]);
         #endif
 
-        #if UNITY_SOAKER
-            Debug.Log("soaker test");
+        #if UNITY_STANDALONE && UNITY_SERVER && UNITY_SOAKER_CLIENT
+            RequestGameLoop(typeof(ClientGameLoop), new[] {"soaker"});
+        #elif UNITY_STANDALONE && UNITY_SERVER && UNITY_SOAKER_SERVER
+            RequestGameLoop(typeof(ServerGameLoop), new[] {"soaker"});
         #endif
+
         }
 
 

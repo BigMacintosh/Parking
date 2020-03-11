@@ -20,6 +20,10 @@ namespace Game.Main {
         public bool Init(string[] args) {
             // Determine if in standalone mode
             isStandalone = args.Length > 0 && args[0].Equals("standalone");
+            var isSoaker = args.Length > 0 && args[0].Equals("soaker");
+            if (isSoaker) {
+                ClientConfig.GameMode = GameMode.AdminMode;
+            }
 
             // Create gameplay components
             parkingSpaceManager = new ClientParkingSpaceManager();
