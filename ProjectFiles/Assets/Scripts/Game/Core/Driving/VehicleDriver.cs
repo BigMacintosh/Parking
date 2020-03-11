@@ -77,7 +77,7 @@ namespace Game.Core.Driving {
         private void Steer() {
             foreach (WheelTransformPair wheel in driveWheels) {
                 wheel.wheel.steerAngle = (maxSteerAngle              * horizontalInput) +
-                                         (maxSteerAngle / 2f * drift * (horizontalInput / Mathf.Abs(horizontalInput)));
+                                         (maxSteerAngle * drift * (horizontalInput / Mathf.Abs(horizontalInput)));
             }
         }
 
