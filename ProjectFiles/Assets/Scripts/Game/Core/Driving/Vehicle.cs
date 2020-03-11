@@ -49,6 +49,7 @@ namespace Game.Core.Driving {
             driver.otherWheels   = otherWheels;
             driver.maxSteerAngle = 30f;
             driver.motorForce    = 1000f;
+            driver.roadMult      = 3f;
             driver.mask          = collisionMask;
             driver.setAcceptInput(true);
 

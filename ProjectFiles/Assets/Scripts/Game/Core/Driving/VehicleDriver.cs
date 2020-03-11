@@ -12,6 +12,7 @@ namespace Game.Core.Driving {
 
         public float maxSteerAngle;
         public float motorForce;
+        public float roadMult;
 
         // Private Fields
         private bool      acceptinput;
@@ -21,6 +22,9 @@ namespace Game.Core.Driving {
         private float verticalInput;
         private bool  drift;
         private bool  jump;
+
+        private bool isGrounded;
+        private bool roadBelow;
 
 
         private float collisionAmplifier = 50f;
@@ -45,7 +49,7 @@ namespace Game.Core.Driving {
         }
 
         private void FixedUpdate() {
-            bool isGrounded = CheckGrounded();
+            CheckGrounded();
 
             GetInput();
             if (jump && isGrounded) Jump();
@@ -60,15 +64,19 @@ namespace Game.Core.Driving {
             acceptinput = option;
         }
 
-        bool CheckGrounded() {
-            bool isGrounded = false;
+        private void CheckGrounded() {
+            isGrounded = false;
+            roadBelow = false;
             foreach (WheelTransformPair wheel in driveWheels) {
                 if (wheel.wheel.isGrounded) {
                     isGrounded = true;
                 }
+                
+                RaycastHit hit;
+                if(Physics.Raycast(wheel.graphics.position, Vector3.down, out hit)) {
+                    roadBelow = hit.collider.gameObject.tag == "Road";
+                }
             }
-
-            return isGrounded;
         }
 
         private void GetInput() {
@@ -111,7 +119,7 @@ namespace Game.Core.Driving {
 
         private void Accelerate() {
             foreach (WheelTransformPair wheel in driveWheels) {
-                wheel.wheel.motorTorque = motorForce * verticalInput;
+                wheel.wheel.motorTorque = roadBelow ? motorForce * verticalInput * roadMult : motorForce * verticalInput;
             }
         }
 
