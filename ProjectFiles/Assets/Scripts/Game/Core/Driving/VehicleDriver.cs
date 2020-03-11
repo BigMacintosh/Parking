@@ -10,8 +10,8 @@ namespace Game.Core.Driving {
         public List<WheelTransformPair> otherWheels;
         public LayerMask                mask;
 
-        public  float maxSteerAngle;
-        public  float motorForce;
+        public float maxSteerAngle;
+        public float motorForce;
 
         // Private Fields
         private bool      acceptinput;
@@ -19,20 +19,29 @@ namespace Game.Core.Driving {
 
         private float horizontalInput;
         private float verticalInput;
-        private float drift;
+        private bool  drift;
         private bool  jump;
 
 
         private float collisionAmplifier = 50f;
         private float collisionCooldown  = 0.5f;
         private float timestamp          = 0f;
-        
-        private WheelFrictionCurve fricCurve = new WheelFrictionCurve();
+
+        private WheelFrictionCurve driftCurve = new WheelFrictionCurve();
+        private WheelFrictionCurve stdCurve;
 
         // Start is called before the first frame update
         private void Start() {
             body              = gameObject.GetComponent<Rigidbody>();
             body.centerOfMass = transform.Find("centreOfMass").transform.localPosition;
+
+            driftCurve.extremumSlip   = 0.15f;
+            driftCurve.extremumValue  = 0.2f;
+            driftCurve.asymptoteSlip  = 1f;
+            driftCurve.asymptoteValue = 0.2f;
+            driftCurve.stiffness      = 1f;
+
+            stdCurve = driveWheels[0].wheel.sidewaysFriction;
         }
 
         private void FixedUpdate() {
@@ -65,9 +74,14 @@ namespace Game.Core.Driving {
         private void GetInput() {
             horizontalInput = Input.GetAxis("Horizontal");
             verticalInput   = Input.GetAxis("Vertical");
-            drift           = Input.GetAxis("Drift");
             if (Input.GetAxis("Jump") != 0) {
                 jump = true;
+            }
+
+            if (Input.GetAxis("Drift") != 0) {
+                drift = true;
+            } else {
+                drift = false;
             }
         }
 
@@ -78,8 +92,20 @@ namespace Game.Core.Driving {
 
         private void Steer() {
             foreach (WheelTransformPair wheel in driveWheels) {
-                wheel.wheel.steerAngle = (maxSteerAngle              * horizontalInput) +
-                                         (maxSteerAngle * drift * (horizontalInput / Mathf.Abs(horizontalInput)));
+                wheel.wheel.steerAngle = (maxSteerAngle * horizontalInput);
+                if (drift) {
+                    wheel.wheel.sidewaysFriction = driftCurve;
+                } else {
+                    wheel.wheel.sidewaysFriction = stdCurve;
+                }
+            }
+            
+            foreach (WheelTransformPair wheel in otherWheels) {
+                if (drift) {
+                    wheel.wheel.sidewaysFriction = driftCurve;
+                } else {
+                    wheel.wheel.sidewaysFriction = stdCurve;
+                }
             }
         }
 
