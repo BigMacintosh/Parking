@@ -168,6 +168,7 @@ GameObject:
   - component: {fileID: 648014179983573437}
   - component: {fileID: 8086405004024988278}
   - component: {fileID: 4422722180551571192}
+  - component: {fileID: 2367503191185441311}
   m_Layer: 9
   m_Name: Police
   m_TagString: Untagged
@@ -254,6 +255,21 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3.2773616, y: 1.962472, z: 6.437804}
   m_Center: {x: 0.010667682, y: 0.56297064, z: 0.2259593}
+--- !u!114 &2367503191185441311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 648014179983573410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff110e9182d0456082306e077f12914, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colour: {r: 1, g: 0.6862745, b: 0, a: 1}
+  size: {x: 16, y: 16}
+  sprite: {fileID: 21300000, guid: 334a2d2e036e93444ad6961513002b71, type: 3}
 --- !u!1 &1818467280397910606
 GameObject:
   m_ObjectHideFlags: 0
