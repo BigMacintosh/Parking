@@ -135,8 +135,35 @@ public class Chunkster : MonoBehaviour {
 
             chunk.edgedRecently = false;
         }
+
+        // final lighting recalculation (sloooow)
+        // TODO: make this properly work
+        foreach (Transform child in this.gameObject.transform) {
+            var mesh = child.GetComponent<MeshFilter>().sharedMesh;
+            mesh.RecalculateNormals();
+        }
     }
 
+    // sorts edge dict. and places into list
+    // of (k, v) pairs.
+    // sorts by x,y depending on which is varying
+    List<(int, Vector3)> sortEdge(Dictionary<int, Vector3> edge, Vector3 direction) {
+        // true if we want to sort by x
+        // if it's false we want to sort by y (probs)
+        bool sortX = direction.x == 0;
+        Debug.Log(sortX);
+
+        var ordered = edge.OrderBy(x => sortX ? x.Value.x : x.Value.y)
+                          .Select (x => (x.Key, x.Value))
+                          .ToList ();
+        // var ordered = edge.OrderBy(x => x.Value.x)
+        //                   .Select (x => (x.Key, x.Value))
+        //                   .ToList ();
+        return ordered;
+    }
+
+    // TODO: one day deal with corners
+    // ...but today will not be that day :)
     public void stitchChunkPair(Chunk chunk1, Vector3 chunkEdge1, Chunk chunk2, Vector3 chunkEdge2) {
         if (chunk1.HasPolybrushMesh() && chunk2.HasPolybrushMesh()) {
 
@@ -151,12 +178,29 @@ public class Chunkster : MonoBehaviour {
             //edge1 = edge1.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
             //edge2 = edge2.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
 
-            var edgeShared = new Dictionary<int, Vector3>();
+            // var edgeShared = new Dictionary<int, Vector3>();
             var edge1New = new Dictionary<int, Vector3>();
             var edge2New = new Dictionary<int, Vector3>();
 
-            // is there any guarantee the vertices are ordered in the same way??
+            var orderedEdge1 = sortEdge(edge1, chunkEdge1);
+            var orderedEdge2 = sortEdge(edge2, chunkEdge2);
 
+            Debug.Log(orderedEdge1.Count + ", " + orderedEdge2.Count);
+
+            for (int i = 0; i < orderedEdge1.Count; i++) {
+                var vec1 = orderedEdge1[i].Item2;
+                var vec2 = orderedEdge2[i].Item2;
+                Debug.Log("(" + vec1.x + "," + vec1.y + "," + vec1.z
+                        + " === "
+                        + "(" + vec2.x + "," + vec2.y + "," + vec2.z + ")");
+                var avgZ = (vec1.z + vec2.z) / 2;
+
+                edge1New[orderedEdge1[i].Item1] = new Vector3(vec1.x, vec1.y, avgZ);
+                edge2New[orderedEdge2[i].Item1] = new Vector3(vec2.x, vec2.y, avgZ);
+            }
+
+            // is there any guarantee the vertices are ordered in the same way??
+/* 
             foreach (var edge1Vtx in edge1){
                 var edge2Vtx = edge1[edge1Vtx.Key];
 
@@ -165,28 +209,47 @@ public class Chunkster : MonoBehaviour {
                 var avgVtx = new Vector3(0, 2, 0);
 
                 edgeShared[edge1Vtx.Key] = avgVtx;
-            }
+            } */
+
+            // sort edge1 and edge2 by x/y
+            // go thru
+            /* edge1.OrderBy(x => x.Value.x)
+                 .Select (x => (x.Key, x.Value))
+                 .ToList ();
+            edge2.OrderBy(x => x.Value.x)
+                 .Select (x => (x.Key, x.Value))
+                 .ToList (); */
 
             // go through values in edge1 & edge2
             // sequentially by key val.
             // probs. not the best way to do this...
-            int lastEdge2Idx = 0;
+            /* int lastEdge2Idx = 0;
             for (int i = 0; i <= edge1.Keys.Max(); i++) {
                 // find next key in edge1
                 if (edge1.ContainsKey(i)) {
                     // find next key in edge2
                     while (!edge2.ContainsKey(lastEdge2Idx)) {
                         lastEdge2Idx++;
+                        if (lastEdge2Idx > edge2.Keys.Max()) {
+                            break;
+                        }
                     }
 
                     // these two should be matched?
-                    edge1New[i] = edge1[i] + new Vector3(0, 0, 2);
-                    edge2New[lastEdge2Idx] = edge2[lastEdge2Idx] + new Vector3(0, 0, 2);
+                    //var avgVec = (edge1[i] + edge2[lastEdge2Idx]) / 2;
+                    //var avgVec = (new Vector3(edge1[i].x, ))
+                    var avgZ = (edge1[i].z + edge2[lastEdge2Idx].z) / 2;
+                    //var avgVec = edge1[i];
+                    //var avgVec = new Vector3(0, 1, 0);
+                    //  edge1New[i]            = edge1[i] + new Vector3(0, 0, 2);
+                    //  edge2New[lastEdge2Idx] = edge2[lastEdge2Idx] + new Vector3(0, 0, 2);
+                    edge1New[i]            = new Vector3(edge1[i].x,            edge1[i].y,            avgZ);
+                    edge2New[lastEdge2Idx] = new Vector3(edge2[lastEdge2Idx].x, edge2[lastEdge2Idx].y, avgZ);
 
                     lastEdge2Idx++;
                 }
 
-            }
+            } */
 
             // foreach (var item in edge1){
             //     edge1New[item.Key] = item.Value + new Vector3(0, 0, 2);

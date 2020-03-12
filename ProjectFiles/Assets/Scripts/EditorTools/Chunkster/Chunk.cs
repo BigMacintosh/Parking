@@ -86,30 +86,13 @@ public class Chunk : MonoBehaviour {
         this.mesh = this.GetComponent<MeshFilter>().sharedMesh;
     }
 
-    // updates mesh with edge
+    // updates mesh with given edge
     public void UpdateEdge(Dictionary<int, Vector3> edge) {
         var vertices = new Vector3[this.mesh.vertices.Length];
         Array.Copy(this.mesh.vertices, vertices, this.mesh.vertices.Length);
         foreach (var item in edge){
-            vertices[item.Key] = item.Value;//new Vector3(2, 0, 0);//item.Value;
+            vertices[item.Key] = item.Value;
         }
         this.mesh.vertices = vertices;
-
-        //var meshFilter = this.GetComponent<MeshFilter>();
-        //meshFilter.mesh.SetVertices(vertices, 0, vertices.Length);
-        //meshFilter.mesh.vertices = vertices;
-        //meshFilter.mesh.RecalculateNormals();
-        //meshFilter.mesh = this.mesh;
-    }
-
-    void Update() {
-        // var vertices = new Vector3[this.mesh.vertices.Length];
-        // Array.Copy(this.mesh.vertices, vertices, this.mesh.vertices.Length);
-        // foreach (var item in this.left) {
-        //     if (item.Key < vertices.Length) {
-        //         vertices[item.Key] += new Vector3(0, 0, 1);
-        //     }
-        // }
-        // this.mesh.vertices = vertices;
     }
 }
