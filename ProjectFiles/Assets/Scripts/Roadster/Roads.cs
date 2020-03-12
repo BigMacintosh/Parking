@@ -10,10 +10,10 @@ namespace Roadster {
         private List<Paver> roads;
         private Vector3     previousPoint;
 
-        private readonly ClientWorld   world;
+        private readonly World   world;
         private readonly List<Vector3> roadPoints;
 
-        public Roads(ClientWorld world) {
+        public Roads(World world) {
             this.world = world;
             roads      = Object.FindObjectsOfType<Paver>().ToList();
             roadPoints = new List<Vector3>();
@@ -24,17 +24,17 @@ namespace Roadster {
         }
 
 
-        private Vector3 GetClosestPoint() {
-            var myPos = world.GetMyPosition().Transform.Position;
+        private Vector3 GetClosestPoint(int playerID) {
+            var pos = world.Players[playerID].GetPosition().Transform.Position;
             if (roadPoints.Count == 0) {
                 // TODO: change this to something that isn't the base exception.
                 throw new Exception("no road points");
             }
 
             var closestPoint         = roadPoints[0];
-            var closestPointDistance = Vector3.Distance(myPos, roadPoints[0]);
+            var closestPointDistance = Vector3.Distance(pos, roadPoints[0]);
             foreach (var point in roadPoints) {
-                var pointDistance = Vector3.Distance(myPos, point);
+                var pointDistance = Vector3.Distance(pos, point);
                 if (pointDistance > closestPointDistance) continue;
                 closestPoint         = point;
                 closestPointDistance = pointDistance;
