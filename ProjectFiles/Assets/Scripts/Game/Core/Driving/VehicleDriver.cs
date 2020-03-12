@@ -94,7 +94,7 @@ namespace Game.Core.Driving {
         }
 
         private void Jump() {
-            body.AddForce(body.mass * motorForce / 3f * transform.up);
+            body.AddForce(body.mass * motorForce / 5f * transform.up);
             jump = false;
         }
 
