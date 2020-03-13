@@ -12,8 +12,9 @@ namespace Game.Core.Parking {
     /// </summary>
     public class ServerParkingSpaceManager : ParkingSpaceManager {
         // Delegates
-
         public event SpaceClaimedDelegate SpaceClaimedEvent;
+
+        private bool cancellingTimers;
 
         /// <summary>
         /// Update all the timers
@@ -27,9 +28,11 @@ namespace Game.Core.Parking {
 
         public override void OnRoundEnd(ushort roundNumber) {
             base.OnRoundEnd(roundNumber);
+            cancellingTimers = true;
             foreach (var space in parkingSpacesBySpaceID.Values) {
                 space.Timer.Reset();
             }
+            cancellingTimers = false;
         }
         
         /// <summary>
@@ -118,14 +121,11 @@ namespace Game.Core.Parking {
         /// <param name="playerID"></param>
         /// <param name="spaceID"></param>
         private void SpaceTimerOnElapsed(int playerID, ushort spaceID) {
+            if (cancellingTimers) return;
             Debug.Log("Timer has elapsed");
-
             var parkingSpace = parkingSpacesBySpaceID[spaceID];
-            if (!parkingSpace.Enabled) {
-                return;
-            }
-
-            // Space timer has elapsed.
+            if (!parkingSpace.Enabled) return;
+            
             OnSpaceClaimed(playerID, spaceID);
             SpaceClaimedEvent?.Invoke(playerID, spaceID);
         }
