@@ -17,6 +17,10 @@ namespace Roadster {
             this.world = world;
             roads      = Object.FindObjectsOfType<Paver>().ToList();
             roadPoints = new List<Vector3>();
+            foreach (var points in roads.Select(road => road.RoadPoints)) {
+                roadPoints.AddRange(points);
+            }
+        }
             foreach (var road in roads) {
                 var points = road.GetRoadPoints();
                 roadPoints.AddRange(points);
