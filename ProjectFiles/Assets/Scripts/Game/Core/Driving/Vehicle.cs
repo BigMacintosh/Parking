@@ -1,16 +1,25 @@
 using System;
 using System.Collections.Generic;
 using Game.Core.Camera;
+using Game.Entity;
 using UI;
 using UI.Minimap;
 using UnityEngine;
 
 namespace Game.Core.Driving {
+    [System.Serializable]
+    public class WheelTransformPair {
+        public WheelCollider wheel;
+        public Transform     graphics;
+    }
+
     public class Vehicle : MonoBehaviour {
         // Public Fields
-        public List<DriveWheel>  driveWheels;
-        public VehicleProperties vehicleProperties;
-        public LayerMask         collisionMask;
+        public CarType                  carType;
+        public List<WheelTransformPair> driveWheels;
+        public List<WheelTransformPair> otherWheels;
+        public VehicleProperties        vehicleProperties;
+        public LayerMask                collisionMask;
 
         [SerializeField] private MeshRenderer bodyRenderer;
 
@@ -35,14 +44,13 @@ namespace Game.Core.Driving {
 
         public void SetControllable() {
             // Add DriveController to car
-            driver = gameObject.AddComponent<VehicleDriver>();
-
-            driver.accel       = 20;
-            driver.maxSpeed    = 50;
-            driver.driveWheels = driveWheels;
-            driver.maxSteer    = 30;
-            driver.driftFactor = 3f;
-            driver.mask        = collisionMask;
+            driver               = gameObject.AddComponent<VehicleDriver>();
+            driver.driveWheels   = driveWheels;
+            driver.otherWheels   = otherWheels;
+            driver.maxSteerAngle = 30f;
+            driver.motorForce    = 1000f;
+            driver.roadMult      = 3f;
+            driver.mask          = collisionMask;
             driver.setAcceptInput(true);
 
             // Set camera to follow car
