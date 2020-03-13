@@ -242,7 +242,7 @@ namespace Network {
                     var handshakeResponse = new ServerHandshakeEvent(playerID, world.GetAllPlayerOptions());
                     SendToClient(srcConnection, handshakeResponse);
 
-                    world.CreatePlayer(playerID, ev.PlayerOptions);
+                    world.AddPlayer(new Player(playerID, ev.PlayerOptions));
 
                     var newClient = new ServerNewPlayerConnectedEvent(playerID, ev.PlayerOptions);
                     SendToAll(newClient);
