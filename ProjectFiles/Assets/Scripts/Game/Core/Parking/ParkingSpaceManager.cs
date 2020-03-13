@@ -61,12 +61,12 @@ namespace Game.Core.Parking {
                 parkingSpacesBySpaceID[space].Enable();
             }
         }
-
+        
         public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive) {
             EnableSpaces(spacesActive);
         }
 
-        public void OnPreRoundStart(ushort roundNumber, ushort preRoundLength, ushort roundLength, ushort nPlayers) {
+        public virtual void OnRoundEnd(ushort roundNumber) {
             DisableAllSpaces();
         }
 
