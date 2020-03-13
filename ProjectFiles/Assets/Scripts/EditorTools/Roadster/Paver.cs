@@ -115,10 +115,27 @@ public class Paver : MonoBehaviour {
 
             var leftLowerPoint = leftPoint - new Vector3(0f, thickness, 0f);
 
+            var midPoint = roadPoint - transform.position;
+
+            RaycastHit midHit;
+            if (Physics.Raycast(new Ray(midPoint + transform.position, Vector3.down), out midHit,
+                                maxGroundDistance)) {
+                midPoint.y -= midHit.distance - raiseAboveGround;
+            }
+
+            var midLowerPoint = midPoint - new Vector3(0f, thickness, 0f);
+
+
             vertices.Add(leftPoint);
             uv.Add(new Vector2(0f, 1 * (p % 2)));
             vertices.Add(leftLowerPoint);
             uv.Add(new Vector2(0.9f, 0f));
+            
+            vertices.Add(midPoint);
+            uv.Add(new Vector2(0.5f, 1 * (p %2)));
+            vertices.Add(midLowerPoint);
+            uv.Add(new Vector2(0.5f, 1 * (p %2)));
+            
             vertices.Add(rightPoint);
             uv.Add(new Vector2(1f, 1 * (p % 2)));
             vertices.Add(rightLowerPoint);
@@ -138,9 +155,9 @@ public class Paver : MonoBehaviour {
 
     public List<Vector3> GetRoadPoints() {
         var roadPoints = new List<Vector3>();
-        
+
         var stepSize = 1f / divisions;
-        
+
         for (var p = 0; p < divisions; p++) {
             roadPoints.Add(spline.GetPoint(p * stepSize));
         }
@@ -149,7 +166,8 @@ public class Paver : MonoBehaviour {
     }
 
     private void PopulateTris() {
-        //Front surface
+        //Front surfaces
+        //left half
         triangles.Add(0);
         triangles.Add(2);
         triangles.Add(1);
@@ -157,44 +175,72 @@ public class Paver : MonoBehaviour {
         triangles.Add(2);
         triangles.Add(3);
         triangles.Add(1);
+        
+        //Right half
+        triangles.Add(2);
+        triangles.Add(4);
+        triangles.Add(3);
 
-        for (var v = 0; v < vertices.Count - 4; v += 4) {
+        triangles.Add(4);
+        triangles.Add(5);
+        triangles.Add(3);
+
+        for (var v = 0; v < vertices.Count - 6; v += 6) {
             //Top surface
+            //Left half
             triangles.Add(v);
-            triangles.Add(v + 4);
             triangles.Add(v + 6);
+            triangles.Add(v + 8);
 
             triangles.Add(v + 2);
             triangles.Add(v);
-            triangles.Add(v + 6);
+            triangles.Add(v + 8);
+            
+            //Right half
+            triangles.Add(v+2);
+            triangles.Add(v + 8);
+            triangles.Add(v + 10);
 
-            //Left Surface
+            triangles.Add(v + 4);
+            triangles.Add(v + 2);
+            triangles.Add(v + 10);
+
+            //Left Road Surface
             triangles.Add(v);
             triangles.Add(v + 1);
-            triangles.Add(v + 5);
+            triangles.Add(v + 6);
 
+            triangles.Add(v + 1);
+            triangles.Add(v + 7);
+            triangles.Add(v+  6);
+
+            //Right Road Surface
+            triangles.Add(v + 10);
             triangles.Add(v + 5);
             triangles.Add(v + 4);
-            triangles.Add(v);
 
-            //Right Surface
-            triangles.Add(v + 2);
-            triangles.Add(v + 6);
-            triangles.Add(v + 7);
-
-            triangles.Add(v + 2);
-            triangles.Add(v + 7);
-            triangles.Add(v + 3);
+            triangles.Add(v + 10);
+            triangles.Add(v + 11);
+            triangles.Add(v + 5);
         }
 
 
         //Back Surface
+        //Right Half
         triangles.Add(vertices.Count - 1);
         triangles.Add(vertices.Count - 2);
         triangles.Add(vertices.Count - 3);
-
+        
+        triangles.Add(vertices.Count - 3);
         triangles.Add(vertices.Count - 2);
         triangles.Add(vertices.Count - 4);
+
         triangles.Add(vertices.Count - 3);
+        triangles.Add(vertices.Count - 6);
+        triangles.Add(vertices.Count - 5);
+        
+        triangles.Add(vertices.Count - 3);
+        triangles.Add(vertices.Count - 4);
+        triangles.Add(vertices.Count - 6);
     }
 }
