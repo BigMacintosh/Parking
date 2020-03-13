@@ -233,12 +233,14 @@ namespace Network {
                     ev = new ServerGameEndEvent();
                     break;
                 }
-                case EventType.ServerNewPlayerConnectedEvent:
+                case EventType.ServerNewPlayerConnectedEvent: {
                     ev = new ServerNewPlayerConnectedEvent();
                     break;
-                default:
+                }
+                default: {
                     Debug.Log($"Received an invalid event {eventType} from {serverIP}:{serverPort}.");
                     return;
+                }
             }
 
             ev.Deserialise(reader, ref readerContext);

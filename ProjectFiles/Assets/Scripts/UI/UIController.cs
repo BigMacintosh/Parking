@@ -26,10 +26,10 @@ namespace UI {
         [SerializeField] private GameObject settingsmenu;
 
         // Private Fields
-        private Rigidbody       _car;
-        private Vehicle _vehicle;
-        private bool            active;
-        private ushort          roundLength;
+        private Rigidbody _car;
+        private Vehicle   _vehicle;
+        private bool      active;
+        private ushort    roundLength;
 
 
         private Timer timer;
@@ -38,7 +38,7 @@ namespace UI {
             timer  = new Timer(0);
             active = ClientConfig.GameMode == GameMode.AdminMode;
         }
-        
+
         private void Awake() {
             Hud = FindObjectOfType<HUD>();
         }

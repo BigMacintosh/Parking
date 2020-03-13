@@ -7,7 +7,7 @@ using UnityEngine;
 using Random = System.Random;
 
 namespace Game.Entity {
-    public class World {
+    public abstract class World {
         // Private Fields
         
         public Dictionary<int, Player> Players { get; }
@@ -55,7 +55,7 @@ namespace Game.Entity {
         }
 
         /// <summary>
-        /// Moves a player to the given postion
+        /// Moves a player to the given position
         /// </summary>
         /// <param name="playerID">The ID of the player to be moved.</param>
         /// <param name="playerPosition">Where to move the player to.</param>
@@ -68,15 +68,21 @@ namespace Game.Entity {
         /// </summary>
         /// <param name="playerID">ID of the player position to get.</param>
         /// <returns>Players position</returns>
-        public PlayerPosition GetPlayerPositon(int playerID) {
+        protected PlayerPosition GetPlayerPosition(int playerID) {
             return Players[playerID].GetPosition();
+        }
+
+        public void OnEliminatePlayers(ushort roundNumber, List<int> eliminatedPlayers) {
+            foreach (var player in eliminatedPlayers) {
+                Players[player].Eliminate();
+            }
         }
 
         /// <summary>
         /// To reset the world at the end of the game.
         /// </summary>
-        public void Reset() {
-            // TODO: reset the world so that we don't need to restart the server each time.
+        protected void Reset() {
+            Players.Clear();
         }
     }
 }

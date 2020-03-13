@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using Game.Core.Driving;
 using Network;
 using UnityEngine;
+using Utils;
 using Object = UnityEngine.Object;
 
 namespace Game.Entity {
@@ -12,7 +13,7 @@ namespace Game.Entity {
     public class Player {
         // Public Fields
         public int           PlayerID      { get; }
-        public bool          IsEliminated  { get; set; }
+        public bool          IsEliminated  { get; private set; }
         public PlayerOptions PlayerOptions => playerOptions;
 
         // Private Fields
@@ -21,7 +22,7 @@ namespace Game.Entity {
         private Transform     carTrans;
         private bool          isSpawned;
         private PlayerOptions playerOptions;
-        
+
         private readonly bool isMe;
 
 
@@ -43,7 +44,7 @@ namespace Game.Entity {
         /// <summary>
         /// Used to set the car object for a player.
         ///
-        /// Used rather than setting to car directly to allow for the rigidbody to be extracted.
+        /// Used rather than setting to car directly to allow for the rigid body to be extracted.
         /// </summary>
         /// <param name="newCar"></param>
         private void SetCar(GameObject newCar) {
@@ -67,12 +68,18 @@ namespace Game.Entity {
         public void Spawn(PlayerPosition spawnPosition) {
             if (isSpawned) throw new PlayerAlreadySpawnedException();
             var prefab = PlayerOptions.CarType.GetPrefab();
-            Debug.Log($"Spawning at {spawnPosition.Pos} with rot: {spawnPosition.Rot}");
-            SetCar(Object.Instantiate(prefab, spawnPosition.Pos, spawnPosition.Rot));
+            Debug.Log($"Spawning at {spawnPosition.Transform.Position} with rot: {spawnPosition.Transform.Rotation}");
+            SetCar(Object.Instantiate(prefab, spawnPosition.Transform.Position, spawnPosition.Transform.Rotation));
+
+            // Set car to controllable if spawning this players car
             if (isMe) {
                 car.GetComponent<Vehicle>().SetControllable();
             }
 
+            // Set the car colour
+            SetCarColour();
+
+            // Set player to spawned
             isSpawned = true;
         }
 
@@ -83,10 +90,10 @@ namespace Game.Entity {
         /// <exception cref="PlayerNotSpawnedException">Thrown if you try to move a player who hasn't been spawned</exception>
         public void Move(PlayerPosition playerPosition) {
             if (!isSpawned) throw new PlayerNotSpawnedException();
-            carTrans.position     = playerPosition.Pos;
-            carTrans.rotation     = playerPosition.Rot;
-            carRb.velocity        = playerPosition.Vel;
-            carRb.angularVelocity = playerPosition.AVel;
+            carTrans.position     = playerPosition.Transform.Position;
+            carTrans.rotation     = playerPosition.Transform.Rotation;
+            carRb.velocity        = playerPosition.Velocity;
+            carRb.angularVelocity = playerPosition.AngularVelocity;
         }
 
         /// <summary>
@@ -104,13 +111,20 @@ namespace Game.Entity {
         /// Usually used when swapping player to police car.
         /// </summary>
         /// <param name="newCarType"></param>
-        public void SwapCar(CarType newCarType) {
-            if (isSpawned) {
-                // TODO: swap the car prefab.
-            }
-
-
+        private void SwapCar(CarType newCarType) {
             playerOptions.CarType = newCarType;
+
+            if (!isSpawned) return;
+            var previousPosition = GetPosition();
+            DestroyCar();
+            Spawn(previousPosition);
+        }
+
+        /// <summary>
+        /// Sets the car colour to the value in playerOptions
+        /// </summary>
+        private void SetCarColour() {
+            car.GetComponent<Vehicle>().SetBodyColour(playerOptions.CarColour);
         }
 
         /// <summary>
@@ -119,11 +133,21 @@ namespace Game.Entity {
         /// <returns>The position</returns>
         public PlayerPosition GetPosition() {
             return new PlayerPosition {
-                Pos  = carTrans.position,
-                Rot  = carTrans.rotation,
-                Vel  = carRb.velocity,
-                AVel = carRb.angularVelocity
+                Transform = new ObjectTransform {
+                    Position = carTrans.position,
+                    Rotation = carTrans.rotation
+                },
+                Velocity        = carRb.velocity,
+                AngularVelocity = carRb.angularVelocity
             };
+        }
+
+        /// <summary>
+        /// Eliminates a player from a game and changes their car to a police car.
+        /// </summary>
+        public void Eliminate() {
+            IsEliminated = true;
+            SwapCar(CarType.PoliceCar);
         }
     }
 
