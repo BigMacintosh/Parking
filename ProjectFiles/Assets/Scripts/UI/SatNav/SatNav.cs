@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Game.Entity;
 using Roadster;
-using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace UI.SatNav {
     public class SatNav {
