@@ -136,6 +136,18 @@ public class Paver : MonoBehaviour {
         }
     }
 
+    public List<Vector3> GetRoadPoints() {
+        var roadPoints = new List<Vector3>();
+        
+        var stepSize = 1f / divisions;
+        
+        for (var p = 0; p < divisions; p++) {
+            roadPoints.Add(spline.GetPoint(p * stepSize));
+        }
+
+        return roadPoints;
+    }
+
     private void PopulateTris() {
         //Front surface
         triangles.Add(0);
