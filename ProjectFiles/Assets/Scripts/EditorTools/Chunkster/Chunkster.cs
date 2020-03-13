@@ -5,13 +5,16 @@ using UnityEngine;
 using UnityEditor;
 
 [ExecuteInEditMode]
+// we store our chunk objects as children of this script
+// and then manipulate them via referencing children
+// i am sorry, but this was the most error-free way
+// even if it is slow
 public class Chunkster : MonoBehaviour {
     // TODO: remove this cus unity has this in Vector3 oops
     public enum Direction { Up, Down, Left, Right }
 
     // our base chunk
-    public GameObject baseChunk;
-    
+    public GameObject baseChunk;    
 
     void Awake() {
         // add centre chunk if it doesn't exist
@@ -44,10 +47,6 @@ public class Chunkster : MonoBehaviour {
     }
 
     public List<(int, int)> getNeighbourChunks(int chunkX, int chunkY) {
-        // foreach (Direction dir in Enum.GetValues(typeof(Direction))) {
-        //     (neighChunkX, neighChunkY) = this.addDirection(chunkX, chunkY, dir);
-        // }
-        // return null;
         var xs = Enum.GetValues(typeof(Direction))
                      .Cast<Direction>()
                      .Select(x => this.addDirection(chunkX, chunkY, x))
@@ -111,12 +110,13 @@ public class Chunkster : MonoBehaviour {
         }
     }
 
-    // stitches together seams between chunks
-    // (takes average of touching vertices)
+    // stitches together seams between ALL chunks
     public void stitchChunks() {
         foreach (Transform child in this.gameObject.transform) {
             var chunk = (Chunk) child.GetComponent<Chunk>();
             
+            // if we stitch together the bottom and the right for all chunks
+            // we will eventually stitch together every chunk
             var (bottomX, bottomY) = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Down );
             var (rightX,   rightY) = this.addDirection(chunk.chunkX, chunk.chunkY, Direction.Right);
 
@@ -151,14 +151,10 @@ public class Chunkster : MonoBehaviour {
         // true if we want to sort by x
         // if it's false we want to sort by y (probs)
         bool sortX = direction.x == 0;
-        Debug.Log(sortX);
 
         var ordered = edge.OrderBy(x => sortX ? x.Value.x : x.Value.y)
                           .Select (x => (x.Key, x.Value))
                           .ToList ();
-        // var ordered = edge.OrderBy(x => x.Value.x)
-        //                   .Select (x => (x.Key, x.Value))
-        //                   .ToList ();
         return ordered;
     }
 
@@ -166,22 +162,10 @@ public class Chunkster : MonoBehaviour {
     // ...but today will not be that day :)
     public void stitchChunkPair(Chunk chunk1, Vector3 chunkEdge1, Chunk chunk2, Vector3 chunkEdge2) {
         if (chunk1.HasPolybrushMesh() && chunk2.HasPolybrushMesh()) {
-
-            // TODO: corners repeated twice?
-
-            // chunk1.RefreshEdges();
-            // chunk2.RefreshEdges();
-
             var edge1 = chunk1.GetMeshEdge(chunkEdge1);
             var edge2 = chunk2.GetMeshEdge(chunkEdge2);
-
-            //edge1 = edge1.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
-            //edge2 = edge2.ToDictionary(x => x.Key, x => x.Value + new Vector3(0, 0, 1));
-
-            // var edgeShared = new Dictionary<int, Vector3>();
             var edge1New = new Dictionary<int, Vector3>();
             var edge2New = new Dictionary<int, Vector3>();
-
             var orderedEdge1 = sortEdge(edge1, chunkEdge1);
             var orderedEdge2 = sortEdge(edge2, chunkEdge2);
 
@@ -190,74 +174,18 @@ public class Chunkster : MonoBehaviour {
             for (int i = 0; i < orderedEdge1.Count; i++) {
                 var vec1 = orderedEdge1[i].Item2;
                 var vec2 = orderedEdge2[i].Item2;
-                Debug.Log("(" + vec1.x + "," + vec1.y + "," + vec1.z
-                        + " === "
-                        + "(" + vec2.x + "," + vec2.y + "," + vec2.z + ")");
                 var avgZ = (vec1.z + vec2.z) / 2;
 
                 edge1New[orderedEdge1[i].Item1] = new Vector3(vec1.x, vec1.y, avgZ);
                 edge2New[orderedEdge2[i].Item1] = new Vector3(vec2.x, vec2.y, avgZ);
             }
 
-            // is there any guarantee the vertices are ordered in the same way??
-/* 
-            foreach (var edge1Vtx in edge1){
-                var edge2Vtx = edge1[edge1Vtx.Key];
-
-                // take average of vals
-                //var avgVtx = (edge1Vtx.Value + edge1Vtx.Value) / 2;
-                var avgVtx = new Vector3(0, 2, 0);
-
-                edgeShared[edge1Vtx.Key] = avgVtx;
-            } */
-
-            // sort edge1 and edge2 by x/y
-            // go thru
-            /* edge1.OrderBy(x => x.Value.x)
-                 .Select (x => (x.Key, x.Value))
-                 .ToList ();
-            edge2.OrderBy(x => x.Value.x)
-                 .Select (x => (x.Key, x.Value))
-                 .ToList (); */
-
-            // go through values in edge1 & edge2
-            // sequentially by key val.
-            // probs. not the best way to do this...
-            /* int lastEdge2Idx = 0;
-            for (int i = 0; i <= edge1.Keys.Max(); i++) {
-                // find next key in edge1
-                if (edge1.ContainsKey(i)) {
-                    // find next key in edge2
-                    while (!edge2.ContainsKey(lastEdge2Idx)) {
-                        lastEdge2Idx++;
-                        if (lastEdge2Idx > edge2.Keys.Max()) {
-                            break;
-                        }
-                    }
-
-                    // these two should be matched?
-                    //var avgVec = (edge1[i] + edge2[lastEdge2Idx]) / 2;
-                    //var avgVec = (new Vector3(edge1[i].x, ))
-                    var avgZ = (edge1[i].z + edge2[lastEdge2Idx].z) / 2;
-                    //var avgVec = edge1[i];
-                    //var avgVec = new Vector3(0, 1, 0);
-                    //  edge1New[i]            = edge1[i] + new Vector3(0, 0, 2);
-                    //  edge2New[lastEdge2Idx] = edge2[lastEdge2Idx] + new Vector3(0, 0, 2);
-                    edge1New[i]            = new Vector3(edge1[i].x,            edge1[i].y,            avgZ);
-                    edge2New[lastEdge2Idx] = new Vector3(edge2[lastEdge2Idx].x, edge2[lastEdge2Idx].y, avgZ);
-
-                    lastEdge2Idx++;
-                }
-
-            } */
-
-            // foreach (var item in edge1){
-            //     edge1New[item.Key] = item.Value + new Vector3(0, 0, 2);
-            // }
-
             chunk1.UpdateEdge(edge1New);
             chunk2.UpdateEdge(edge2New);
         } else {
+            // if we try to stitch a mesh which is not polybrush, we will
+            // be manipulating the shared mesh of all base terrain objects.
+            // so let's not do that
             Debug.LogWarning("Tried to stitch mesh of "
                            + chunk1.gameObject.name + " & " + chunk2.gameObject.name
                            + " but couldn't as it is not a Polybrush mesh instance!");

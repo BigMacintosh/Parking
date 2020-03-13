@@ -15,17 +15,14 @@ public class Chunk : MonoBehaviour {
 
     void Awake() {
         #if UNITY_EDITOR
-            // var meshFilter = this.GetComponent<MeshFilter>();
-            // var meshCopy   = Mesh.Instantiate(meshFilter.sharedMesh) as Mesh;
-            // mesh = meshFilter.mesh = meshCopy;
             mesh = this.GetComponent<MeshFilter>().sharedMesh;
-            //mesh = meshCopy;
         #else
             // play mode
             mesh = this.GetComponent<MeshFilter>().mesh;
         #endif
     }
 
+    // don't look at this
     public void RefreshEdges() {
         this.edgedRecently = true;
 
@@ -62,9 +59,6 @@ public class Chunk : MonoBehaviour {
     // will only be accurate if the edges have been refreshed
     public Dictionary<int, Vector3> GetMeshEdge(Vector3 direction) {
         if       (direction == Vector3.up) {
-            if(this.top == null)
-                Debug.Log("nulll");
-            Debug.Log("umm" + direction + top);
             return this.top;
         } else if(direction == Vector3.left) {
             return this.left;
@@ -77,13 +71,13 @@ public class Chunk : MonoBehaviour {
         }
     }
 
+    public void UpdateMeshReference() {
+        this.mesh = this.GetComponent<MeshFilter>().sharedMesh;
+    }
+
     public bool HasPolybrushMesh() {
         UpdateMeshReference();
         return this.mesh.name.StartsWith("Polybrush");
-    }
-
-    public void UpdateMeshReference() {
-        this.mesh = this.GetComponent<MeshFilter>().sharedMesh;
     }
 
     // updates mesh with given edge
