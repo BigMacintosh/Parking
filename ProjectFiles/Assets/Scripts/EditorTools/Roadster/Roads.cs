@@ -21,11 +21,6 @@ namespace EditorTools.Roadster {
                 roadPoints.AddRange(points);
             }
         }
-            foreach (var road in roads) {
-                var points = road.GetRoadPoints();
-                roadPoints.AddRange(points);
-            }
-        }
 
 
         private Vector3 GetClosestPoint(int playerID) {
