@@ -51,7 +51,7 @@ namespace Tests {
             roundManager = new RoundManager(world, parkingSpaceManager);
 
             for (int i = 0; i < 3; i++) {
-                world.TEST_ONLY_AddPlayer(TestUtils.NewMockPlayer(i));
+                world.AddPlayer(TestUtils.NewMockPlayer(i));
             }
 
             // Set up some standard event listeners (as in the ServerGameLoop)

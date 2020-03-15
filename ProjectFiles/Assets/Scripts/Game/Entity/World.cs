@@ -20,10 +20,6 @@ namespace Game.Entity {
             Players.Add(player.PlayerID, player);
         }
 
-        public void TEST_ONLY_AddPlayer(Player player) {
-            Players.Add(player.PlayerID, player);
-        }
-        
         /// <summary>
         /// Destroys a players car.
         /// </summary>
