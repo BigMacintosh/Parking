@@ -111,13 +111,7 @@ namespace Game.Core.Parking {
                 ParkingSpacesByPlayerID[playerID].SetEmpty();
             }
 
-            foreach (var player in ParkingSpacesByPlayerID) {
-                Debug.Log($"FUCKING HERE1: {player.Key}");
-            }
             ParkingSpacesByPlayerID[playerID] = parkingSpace;
-            foreach (var player in ParkingSpacesByPlayerID) {
-                Debug.Log($"FUCKING HERE2: {player.Key}");
-            }
             parkingSpace.SetOccupied(playerID);
         }
 

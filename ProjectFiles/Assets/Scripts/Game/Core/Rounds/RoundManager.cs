@@ -183,10 +183,6 @@ namespace Game.Core.Rounds {
 
             var eliminatedPlayers = new List<int>();
 
-            foreach (var player in playersInSpace) {
-                Debug.Log($"FUCKING WORK PIECE OF GARBAGE {player.Key}");
-            }
-            
             foreach (var playerID in playersInGame) {
                 if (!playersInSpace.ContainsKey(playerID)) {
                     eliminatedPlayers.Add(playerID);
