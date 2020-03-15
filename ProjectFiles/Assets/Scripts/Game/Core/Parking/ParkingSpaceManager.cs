@@ -58,16 +58,18 @@ namespace Game.Core.Parking {
         /// <param name="spaces">The spaces to be activated.</param>
         private void EnableSpaces(List<ushort> spaces) {
             foreach (var space in spaces) {
+                Debug.Log($"Enabled space {space}");
                 parkingSpacesBySpaceID[space].Enable();
             }
         }
         
         public void OnRoundStart(ushort roundNumber, List<ushort> spacesActive) {
+            DisableAllSpaces();
             EnableSpaces(spacesActive);
         }
 
         public virtual void OnRoundEnd(ushort roundNumber) {
-            DisableAllSpaces();
+            
         }
 
         /// <summary>

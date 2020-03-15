@@ -55,13 +55,13 @@ namespace Tests {
             }
 
             // Set up some standard event listeners (as in the ServerGameLoop)
-            roundManager.GameStartEvent     += (length, players) => world.SpawnPlayers();
-            roundManager.PreRoundStartEvent += parkingSpaceManager.OnPreRoundStart;
-            roundManager.RoundStartEvent    += parkingSpaceManager.OnRoundStart;
-            
+            roundManager.GameStartEvent  += (length, players) => world.SpawnPlayers();
+            roundManager.RoundEndEvent   += parkingSpaceManager.OnRoundEnd;
+
             // Schedule a SpaceEnter event
             roundManager.RoundStartEvent += (number, active) => {
-                timer         =  new Timer(1);
+                parkingSpaceManager.OnRoundStart(number, active);
+                timer         =  new Timer(0.5f);
                 timer.Elapsed += () => parkingSpaceManager.OnSpaceEnter(1, active[0]);
                 timer.Start();
             };
