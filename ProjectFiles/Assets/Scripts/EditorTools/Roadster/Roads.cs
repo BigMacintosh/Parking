@@ -5,7 +5,7 @@ using Game.Entity;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Roadster {
+namespace EditorTools.Roadster {
     public class Roads {
         private List<Paver> roads;
         private Vector3     previousPoint;
