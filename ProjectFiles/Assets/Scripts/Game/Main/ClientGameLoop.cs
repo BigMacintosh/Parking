@@ -1,7 +1,9 @@
 ﻿using Game.Core.Parking;
 using Game.Entity;
 using Network;
+using Roadster;
 using UI;
+using UI.SatNav;
 using UnityEngine;
 
 namespace Game.Main {
@@ -12,6 +14,8 @@ namespace Game.Main {
         private ClientParkingSpaceManager parkingSpaceManager;
         private UIController              uiController;
         private ClientWorld               world;
+        private SatNav                    satNav;
+        private Roads                     roads;
 
         public bool Init(string[] args) {
             // Determine if in standalone mode
@@ -28,6 +32,9 @@ namespace Game.Main {
 
             uiController = Object.Instantiate(Resources.Load<GameObject>("UICanvas"), Vector3.zero, Quaternion.identity)
                                  .GetComponent<UIController>();
+
+            roads = new Roads(world);
+            satNav = new SatNav(roads);
 
             // Initialise the client
             client = isStandalone ? Client.GetDummyClient(world) : new Client(world);
