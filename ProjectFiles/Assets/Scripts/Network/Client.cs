@@ -100,7 +100,6 @@ namespace Network {
 
         public void SendEvents(VehicleInputState inputs) {
             tick++;
-            Debug.Log($"Client: tick = {tick}, timestamp = {DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
             // Only send location if in game and in player mode
             if (inGame && ClientConfig.GameMode == GameMode.PlayerMode) {
                 var locationUpdate = new ClientInputStateEvent(tick, inputs);

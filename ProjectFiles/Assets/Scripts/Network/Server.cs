@@ -7,6 +7,7 @@ using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEngine;
+using Utils;
 using Event = Network.Events.Event;
 using Timer = Utils.Timer;
 using UdpCNetworkDriver =
@@ -21,9 +22,10 @@ namespace Network {
         public event TriggerGameStartDelegate TriggerGameStartEvent;
 
         private       ulong tick;
-        private const ulong TickRate     = 50;
-        private const ulong SnapshotRate = 25;
-
+        private const ulong TickRate      = 50;
+        private const ulong SnapshotRate  = 25;
+        private const ulong SnapshotRatio = TickRate / SnapshotRate;
+        
         private bool acceptingNewPlayers;
         private int  adminClient = -1;
 
@@ -41,7 +43,11 @@ namespace Network {
 
         private readonly Dictionary<int, Queue<Event>> connectionEventQueues;
 
+        private HistoryBuffer<GameSnapshot> snapshotHistory;
+
         public Server(ServerWorld world, ServerConfig config) {
+            snapshotHistory = new HistoryBuffer<GameSnapshot>((int) SnapshotRate);
+
             this.world            = world;
             this.config           = config;
             connections           = new NativeList<NetworkConnection>(this.config.MaxPlayers, Allocator.Persistent);
@@ -83,13 +89,18 @@ namespace Network {
         }
 
         // Send Messages.
-        public void SendEvents() {
+        public void FixedUpdate() {
             tick++;
-//            Debug.Log($"Client: tick = {tick}, timestamp = {DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
             if (!acceptingNewPlayers) {
                 // generate location updates
                 var locationUpdate = new ServerLocationUpdateEvent(tick, world);
                 SendToAll(locationUpdate);
+
+                if (tick % SnapshotRatio == 0) {
+                    var snapshot = GameSnapshot.NewGameSnapshot();
+                    snapshot.playerPositions = world.Players.ToDictionary(x => (ushort)x.Key, x => x.Value.GetPosition());
+                    snapshotHistory.Put(snapshot);
+                }
             }
 
             // send all events in queue
