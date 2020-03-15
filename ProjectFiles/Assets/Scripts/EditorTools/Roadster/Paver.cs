@@ -161,7 +161,7 @@ public class Paver : MonoBehaviour {
             // Collect points for the road detection.
             LeftSignPosts.Add(signLeftPoint);
             RightSignPosts.Add(signRightPoint);
-            RoadPoints.Add(roadPoint);
+            RoadPoints.Add(midPoint);
         }
     }
 
