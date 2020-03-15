@@ -80,7 +80,7 @@ namespace Game.Main {
 
         public void FixedUpdate() {
             // Trigger network send.
-            server.SendEvents();
+            server.FixedUpdate();
         }
 
         public void LateUpdate() {
