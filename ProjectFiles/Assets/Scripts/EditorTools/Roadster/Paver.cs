@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Utils;
 
 public class Paver : MonoBehaviour {
     public List<Vector3> LeftSignPosts  { get; private set; }
@@ -241,4 +243,27 @@ public class Paver : MonoBehaviour {
         triangles.Add(vertices.Count - 4);
         triangles.Add(vertices.Count - 6);
     }
+
+    public List<Bounds> GetDivisionBoundingBoxes() {
+        var boundingBoxes = new List<Bounds>();
+        Vector3 leftPoint = LeftSignPosts[0];
+        Vector3 rightPoint = RightSignPosts[0];
+        for (int i = 1; i < LeftSignPosts.Count; i++) {
+            var nextLeftPoint = LeftSignPosts[i];
+            var nextRightPoint = RightSignPosts[i];
+
+            Vector3 min = VectorTools.GetMinVector(leftPoint, rightPoint, nextLeftPoint, nextRightPoint);
+            Vector3 max = VectorTools.GetMaxVector(leftPoint, rightPoint, nextLeftPoint, nextRightPoint);
+
+            Vector3 center = (min + max) / 2;
+            Vector3 size = max - min;
+            boundingBoxes.Add(new Bounds(center, size));
+            
+            leftPoint = nextLeftPoint;
+            rightPoint = nextRightPoint;
+        }
+        return boundingBoxes;
+    }
+
+    
 }

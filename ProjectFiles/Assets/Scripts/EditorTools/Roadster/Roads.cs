@@ -22,6 +22,39 @@ namespace EditorTools.Roadster {
             }
         }
 
+        private List<Junction> GetAllRoadJunctions() {
+            var junctions = new List<Junction>();
+
+            // Determine which roads intersect and form junctions.
+            foreach (var road in roads) {
+                foreach (var otherRoad in roads) {
+                    if (road == otherRoad) continue;
+                    junctions.AddRange(GetRoadJunctions(road, otherRoad));
+                }
+            }
+            return junctions;
+        }
+
+        private List<Junction> GetRoadJunctions(Paver road1, Paver road2) {
+            List<int> road1Overlaps = new List<int>();
+            List<int> road2Overlaps = new List<int>();
+            
+            var boxes1 = road1.GetDivisionBoundingBoxes();
+            var boxes2 = road2.GetDivisionBoundingBoxes();
+
+            for (int i = 0; i < boxes1.Capacity; i++) {
+                for (int j = 0; j < boxes2.Capacity; j++) {
+                    if (boxes1[i].Intersects(boxes2[j])) {
+                        road1Overlaps.Add(i);
+                        road2Overlaps.Add(j);
+                    }
+                }
+            }
+            
+            
+            
+            return new List<Junction>();
+        }
 
         private Vector3 GetClosestPoint(int playerID) {
             var pos = world.Players[playerID].GetPosition().Transform.Position;
