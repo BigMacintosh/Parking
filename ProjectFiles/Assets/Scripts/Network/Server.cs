@@ -46,6 +46,8 @@ namespace Network {
 
         // private HistoryBuffer<GameSnapshot> snapshotHistory;
 
+        private HistoryBuffer<GameSnapshot> snapshotHistory;
+
         public Server(ServerWorld world, ServerConfig config) {
             // snapshotHistory = new HistoryBuffer<GameSnapshot>((int) SnapshotRate);
             lastConfirmedTicks = new Dictionary<int, ulong>();
