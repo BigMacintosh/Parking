@@ -3,7 +3,11 @@ using System.Linq;
 using UnityEngine;
 using Utils;
 
-public class Paver : MonoBehaviour {
+public interface IPaver {
+    List<Bounds> GetDivisionBoundingBoxes();
+}
+
+public class Paver : MonoBehaviour, IPaver {
     public List<Vector3> LeftSignPosts  { get; private set; }
     public List<Vector3> RightSignPosts { get; private set; }
     public List<Vector3> RoadPoints     { get; private set; }

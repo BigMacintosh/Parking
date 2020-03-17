@@ -30,73 +30,8 @@ namespace EditorTools.Roadster {
             foreach (var road in roads) {
                 foreach (var otherRoad in roads) {
                     if (road == otherRoad) continue;
-                    junctions.AddRange(GetRoadJunctions(road, otherRoad));
+                    junctions.AddRange(RoadTools.GetRoadJunctions(road, otherRoad));
                 }
-            }
-
-            return junctions;
-        }
-
-        private List<Junction> GetRoadJunctions(Paver road1, Paver road2) {
-            var junctions = new List<Junction>();
-
-            var boxes1 = road1.GetDivisionBoundingBoxes();
-            var boxes2 = road2.GetDivisionBoundingBoxes();
-
-            var i = 0;
-            var j = 0;
-
-            while (i < boxes1.Count) {
-                while (j < boxes2.Count) {
-                    if (boxes1[i].Intersects(boxes2[j])) {
-                        // We found the start of a junction, now find the whole thing...
-                        var junc             = new Junction();
-                        var previousIMatches = new Queue<int>();
-                        var currentIMatches  = new Queue<int>();
-                        while (true) {
-                            // Check if a box intersects
-                            if (boxes1[i].Intersects(boxes2[j])) {
-                                junc.AddBounds(boxes1[i], boxes2[j]);
-                                currentIMatches.Enqueue(j);
-
-                                // move j forward
-                                if (previousIMatches.Count != 0) j = previousIMatches.Dequeue();
-                                else {
-                                    j++;
-                                    if (j == boxes2.Count) {
-                                        // At the end of boxes2 so reset j back to the start of the previous
-                                        // j matches and increment i
-                                        i++;
-                                        if (i == boxes1.Count) break; // We've got to the end of both arrays.
-                                        previousIMatches = currentIMatches;
-                                        currentIMatches  = new Queue<int>();
-                                        j                = previousIMatches.Dequeue();
-                                    }
-                                }
-                            } else {
-                                // Boxes do not intersect.
-                                if (previousIMatches.Count == 0 && currentIMatches.Count == 0) break;
-                                if (previousIMatches.Count == 0) {
-                                    // We have no more j to look at on this row.
-                                    // Move i forward.
-                                    i++;
-                                    // Transfer queues
-                                    previousIMatches = currentIMatches;
-                                    currentIMatches  = new Queue<int>();
-                                    j                = previousIMatches.Dequeue();
-                                } else {
-                                    j = previousIMatches.Dequeue();
-                                }
-                            }
-                        }
-
-                        junctions.Add(junc);
-                    }
-
-                    j++;
-                }
-
-                i++;
             }
 
             return junctions;
@@ -119,6 +54,89 @@ namespace EditorTools.Roadster {
             }
 
             return closestPoint;
+        }
+    }
+
+    public static class RoadTools {
+        public static List<Junction> GetRoadJunctions(IPaver road1, IPaver road2) {
+            var junctions = new List<Junction>();
+
+            var boxes1 = road1.GetDivisionBoundingBoxes();
+            var boxes2 = road2.GetDivisionBoundingBoxes();
+
+            Debug.Log(boxes1[1].Intersects(boxes2[0]));
+
+            var i = 0;
+            var j = 0;
+
+            Debug.Log($"lengths: {boxes1.Count}, {boxes2.Count}");
+
+            while (i < boxes1.Count) {
+                while (j < boxes2.Count) {
+                    if (boxes1[i].Intersects(boxes2[j])) {
+                        // We found the start of a junction, now find the whole thing...
+                        JunctionType junctionType = (i == 0 || i == boxes1.Count - 1 ||
+                                                     j == 0 || j == boxes2.Count - 1)
+                            ? JunctionType.TJunction
+                            : JunctionType.CrossRoads;
+                        var junction         = new Junction(junctionType);
+                        var previousIMatches = new Queue<int>();
+                        var currentIMatches  = new Queue<int>();
+                        while (true) {
+                            // Check if a box intersects
+                            if (boxes1[i].Intersects(boxes2[j])) {
+                                junction.AddBounds(boxes1[i], i, boxes2[j], j);
+                                currentIMatches.Enqueue(j);
+                                
+                                // move j forward
+                                if (previousIMatches.Count != 0) j = previousIMatches.Dequeue();
+                                else {
+                                    j++;
+                                    if (j == boxes2.Count) {
+                                        // At the end of boxes2 so reset j back to the start of the previous
+                                        // j matches and increment i
+                                        i++;
+                                        if (i == boxes1.Count) break; // We've got to the end of both arrays.
+                                        previousIMatches = currentIMatches;
+                                        currentIMatches  = new Queue<int>();
+                                        j                = previousIMatches.Dequeue();
+                                    }
+                                }
+                            } else {
+                                // Boxes do not intersect.
+                                if (previousIMatches.Count == 0 && currentIMatches.Count == 0) {
+                                    
+                                    break;
+                                }
+                                if (previousIMatches.Count == 0) {
+                                    // We have no more j to look at on this row.
+                                    // Move i forward.
+                                    i++;
+                                    // Transfer queues
+                                    previousIMatches = currentIMatches;
+                                    currentIMatches  = new Queue<int>();
+                                    j                = previousIMatches.Dequeue();
+                                } else {
+                                    j = previousIMatches.Dequeue();
+                                }
+                            }
+                        }
+
+                        if (i == 0 || i == boxes1.Count - 1 ||
+                            j == 0 || j == boxes2.Count - 1) {
+                            junction.JunctionType = JunctionType.TJunction;
+                        }
+                        junctions.Add(junction);
+                    }
+
+                    j++;
+                }
+
+                j = 0;
+                i++;
+            }
+
+            return junctions;
         }
     }
 }
