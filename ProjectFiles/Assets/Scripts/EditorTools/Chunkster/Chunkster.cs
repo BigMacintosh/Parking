@@ -135,7 +135,7 @@ namespace EditorTools.Chunkster {
                     var chunkBotData = chunkBot.GetComponent<Chunk>();
                     /*if (!chunkBotData.edgedRecently)*/
                     chunkBotData.RefreshEdges();
-                    StitchChunkPair(chunk, Vector3.down, chunkBotData, Vector3.up);
+                    StitchChunkPair(chunk, Vector3.up, chunkBotData, Vector3.down);
                 }
 
                 if (ChunkExists(rightX, rightY, out var chunkRight)) {
@@ -206,8 +206,8 @@ namespace EditorTools.Chunkster {
 
                     var avgY = (vec1.y + vec2.y) / 2;
 
-                    edge1New[orderedEdge1[i].Item1] = new Vector3(vec1.x, 2, vec1.z);
-                    edge2New[orderedEdge2[i].Item1] = new Vector3(vec2.x, 2, vec2.z);
+                    edge1New[orderedEdge1[i].Item1] = new Vector3(vec1.x, avgY, vec1.z);
+                    edge2New[orderedEdge2[i].Item1] = new Vector3(vec2.x, avgY, vec2.z);
                 }
 
                 chunk1.UpdateEdge(edge1New);

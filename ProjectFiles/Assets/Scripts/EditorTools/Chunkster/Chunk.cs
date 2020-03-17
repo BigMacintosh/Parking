@@ -53,8 +53,8 @@ namespace EditorTools.Chunkster {
 
             left   = edgeVertices.Where(v => v.Value.x == leftMost ).ToDictionary(x => x.Key, x => x.Value);
             right  = edgeVertices.Where(v => v.Value.x == rightMost).ToDictionary(x => x.Key, x => x.Value);
-            bottom = edgeVertices.Where(v => v.Value.y == botMost  ).ToDictionary(x => x.Key, x => x.Value);
-            top    = edgeVertices.Where(v => v.Value.y == topMost  ).ToDictionary(x => x.Key, x => x.Value);
+            bottom = edgeVertices.Where(v => v.Value.z == botMost  ).ToDictionary(x => x.Key, x => x.Value);
+            top    = edgeVertices.Where(v => v.Value.z == topMost  ).ToDictionary(x => x.Key, x => x.Value);
         }
 
         // will only be accurate if the edges have been refreshed
