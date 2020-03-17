@@ -48,30 +48,34 @@ namespace EditorTools.Chunkster {
             // could put this in a function but honestly... cba
             var leftMost  = corners.Min(x => x.Value.x);
             var rightMost = corners.Max(x => x.Value.x);
-            var botMost   = corners.Max(x => x.Value.y);
-            var topMost   = corners.Min(x => x.Value.y);
+            var botMost   = corners.Max(x => x.Value.z);
+            var topMost   = corners.Min(x => x.Value.z);
 
-            left   = edgeVertices.Where(v => v.Value.x == leftMost).ToDictionary(x => x.Key, x => x.Value);
+            left   = edgeVertices.Where(v => v.Value.x == leftMost ).ToDictionary(x => x.Key, x => x.Value);
             right  = edgeVertices.Where(v => v.Value.x == rightMost).ToDictionary(x => x.Key, x => x.Value);
-            bottom = edgeVertices.Where(v => v.Value.y == botMost).ToDictionary(x => x.Key, x => x.Value);
-            top    = edgeVertices.Where(v => v.Value.y == topMost).ToDictionary(x => x.Key, x => x.Value);
+            bottom = edgeVertices.Where(v => v.Value.y == botMost  ).ToDictionary(x => x.Key, x => x.Value);
+            top    = edgeVertices.Where(v => v.Value.y == topMost  ).ToDictionary(x => x.Key, x => x.Value);
         }
 
         // will only be accurate if the edges have been refreshed
         public Dictionary<int, Vector3> GetMeshEdge(Vector3 direction) {
             if (direction == Vector3.up) {
+                Debug.Log("top " + top);
                 return top;
             }
 
             if (direction == Vector3.left) {
+                Debug.Log("left " + left);
                 return left;
             }
 
             if (direction == Vector3.right) {
+                Debug.Log("right " + right);
                 return right;
             }
 
             if (direction == Vector3.down) {
+                Debug.Log("bot " + bottom);
                 return bottom;
             }
 

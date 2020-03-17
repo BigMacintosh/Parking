@@ -164,7 +164,7 @@ namespace EditorTools.Chunkster {
             // if it's false we want to sort by y (probs)
             var sortX = direction.x == 0;
 
-            var ordered = edge.OrderBy(x => sortX ? x.Value.x : x.Value.y)
+            var ordered = edge.OrderBy(x => sortX ? x.Value.x : x.Value.z)
                               .Select(x => (x.Key, x.Value))
                               .ToList();
             return ordered;
@@ -176,20 +176,38 @@ namespace EditorTools.Chunkster {
             if (chunk1.HasPolybrushMesh() && chunk2.HasPolybrushMesh()) {
                 var edge1        = chunk1.GetMeshEdge(chunkEdge1);
                 var edge2        = chunk2.GetMeshEdge(chunkEdge2);
+
+                foreach (var item in edge1)
+                {
+                    Debug.Log(item);
+                }
+                foreach (var item in edge2)
+                {
+                    Debug.Log(item);
+                }
+
                 var edge1New     = new Dictionary<int, Vector3>();
                 var edge2New     = new Dictionary<int, Vector3>();
                 var orderedEdge1 = SortEdge(edge1, chunkEdge1);
                 var orderedEdge2 = SortEdge(edge2, chunkEdge2);
 
+                Debug.Log("ihegsjosjg");
+                Debug.Log(chunkEdge1);
+                Debug.Log(chunkEdge2);
                 Debug.Log(orderedEdge1.Count + ", " + orderedEdge2.Count);
 
                 for (var i = 0; i < orderedEdge1.Count; i++) {
                     var vec1 = orderedEdge1[i].Item2;
                     var vec2 = orderedEdge2[i].Item2;
-                    var avgZ = (vec1.z + vec2.z) / 2;
+                    // var avgZ = (vec1.z + vec2.z) / 2;
 
-                    edge1New[orderedEdge1[i].Item1] = new Vector3(vec1.x, vec1.y, avgZ);
-                    edge2New[orderedEdge2[i].Item1] = new Vector3(vec2.x, vec2.y, avgZ);
+                    // edge1New[orderedEdge1[i].Item1] = new Vector3(vec1.x, vec1.y, avgZ);
+                    // edge2New[orderedEdge2[i].Item1] = new Vector3(vec2.x, vec2.y, avgZ);
+
+                    var avgY = (vec1.y + vec2.y) / 2;
+
+                    edge1New[orderedEdge1[i].Item1] = new Vector3(vec1.x, 2, vec1.z);
+                    edge2New[orderedEdge2[i].Item1] = new Vector3(vec2.x, 2, vec2.z);
                 }
 
                 chunk1.UpdateEdge(edge1New);
