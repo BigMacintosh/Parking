@@ -177,24 +177,10 @@ namespace EditorTools.Chunkster {
                 var edge1        = chunk1.GetMeshEdge(chunkEdge1);
                 var edge2        = chunk2.GetMeshEdge(chunkEdge2);
 
-                foreach (var item in edge1)
-                {
-                    Debug.Log(item);
-                }
-                foreach (var item in edge2)
-                {
-                    Debug.Log(item);
-                }
-
                 var edge1New     = new Dictionary<int, Vector3>();
                 var edge2New     = new Dictionary<int, Vector3>();
                 var orderedEdge1 = SortEdge(edge1, chunkEdge1);
                 var orderedEdge2 = SortEdge(edge2, chunkEdge2);
-
-                Debug.Log("ihegsjosjg");
-                Debug.Log(chunkEdge1);
-                Debug.Log(chunkEdge2);
-                Debug.Log(orderedEdge1.Count + ", " + orderedEdge2.Count);
 
                 for (var i = 0; i < orderedEdge1.Count; i++) {
                     var vec1 = orderedEdge1[i].Item2;

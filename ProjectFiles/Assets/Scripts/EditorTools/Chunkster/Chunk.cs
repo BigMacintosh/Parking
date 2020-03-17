@@ -60,22 +60,18 @@ namespace EditorTools.Chunkster {
         // will only be accurate if the edges have been refreshed
         public Dictionary<int, Vector3> GetMeshEdge(Vector3 direction) {
             if (direction == Vector3.up) {
-                Debug.Log("top " + top);
                 return top;
             }
 
             if (direction == Vector3.left) {
-                Debug.Log("left " + left);
                 return left;
             }
 
             if (direction == Vector3.right) {
-                Debug.Log("right " + right);
                 return right;
             }
 
             if (direction == Vector3.down) {
-                Debug.Log("bot " + bottom);
                 return bottom;
             }
 
