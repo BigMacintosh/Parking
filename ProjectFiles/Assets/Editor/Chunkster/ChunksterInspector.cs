@@ -38,7 +38,7 @@ public class ChunksterInspector : Editor {
                 var pos  = new Vector3(worldX, 0, worldZ);
 
                 // handling button presses
-                if (Handles.Button(pos, child.transform.rotation, size.x, size.x, Handles.RectangleHandleCap)) {
+                if (Handles.Button(pos, Quaternion.Euler(90, 0, 0), size.x, size.x, Handles.RectangleHandleCap)) {
                     t.CreateNewChunk(n.Item1, n.Item2);
                 }
             }
@@ -51,7 +51,7 @@ public class ChunksterInspector : Editor {
         var pos  = new Vector3(worldX, 0, worldZ);
 
         // handling button presses
-        if (Handles.Button(pos, child.transform.rotation, size.x, size.x, Handles.RectangleHandleCap)) {
+        if (Handles.Button(pos, Quaternion.Euler(90, 0, 0), size.x, size.x, Handles.RectangleHandleCap)) {
             t.DeleteChunk(chunk.chunkX, chunk.chunkY);
         }
     }
