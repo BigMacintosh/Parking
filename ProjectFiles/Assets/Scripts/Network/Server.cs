@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Core.Driving;
 using Game.Entity;
 using Network.Events;
 using Unity.Collections;
@@ -43,14 +44,14 @@ namespace Network {
 
         private readonly Dictionary<int, Queue<Event>> connectionEventQueues;
         private readonly Dictionary<int, ulong> lastConfirmedTicks;
-
+        private readonly Dictionary<int, VehicleInputState> lastInputs;
+        
         // private HistoryBuffer<GameSnapshot> snapshotHistory;
-
-        private HistoryBuffer<GameSnapshot> snapshotHistory;
 
         public Server(ServerWorld world, ServerConfig config) {
             // snapshotHistory = new HistoryBuffer<GameSnapshot>((int) SnapshotRate);
             lastConfirmedTicks = new Dictionary<int, ulong>();
+            lastInputs = new Dictionary<int, VehicleInputState>();
             this.world            = world;
             this.config           = config;
             connections           = new NativeList<NetworkConnection>(this.config.MaxPlayers, Allocator.Persistent);
@@ -104,7 +105,7 @@ namespace Network {
 
                     foreach (var connection in connections) {
                         var lastTick = lastConfirmedTicks[connection.InternalId];
-                        var locations = new ServerLocationUpdateEvent(lastTick, world);
+                        var locations = new ServerLocationUpdateEvent(lastTick, lastInputs, world);
                         SendToClient(connection, locations);
                     }
                 }
@@ -326,6 +327,7 @@ namespace Network {
 
         public void Handle(ClientInputStateEvent ev, NetworkConnection srcConnection) {
             lastConfirmedTicks[srcConnection.InternalId] = ev.Tick;
+            lastInputs[srcConnection.InternalId]         = ev.Inputs;
             world.ApplyInputs(srcConnection.InternalId, ev.Inputs);
         }
 

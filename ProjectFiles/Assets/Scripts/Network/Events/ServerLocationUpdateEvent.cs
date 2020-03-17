@@ -1,14 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Game;
+using Game.Core.Driving;
 using Game.Entity;
 using Unity.Networking.Transport;
-using UnityEngine;
 
 namespace Network.Events {
     public class ServerLocationUpdateEvent : Event {
         public ulong                           Tick            { get; private set; }
-        public Dictionary<int, PlayerPosition> PlayerPositions { get; } = new Dictionary<int, PlayerPosition>();
+        public Dictionary<int, ValueTuple<PlayerPosition, VehicleInputState>> PlayerPositions { get; } = new Dictionary<int, ValueTuple<PlayerPosition, VehicleInputState>>();
 
         private int count;
 
@@ -17,16 +17,17 @@ namespace Network.Events {
             Length = 1;
         }
 
-        public ServerLocationUpdateEvent(ulong tick, World world) : this() {
+        public ServerLocationUpdateEvent(ulong tick, Dictionary<int, VehicleInputState> inputs, World world) : this() {
             Tick = tick;
             foreach (var pair in world.Players) {
                 var id             = pair.Key;
                 var playerPosition = pair.Value.GetPosition();
-                PlayerPositions.Add(id, playerPosition);
+                var playerInput    = inputs[id];
+                PlayerPositions.Add(id, (playerPosition, playerInput));
             }
-
+            // hi samie 
             Length = sizeof(byte) + sizeof(ulong) + sizeof(ushort) +
-                     PlayerPositions.Sum(kv => kv.Value.WriterLength() + sizeof(int));
+                     PlayerPositions.Sum(kv => sizeof(int) + kv.Value.Item1.WriterLength() + kv.Value.Item2.WriterLength());
         }
 
 
@@ -36,7 +37,8 @@ namespace Network.Events {
             writer.Write((ushort) PlayerPositions.Count);
             foreach (var kv in PlayerPositions) {
                 writer.Write(kv.Key);
-                writer.WritePlayerPosition(kv.Value);
+                writer.WritePlayerPosition(kv.Value.Item1);
+                writer.WriteVehicleInputState(kv.Value.Item2);
             }
         }
 
@@ -45,15 +47,19 @@ namespace Network.Events {
             var length = reader.ReadUShort(ref context);
             for (var i = 0; i < length; i++) {
                 var id = reader.ReadInt(ref context);
-                PlayerPositions[id] = reader.ReadPlayerPosition(ref context);
+
+                var pos = reader.ReadPlayerPosition(ref context);
+                var inputs = reader.ReadVehicleInputState(ref context);
+                PlayerPositions[id] = (pos, inputs);
             }
 
-            Length = sizeof(byte) + sizeof(ulong) + sizeof(ushort) + length * (sizeof(ushort) + (3 + 4 + 3 + 3) * sizeof(float));
+            Length = sizeof(byte) + sizeof(ulong) + sizeof(ushort) +
+                     PlayerPositions.Sum(kv => sizeof(int) + kv.Value.Item1.WriterLength() + kv.Value.Item2.WriterLength());
         }
 
         public void UpdateLocations(World world) {
             foreach (var playerID in PlayerPositions.Keys) {
-                world.MovePlayer(playerID, PlayerPositions[playerID]);
+                world.MovePlayer(playerID, PlayerPositions[playerID].Item1);
             }
         }
 

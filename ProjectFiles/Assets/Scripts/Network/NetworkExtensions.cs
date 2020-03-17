@@ -1,4 +1,5 @@
 using System;
+using Game.Core.Driving;
 using Game.Entity;
 using Unity.Collections;
 using Unity.Networking.Transport;
@@ -67,7 +68,7 @@ namespace Network {
 
         public static int WriterLength(this PlayerPosition pos) {
             return pos.Transform.Position.WriterLength() + pos.Transform.Rotation.WriterLength() +
-                   pos.Velocity.WriterLength()           + pos.Transform.Position.WriterLength();
+                   pos.Velocity.WriterLength()           + pos.AngularVelocity.WriterLength();
         }
 
         public static void WritePlayerPosition(this DataStreamWriter writer, PlayerPosition playerPosition) {
@@ -126,6 +127,26 @@ namespace Network {
                 CarType    = (CarType) reader.ReadByte(ref context),
                 PlayerName = reader.ReadString(ref context).ToString(),
             };
+        }
+
+        public static void WriteVehicleInputState(this DataStreamWriter writer, VehicleInputState inputs) {
+            writer.Write(inputs.Drive);
+            writer.Write(inputs.Turn);
+            writer.Write(inputs.Jump);
+            writer.Write(inputs.Drift);
+        }
+
+        public static VehicleInputState ReadVehicleInputState(this DataStreamReader reader, ref DataStreamReader.Context context) {
+            return new VehicleInputState {
+                Drive = reader.ReadFloat(ref context),
+                Turn = reader.ReadFloat(ref context),
+                Jump = reader.ReadFloat(ref context),
+                Drift = reader.ReadFloat(ref context)
+            };
+        }
+
+        public static int WriterLength(this VehicleInputState inputs) {
+            return 4 * sizeof(float);
         }
     }
 }

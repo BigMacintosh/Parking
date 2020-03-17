@@ -52,13 +52,12 @@ namespace Network {
         public event GameEndDelegate           GameEndEvent;
         public event SpaceClaimedDelegate      SpaceClaimedEvent;
 
-        private ulong tick;
         private const ulong TickRate         = 50;
         private const ulong SnapshotRate     = 50;
         private const ulong TickDuration     = 1000 / TickRate;
         private const ulong SnapshotDuration = 1000 / SnapshotRate;
 
-        // Private Fields
+        private ulong             tick;
         private bool              inGame;
         private bool              done;
         private string            serverIP;
@@ -66,6 +65,7 @@ namespace Network {
         private UdpCNetworkDriver driver;
         private NetworkConnection connection;
 
+        private Dictionary<int, VehicleInputState> lastInputs;
         private readonly NetworkPipeline pipeline;
         private readonly ClientWorld     world;
         private readonly HistoryBuffer<VehicleInputState> pastInputs;
@@ -79,6 +79,7 @@ namespace Network {
             this.world = world;
             eventQueue = new Queue<Event>();
             pastInputs = new HistoryBuffer<VehicleInputState>((int) (2 * TickRate));
+            lastInputs = new Dictionary<int, VehicleInputState>();
         }
 
         public static IClient GetDummyClient(ClientWorld world) {
@@ -111,6 +112,9 @@ namespace Network {
                 var locationUpdate = new ClientInputStateEvent(tick, inputs);
                 SendEventToServer(locationUpdate);
                 world.ApplyInputs(ClientConfig.PlayerID, inputs);
+                foreach (var kv in lastInputs.Where(o => o.Key != ClientConfig.PlayerID)) {
+                    world.ApplyInputs(kv.Key, kv.Value);
+                }
                 Physics.Simulate(Time.fixedDeltaTime);
             }
 
@@ -299,6 +303,7 @@ namespace Network {
 
         public void Handle(ServerLocationUpdateEvent ev, NetworkConnection conn) {
             ev.UpdateLocations(world);
+            lastInputs = ev.PlayerPositions.ToDictionary(o => o.Key, o => o.Value.Item2);
             var tickOffset = (int) (tick - ev.Tick);
             // TODO: interpolate difference rather than teleport
             for (int i = tickOffset; i >= 0; i--) {

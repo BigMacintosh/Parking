@@ -19,20 +19,12 @@ namespace Network.Events {
         public override void Serialise(DataStreamWriter writer) {
             base.Serialise(writer);
             writer.Write(Tick);
-            writer.Write(Inputs.Drive);
-            writer.Write(Inputs.Turn);
-            writer.Write(Inputs.Jump);
-            writer.Write(Inputs.Drift);
+            writer.WriteVehicleInputState(Inputs);
         }
 
         public override void Deserialise(DataStreamReader reader, ref DataStreamReader.Context context) {
             Tick = reader.ReadULong(ref context);
-            Inputs = new VehicleInputState {
-                Drive = reader.ReadFloat(ref context),
-                Turn  = reader.ReadFloat(ref context),
-                Jump  = reader.ReadFloat(ref context),
-                Drift = reader.ReadFloat(ref context)
-            };
+            Inputs = reader.ReadVehicleInputState(ref context);
         }
 
         public override void Handle(Server server, NetworkConnection connection) {
