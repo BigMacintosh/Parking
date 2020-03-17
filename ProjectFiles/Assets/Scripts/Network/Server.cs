@@ -42,12 +42,13 @@ namespace Network {
         private readonly ServerConfig    config;
 
         private readonly Dictionary<int, Queue<Event>> connectionEventQueues;
+        private readonly Dictionary<int, ulong> lastConfirmedTicks;
 
-        private HistoryBuffer<GameSnapshot> snapshotHistory;
+        // private HistoryBuffer<GameSnapshot> snapshotHistory;
 
         public Server(ServerWorld world, ServerConfig config) {
-            snapshotHistory = new HistoryBuffer<GameSnapshot>((int) SnapshotRate);
-
+            // snapshotHistory = new HistoryBuffer<GameSnapshot>((int) SnapshotRate);
+            lastConfirmedTicks = new Dictionary<int, ulong>();
             this.world            = world;
             this.config           = config;
             connections           = new NativeList<NetworkConnection>(this.config.MaxPlayers, Allocator.Persistent);
@@ -93,19 +94,21 @@ namespace Network {
             tick++;
             if (!acceptingNewPlayers) {
                 // generate location updates
-                var locationUpdate = new ServerLocationUpdateEvent(tick, world);
-                SendToAll(locationUpdate);
 
                 if (tick % SnapshotRatio == 0) {
-                    var snapshot = GameSnapshot.NewGameSnapshot();
-                    snapshot.playerPositions = world.Players.ToDictionary(x => (ushort)x.Key, x => x.Value.GetPosition());
-                    snapshotHistory.Put(snapshot);
+                    // var snapshot = GameSnapshot.NewGameSnapshot();
+                    // snapshot.playerPositions = world.Players.ToDictionary(x => (ushort)x.Key, x => x.Value.GetPosition());
+                    // snapshotHistory.Put(snapshot);
+
+                    foreach (var connection in connections) {
+                        var lastTick = lastConfirmedTicks[connection.InternalId];
+                        var locations = new ServerLocationUpdateEvent(lastTick, world);
+                        SendToClient(connection, locations);
+                    }
                 }
             }
 
             // send all events in queue
-
-
             foreach (var connection in connections) {
                 var queue = connectionEventQueues[connection.InternalId];
 
@@ -256,8 +259,11 @@ namespace Network {
                     Debug.Log($"Server: Received handshake from {playerID}.");
 
                     var handshakeResponse = new ServerHandshakeEvent(
-                        tick, (ulong) DateTimeOffset.Now.ToUnixTimeMilliseconds(), playerID,
-                        world.GetAllPlayerOptions());
+                        tick, 
+                        (ulong) DateTimeOffset.Now.ToUnixTimeMilliseconds(), 
+                        playerID,
+                        world.GetAllPlayerOptions()
+                    );
                     SendToClient(srcConnection, handshakeResponse);
 
                     world.CreatePlayer(playerID, ev.PlayerOptions);
@@ -280,6 +286,7 @@ namespace Network {
                             playerID,
                             world.GetAllPlayerOptions()
                         );
+                        lastConfirmedTicks[srcConnection.InternalId] = tick;
                         SendToClient(srcConnection, handshakeResponse);
                         respond = true;
                     } else {
@@ -316,6 +323,7 @@ namespace Network {
         }
 
         public void Handle(ClientInputStateEvent ev, NetworkConnection srcConnection) {
+            lastConfirmedTicks[srcConnection.InternalId] = ev.Tick;
             world.ApplyInputs(srcConnection.InternalId, ev.Inputs);
         }
 

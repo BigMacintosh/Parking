@@ -52,8 +52,7 @@ namespace Network.Events {
         }
 
         public void UpdateLocations(World world) {
-            foreach (var playerID in PlayerPositions.Keys.Where(k => ClientConfig.PlayerID != k &&
-                                                                     world.Players.Keys.Contains(k))) {
+            foreach (var playerID in PlayerPositions.Keys) {
                 world.MovePlayer(playerID, PlayerPositions[playerID]);
             }
         }

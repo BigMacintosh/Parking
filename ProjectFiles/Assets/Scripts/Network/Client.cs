@@ -10,6 +10,7 @@ using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEngine;
+using Utils;
 using Event = Network.Events.Event;
 using UdpCNetworkDriver =
     Unity.Networking.Transport.GenericNetworkDriver<Unity.Networking.Transport.IPv4UDPSocket,
@@ -32,7 +33,7 @@ namespace Network {
 
         bool   Start(ushort port = 25565);
         void   Shutdown();
-        void   SendEvents(VehicleInputState inputs);
+        void   FixedUpdate(VehicleInputState inputs);
         void   HandleNetworkEvents();
         string GetServerIP();
         void   OnSpaceEnter(int playerID, ushort spaceID);
@@ -52,8 +53,10 @@ namespace Network {
         public event SpaceClaimedDelegate      SpaceClaimedEvent;
 
         private ulong tick;
-        private const ulong TickDuration = 1000 / 50;
-        private const ulong SnapshotDuration = 1000 / 50;
+        private const ulong TickRate         = 50;
+        private const ulong SnapshotRate     = 50;
+        private const ulong TickDuration     = 1000 / TickRate;
+        private const ulong SnapshotDuration = 1000 / SnapshotRate;
 
         // Private Fields
         private bool              inGame;
@@ -65,7 +68,8 @@ namespace Network {
 
         private readonly NetworkPipeline pipeline;
         private readonly ClientWorld     world;
-
+        private readonly HistoryBuffer<VehicleInputState> pastInputs;
+        private readonly HistoryBuffer<Dictionary<int, PlayerPosition>> pastPositions;
         private readonly Queue<Event> eventQueue;
 
         public Client(ClientWorld world) {
@@ -74,6 +78,7 @@ namespace Network {
             done       = false;
             this.world = world;
             eventQueue = new Queue<Event>();
+            pastInputs = new HistoryBuffer<VehicleInputState>((int) (2 * TickRate));
         }
 
         public static IClient GetDummyClient(ClientWorld world) {
@@ -98,12 +103,15 @@ namespace Network {
             driver.Dispose();
         }
 
-        public void SendEvents(VehicleInputState inputs) {
+        public void FixedUpdate(VehicleInputState inputs) {
             tick++;
             // Only send location if in game and in player mode
             if (inGame && ClientConfig.GameMode == GameMode.PlayerMode) {
+                pastInputs.Put(inputs);
                 var locationUpdate = new ClientInputStateEvent(tick, inputs);
                 SendEventToServer(locationUpdate);
+                world.ApplyInputs(ClientConfig.PlayerID, inputs);
+                Physics.Simulate(Time.fixedDeltaTime);
             }
 
             var totalLength = eventQueue.Sum(ev => ev.Length);
@@ -291,6 +299,13 @@ namespace Network {
 
         public void Handle(ServerLocationUpdateEvent ev, NetworkConnection conn) {
             ev.UpdateLocations(world);
+            var tickOffset = (int) (tick - ev.Tick);
+            // TODO: interpolate difference rather than teleport
+            for (int i = tickOffset; i >= 0; i--) {
+                // catch up on inputs since the last confirmed tick
+                world.ApplyInputs(ClientConfig.PlayerID, pastInputs[i]);
+                Physics.Simulate(Time.fixedDeltaTime);
+            }
         }
 
         public void Handle(ServerDisconnectEvent ev, NetworkConnection conn) {

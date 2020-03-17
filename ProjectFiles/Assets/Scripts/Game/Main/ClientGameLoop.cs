@@ -89,11 +89,7 @@ namespace Game.Main {
 
         public void FixedUpdate() {
             var inputs = VehicleInputState.GetInputs();
-            if (ClientConfig.PlayerID != -1) {
-                world.ApplyInputs(ClientConfig.PlayerID, inputs);
-            }
-
-            client.SendEvents(inputs);
+            client.FixedUpdate(inputs);
         }
 
         public void LateUpdate() {

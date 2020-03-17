@@ -50,7 +50,11 @@ namespace Network {
 
         public void Shutdown() { }
 
-        public void SendEvents(VehicleInputState inputs) { }
+        public void FixedUpdate(VehicleInputState inputs) {
+            if (ClientConfig.PlayerID != -1) {
+                world.ApplyInputs(ClientConfig.PlayerID, inputs);
+            }
+        }
 
         public void HandleNetworkEvents() { }
 

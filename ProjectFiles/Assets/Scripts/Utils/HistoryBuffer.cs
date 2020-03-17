@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Utils {
     /// <summary>
@@ -50,7 +51,7 @@ namespace Utils {
                     );
                 }
 
-                return buffer[(head - i) % Capacity];
+                return buffer[((head - i) + Capacity) % Capacity];
             }
         }
 
