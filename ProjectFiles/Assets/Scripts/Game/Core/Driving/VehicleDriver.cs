@@ -26,18 +26,22 @@ namespace Game.Core.Driving {
 
         private bool isGrounded;
         private bool roadBelow;
-        private bool canReset = true;
+
+        private bool  canReset      = true;
+        private float resetTime     = 0f;
+        private float resetCooldown = 5f;
 
 
         private float collisionAmplifier = 50f;
         private float collisionCooldown  = 0.5f;
-        private float collisionTime          = 0f;
+        private float collisionTime      = 0f;
 
         private WheelFrictionCurve driftCurve = new WheelFrictionCurve();
         private WheelFrictionCurve stdCurve;
 
         // Start is called before the first frame update
         private void Start() {
+            resetTime = Time.time + resetCooldown;
             body              = gameObject.GetComponent<Rigidbody>();
             body.centerOfMass = transform.Find("centreOfMass").transform.localPosition;
 
@@ -52,10 +56,16 @@ namespace Game.Core.Driving {
 
         private void FixedUpdate() {
             CheckGrounded();
-
+            CheckReset();
             GetInput();
-            if (jump  && isGrounded) Jump();
-            if (reset && canReset) Reset();
+            if (jump && isGrounded) Jump();
+            else {
+                jump = false;
+            }
+            if (reset && canReset) ResetPos();
+            else {
+                reset = false;
+            }
             Steer();
             Accelerate();
             UpdateWheels();
@@ -82,6 +92,10 @@ namespace Game.Core.Driving {
             }
         }
 
+        private void CheckReset() {
+            
+        }
+
         private void GetInput() {
             horizontalInput = Input.GetAxis("Horizontal");
             verticalInput   = Input.GetAxis("Vertical");
@@ -105,10 +119,12 @@ namespace Game.Core.Driving {
             jump = false;
         }
 
-        private void Reset() {
+        private void ResetPos() {
+            
             Debug.Log("RESET");
+            canReset  = false;
+            resetTime = Time.time + resetCooldown;
             reset = false;
-            canReset = false;
         }
 
         private void Steer() {
