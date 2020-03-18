@@ -31,7 +31,7 @@ namespace Game.Core.Driving {
 
         private float collisionAmplifier = 50f;
         private float collisionCooldown  = 0.5f;
-        private float timestamp          = 0f;
+        private float collisionTime          = 0f;
 
         private WheelFrictionCurve driftCurve = new WheelFrictionCurve();
         private WheelFrictionCurve stdCurve;
@@ -169,7 +169,7 @@ namespace Game.Core.Driving {
         }
 
         private void OnCollisionEnter(Collision other) {
-            if ((mask.value & 1 << other.gameObject.layer) != 0 && timestamp < Time.time) {
+            if ((mask.value & 1 << other.gameObject.layer) != 0 && collisionTime < Time.time) {
                 Rigidbody otherBody = other.gameObject.GetComponent<Rigidbody>();
                 Vector3   colDir    = Vector3.Normalize(transform.position - other.transform.position);
 
@@ -180,7 +180,7 @@ namespace Game.Core.Driving {
                     body.AddForce(colDir * otherMomentum * collisionAmplifier);
                 }
 
-                timestamp = Time.time + collisionCooldown;
+                collisionTime = Time.time + collisionCooldown;
             }
         }
     }
