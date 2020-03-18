@@ -96,7 +96,6 @@ namespace Game.Core.Driving {
             if (body.velocity.magnitude > 2f) {
                 resetTime = Time.time + resetCooldown;
             } else if (resetTime < Time.time) {
-                Debug.Log("CAN RESET");
                 canReset = true;
             }
         }
