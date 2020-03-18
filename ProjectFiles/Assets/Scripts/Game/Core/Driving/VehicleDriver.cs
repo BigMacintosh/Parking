@@ -22,9 +22,11 @@ namespace Game.Core.Driving {
         private float verticalInput;
         private bool  drift;
         private bool  jump;
+        private bool  reset;
 
         private bool isGrounded;
         private bool roadBelow;
+        private bool canReset = true;
 
 
         private float collisionAmplifier = 50f;
@@ -52,7 +54,8 @@ namespace Game.Core.Driving {
             CheckGrounded();
 
             GetInput();
-            if (jump && isGrounded) Jump();
+            if (jump  && isGrounded) Jump();
+            if (reset && canReset) Reset();
             Steer();
             Accelerate();
             UpdateWheels();
@@ -66,14 +69,14 @@ namespace Game.Core.Driving {
 
         private void CheckGrounded() {
             isGrounded = false;
-            roadBelow = false;
+            roadBelow  = false;
             foreach (WheelTransformPair wheel in driveWheels) {
                 if (wheel.wheel.isGrounded) {
                     isGrounded = true;
                 }
-                
+
                 RaycastHit hit;
-                if(Physics.Raycast(wheel.graphics.position, Vector3.down, out hit)) {
+                if (Physics.Raycast(wheel.graphics.position, Vector3.down, out hit)) {
                     roadBelow = hit.collider.gameObject.tag == "Road";
                 }
             }
@@ -91,11 +94,21 @@ namespace Game.Core.Driving {
             } else {
                 drift = false;
             }
+
+            if (Input.GetAxis("Reset") != 0) {
+                reset = true;
+            }
         }
 
         private void Jump() {
             body.AddForce(body.mass * motorForce / 5f * transform.up);
             jump = false;
+        }
+
+        private void Reset() {
+            Debug.Log("RESET");
+            reset = false;
+            canReset = false;
         }
 
         private void Steer() {
@@ -107,7 +120,7 @@ namespace Game.Core.Driving {
                     wheel.wheel.sidewaysFriction = stdCurve;
                 }
             }
-            
+
             foreach (WheelTransformPair wheel in otherWheels) {
                 if (drift) {
                     wheel.wheel.sidewaysFriction = driftCurve;
@@ -119,7 +132,8 @@ namespace Game.Core.Driving {
 
         private void Accelerate() {
             foreach (WheelTransformPair wheel in driveWheels) {
-                wheel.wheel.motorTorque = roadBelow ? motorForce * verticalInput * roadMult : motorForce * verticalInput;
+                wheel.wheel.motorTorque =
+                    roadBelow ? motorForce * verticalInput * roadMult : motorForce * verticalInput;
             }
         }
 
