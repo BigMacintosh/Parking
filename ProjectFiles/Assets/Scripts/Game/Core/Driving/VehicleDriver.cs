@@ -93,7 +93,12 @@ namespace Game.Core.Driving {
         }
 
         private void CheckReset() {
-            
+            if (body.velocity.magnitude > 2f) {
+                resetTime = Time.time + resetCooldown;
+            } else if (resetTime < Time.time) {
+                Debug.Log("CAN RESET");
+                canReset = true;
+            }
         }
 
         private void GetInput() {
@@ -120,8 +125,7 @@ namespace Game.Core.Driving {
         }
 
         private void ResetPos() {
-            
-            Debug.Log("RESET");
+            Debug.Log("RESET COMPLETE");
             canReset  = false;
             resetTime = Time.time + resetCooldown;
             reset = false;
