@@ -124,6 +124,7 @@ namespace Game.Core.Driving {
         }
 
         private void ResetPos() {
+            //TODO get road position then move to it
             Debug.Log("RESET COMPLETE");
             canReset  = false;
             resetTime = Time.time + resetCooldown;
