@@ -45,6 +45,8 @@ namespace Network {
             };
             var dict = new Dictionary<int, PlayerPosition> {{playerID, spawnPos}};
             world.SpawnPlayers(dict);
+
+            Physics.autoSimulation = true;
             return true;
         }
 

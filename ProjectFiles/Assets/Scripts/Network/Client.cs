@@ -94,6 +94,8 @@ namespace Network {
 
             var endpoint = NetworkEndPoint.Parse(serverIP, serverPort);
             connection = driver.Connect(endpoint);
+            
+            Physics.autoSimulation = false;
             return true;
         }
 

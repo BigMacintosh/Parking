@@ -78,8 +78,9 @@ namespace Network {
 
             driver.Listen();
             Debug.Log($"Server: Listening at port {IP}:{Port}...");
-
             keepAliveTimer.Start();
+
+            Physics.autoSimulation = true;
             return true;
         }
 
