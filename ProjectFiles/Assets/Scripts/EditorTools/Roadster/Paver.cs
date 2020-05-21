@@ -1,7 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Utils;
 
-public class Paver : MonoBehaviour {
+public interface IPaver {
+    List<Bounds> GetDivisionBoundingBoxes();
+}
+
+public class Paver : MonoBehaviour, IPaver {
+    public List<Vector3> LeftSignPosts  { get; private set; }
+    public List<Vector3> RightSignPosts { get; private set; }
+    public List<Vector3> RoadPoints     { get; private set; }
+    
     [SerializeField] private float        divisions;
     [SerializeField] private float        maxGroundDistance;
     [SerializeField] private float        raiseAboveGround;
@@ -23,6 +33,9 @@ public class Paver : MonoBehaviour {
         vertices  = new List<Vector3>();
         triangles = new List<int>();
         uv        = new List<Vector2>();
+        LeftSignPosts = new List<Vector3>();
+        RightSignPosts = new List<Vector3>();
+        RoadPoints = new List<Vector3>();
 
         var mesh = new Mesh();
 
@@ -81,8 +94,7 @@ public class Paver : MonoBehaviour {
                                          roadPoint.z - width / 2 * Mathf.Sin(alpha)) - transform.position;
             var signRightPoint = rightPoint;
 
-            RaycastHit rightHit;
-            if (Physics.Raycast(new Ray(rightPoint + transform.position, Vector3.down), out rightHit,
+            if (Physics.Raycast(new Ray(rightPoint + transform.position, Vector3.down), out var rightHit,
                                 maxGroundDistance)) {
                 rightPoint.y -= rightHit.distance - raiseAboveGround;
                 if (signpost) {
@@ -100,8 +112,7 @@ public class Paver : MonoBehaviour {
                                         roadPoint.z + width / 2 * Mathf.Sin(alpha)) - transform.position;
             var signLeftPoint = leftPoint;
 
-            RaycastHit leftHit;
-            if (Physics.Raycast(new Ray(leftPoint + transform.position, Vector3.down), out leftHit,
+            if (Physics.Raycast(new Ray(leftPoint + transform.position, Vector3.down), out var leftHit,
                                 maxGroundDistance)) {
                 leftPoint.y -= leftHit.distance - raiseAboveGround;
                 if (signpost) {
@@ -150,19 +161,12 @@ public class Paver : MonoBehaviour {
                 cube.transform.position   = signRightPoint + transform.position;
                 cube.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             }
+            
+            // Collect points for the road detection.
+            LeftSignPosts.Add(signLeftPoint);
+            RightSignPosts.Add(signRightPoint);
+            RoadPoints.Add(midPoint);
         }
-    }
-
-    public List<Vector3> GetRoadPoints() {
-        var roadPoints = new List<Vector3>();
-
-        var stepSize = 1f / divisions;
-
-        for (var p = 0; p < divisions; p++) {
-            roadPoints.Add(spline.GetPoint(p * stepSize));
-        }
-
-        return roadPoints;
     }
 
     private void PopulateTris() {
@@ -243,4 +247,27 @@ public class Paver : MonoBehaviour {
         triangles.Add(vertices.Count - 4);
         triangles.Add(vertices.Count - 6);
     }
+
+    public List<Bounds> GetDivisionBoundingBoxes() {
+        var boundingBoxes = new List<Bounds>();
+        Vector3 leftPoint = LeftSignPosts[0];
+        Vector3 rightPoint = RightSignPosts[0];
+        for (int i = 1; i < LeftSignPosts.Count; i++) {
+            var nextLeftPoint = LeftSignPosts[i];
+            var nextRightPoint = RightSignPosts[i];
+
+            Vector3 min = VectorTools.GetMinVector(leftPoint, rightPoint, nextLeftPoint, nextRightPoint);
+            Vector3 max = VectorTools.GetMaxVector(leftPoint, rightPoint, nextLeftPoint, nextRightPoint);
+
+            Vector3 center = (min + max) / 2;
+            Vector3 size = max - min;
+            boundingBoxes.Add(new Bounds(center, size));
+            
+            leftPoint = nextLeftPoint;
+            rightPoint = nextRightPoint;
+        }
+        return boundingBoxes;
+    }
+
+    
 }
