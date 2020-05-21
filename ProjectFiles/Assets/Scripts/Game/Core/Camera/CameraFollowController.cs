@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 
 namespace Game.Core.Camera {
     public class CameraFollowController : MonoBehaviour {
@@ -14,23 +15,30 @@ namespace Game.Core.Camera {
             ObjectToFollow = FindObjectOfType<Main.Game>().transform;
         }
 
+        private Vector3 getDirection() {
+            var _lookDirectionx = (ObjectToFollow.position.x - transform.position.x);
+            var _lookDirectionz = (ObjectToFollow.position.z - transform.position.z);
+            var _lookDirection = new Vector3(_lookDirectionx, 0f, _lookDirectionz).normalized; 
+            return _lookDirection;
+        }
         private void LookAtTarget() {
-            var _lookDirection = ObjectToFollow.position - transform.position;
-            var _rot           = Quaternion.LookRotation(_lookDirection, Vector3.up);
+
+            var _rot           = Quaternion.LookRotation(getDirection(), Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, _rot, lookSpeed * Time.deltaTime);
         }
 
         private void MoveToTarget() {
             var _targetPos = ObjectToFollow.position           +
-                             ObjectToFollow.forward * offset.z +
-                             ObjectToFollow.right   * offset.x +
-                             ObjectToFollow.up      * offset.y;
+                             Vector3.ProjectOnPlane(ObjectToFollow.forward, Vector3.up) * offset.z +
+                             Vector3.right   * offset.x +
+                             Vector3.up      * offset.y;
+
             transform.position = Vector3.Lerp(transform.position, _targetPos, followSpeed * Time.deltaTime);
         }
 
         private void FixedUpdate() {
-            LookAtTarget();
             MoveToTarget();
+            LookAtTarget();
         }
     }
 }

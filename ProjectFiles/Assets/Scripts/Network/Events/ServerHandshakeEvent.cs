@@ -13,10 +13,11 @@ namespace Network.Events {
         }
 
         public ServerHandshakeEvent(int playerID, Dictionary<int, PlayerOptions> playerOptions) : this() {
-            PlayerID = playerID;
+            PlayerID      = playerID;
             PlayerOptions = playerOptions;
 
-            Length = sizeof(byte) + sizeof(int) + sizeof(int) + playerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
+            Length = sizeof(byte) + sizeof(int) + sizeof(int) +
+                     playerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
         }
 
 
@@ -41,7 +42,8 @@ namespace Network.Events {
                 PlayerOptions.Add(playerID, playerOptions);
             }
 
-            Length = sizeof(int) + sizeof(byte) + sizeof(int) + PlayerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
+            Length = sizeof(int) + sizeof(byte) + sizeof(int) +
+                     PlayerOptions.Sum(k => k.Value.WriterLength() + sizeof(int));
         }
 
         public override void Handle(Server server, NetworkConnection connection) {
@@ -53,16 +55,16 @@ namespace Network.Events {
         }
 
         public void Apply(ClientWorld world) {
-            world.CreatePlayer(PlayerID, new PlayerOptions {
+            world.AddPlayer(new Player(PlayerID, new PlayerOptions {
                 CarColour  = ClientConfig.VehicleColour,
                 CarType    = ClientConfig.VehicleType,
                 PlayerName = ClientConfig.PlayerName,
-            }, true);
+            }, true));
 
 
             // Create all players who have already connected.
             foreach (var kv in PlayerOptions.Where(kv => kv.Key != PlayerID)) {
-                world.CreatePlayer(kv.Key, kv.Value);
+                world.AddPlayer(new Player(kv.Key, kv.Value));
             }
         }
     }

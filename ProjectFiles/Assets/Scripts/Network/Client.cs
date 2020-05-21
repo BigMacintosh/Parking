@@ -267,7 +267,7 @@ namespace Network {
         public void Handle(ServerNewPlayerConnectedEvent ev, NetworkConnection conn) {
             Debug.Log($"Client: New player has connected to the game");
 
-            if (ev.PlayerID != ClientConfig.PlayerID) world.CreatePlayer(ev.PlayerID, ev.PlayerOptions);
+            if (ev.PlayerID != ClientConfig.PlayerID) world.AddPlayer(new Player(ev.PlayerID, ev.PlayerOptions));
             PlayerCountChangeEvent?.Invoke(world.GetNumPlayers());
         }
 
